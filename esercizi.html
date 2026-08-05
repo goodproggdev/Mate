@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Esercizi — Metodi Matematici</title>
+<link rel="stylesheet" href="style.css">
+<style>
+#loading-overlay {
+  position: fixed; inset: 0; background: var(--bg); z-index: 1000;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 14px; text-align: center; padding: 20px;
+}
+.spinner {
+  width: 40px; height: 40px; border-radius: 50%;
+  border: 4px solid var(--border); border-top-color: var(--accent);
+  animation: spin 0.9s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+#loading-overlay p { max-width: 380px; }
+#loading-overlay .small { font-size: 12px; color: var(--text3); }
+
+.topic-btn {
+  display: block; width: 100%; text-align: left; background: var(--bg-card);
+  border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px;
+  margin-bottom: 6px; font-size: 14px; font-weight: 600; color: var(--text);
+  cursor: pointer; font-family: var(--sans);
+}
+.topic-btn:hover { border-color: var(--accent); background: var(--blue-bg); }
+.topic-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+.sidebar-section { margin-bottom: 20px; }
+.sidebar-title { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--text3); font-weight: 700; margin-bottom: 8px; }
+
+.progress-row { display: flex; justify-content: space-between; font-size: 13px; padding: 6px 0; border-bottom: 1px solid var(--border); color: var(--text2); }
+.progress-row .pct { font-weight: 700; color: var(--accent2); }
+.progress-empty { font-size: 13px; color: var(--text3); font-style: italic; }
+
+#hint { font-size: 12.5px; color: var(--text3); font-style: italic; margin: 4px 0 10px; }
+#risposta {
+  width: 100%; min-height: 90px; font-family: var(--mono); font-size: 13.5px;
+  border: 1px solid var(--border); border-radius: 8px; padding: 10px; resize: vertical;
+  background: var(--bg-card); color: var(--text);
+}
+#risposta:focus { outline: none; border-color: var(--accent); }
+
+.action-row { display: flex; gap: 8px; margin: 12px 0; flex-wrap: wrap; }
+
+#esito { margin-top: 6px; }
+#esito .badge { display: inline-block; font-weight: 700; padding: 4px 10px; border-radius: 6px; font-size: 13px; margin-bottom: 8px; }
+#esito .badge.ok { background: var(--green-bg); color: var(--green); }
+#esito .badge.no { background: var(--red-bg); color: var(--red); }
+#esito .badge.err { background: var(--gold-bg); color: var(--gold); }
+#esito pre { white-space: pre-wrap; font-family: var(--mono); font-size: 13px; color: var(--text2); margin: 0; }
+
+#grafico-area { margin-top: 14px; text-align: center; }
+#grafico-area img { max-width: 100%; border-radius: 8px; border: 1px solid var(--border); }
+
+.placeholder { color: var(--text3); font-style: italic; padding: 30px 0; text-align: center; }
+.mini-spinner {
+  width: 18px; height: 18px; border-radius: 50%; display: inline-block;
+  border: 3px solid var(--border); border-top-color: var(--accent);
+  animation: spin 0.8s linear infinite; vertical-align: -3px; margin-right: 6px;
+}
+</style>
+</head>
+<body>
+
+<div id="loading-overlay">
+  <div class="spinner"></div>
+  <p id="loading-text"><strong>Caricamento del motore Python...</strong><br>Sto avviando SymPy, NumPy e Matplotlib nel browser (Pyodide). La prima volta può richiedere qualche secondo, dalla seconda sarà più veloce grazie alla cache.</p>
+  <p class="small" id="loading-detail"></p>
+</div>
+
+<div class="topbar">
+  <div class="brand">Metodi Matematici — Allenamento</div>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="esercizi.html" class="active">Esercizi</a>
+    <a href="teoria.html">Teoria &amp; Formulario</a>
+  </nav>
+</div>
+
+<div class="wrap wide">
+  <div class="grid2" style="grid-template-columns: 260px 1fr;">
+
+    <div>
+      <div class="sidebar-section">
+        <div class="sidebar-title">Argomenti</div>
+        <div id="topic-buttons"></div>
+      </div>
+
+      <div class="sidebar-section">
+        <button class="btn secondary" id="btn-debole" style="width:100%;">Punto debole (auto)</button>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-title">Progressi</div>
+        <div id="progress-table"></div>
+        <button class="btn secondary" id="btn-reset" style="width:100%; margin-top:10px; font-size:12px;">Azzera progressi</button>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <div class="sidebar-title">Esercizio</div>
+        <p id="testo-esercizio" style="color: var(--text); font-size: 15px; margin-top:8px;">Scegli un argomento a sinistra per iniziare.</p>
+        <div id="hint"></div>
+
+        <div class="sidebar-title" style="margin-top:14px;">La tua risposta</div>
+        <textarea id="risposta" placeholder="Scrivi qui la risposta..." disabled></textarea>
+
+        <div class="action-row">
+          <button class="btn" id="btn-verifica" disabled>Verifica risposta</button>
+          <button class="btn secondary" id="btn-soluzione" disabled>Mostra soluzione</button>
+          <button class="btn secondary" id="btn-grafico" disabled>Mostra grafico</button>
+        </div>
+
+        <div id="esito"></div>
+        <div id="grafico-area"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>Strumento di allenamento per uso personale — generato ed eseguito interamente nel browser, nessun dato lascia il tuo dispositivo.</footer>
+
+<script src="https://cdn.jsdelivr.net/pyodide/v314.0.4/full/pyodide.js"></script>
+<script>
+const ARGOMENTI = [
+  ["Serie numeriche", "serie"],
+  ["Sviluppi di Taylor", "taylor"],
+  ["Lagrange (multivariabile)", "lagrange"],
+  ["EDO / Cauchy", "edo"],
+  ["Integrali doppi", "integrali"],
+];
+const NOMI = Object.fromEntries(ARGOMENTI.map(([n, k]) => [k, n]));
+const PY_FILES = ["serie.py", "taylor.py", "multivariabile.py", "edo.py", "integrali.py", "grafico.py", "bridge.py"];
+const PROGRESS_KEY = "mm_progress_v1";
+
+let pyodide = null;
+let bridge = null;
+let argomentoCorrente = null;
+
+function loadProgress() {
+  try { return JSON.parse(localStorage.getItem(PROGRESS_KEY)) || {}; }
+  catch (e) { return {}; }
+}
+function saveProgress(data) { localStorage.setItem(PROGRESS_KEY, JSON.stringify(data)); }
+function registraProgresso(argomento, corretto) {
+  const data = loadProgress();
+  const stat = data[argomento] || { corretti: 0, totali: 0 };
+  stat.totali += 1;
+  if (corretto) stat.corretti += 1;
+  data[argomento] = stat;
+  saveProgress(data);
+  renderProgressTable();
+}
+function renderProgressTable() {
+  const data = loadProgress();
+  const righe = Object.entries(data).map(([arg, stat]) => {
+    const perc = stat.totali ? (100 * stat.corretti / stat.totali) : 0;
+    return { arg, corretti: stat.corretti, totali: stat.totali, perc };
+  }).sort((a, b) => a.perc - b.perc);
+
+  const el = document.getElementById("progress-table");
+  if (righe.length === 0) {
+    el.innerHTML = '<div class="progress-empty">Nessun esercizio ancora</div>';
+    return;
+  }
+  el.innerHTML = righe.map(r =>
+    `<div class="progress-row"><span>${NOMI[r.arg] || r.arg}: ${r.corretti}/${r.totali}</span><span class="pct">${r.perc.toFixed(0)}%</span></div>`
+  ).join("");
+}
+function argomentoPiuDebole() {
+  const data = loadProgress();
+  const pesi = ARGOMENTI.map(([, arg]) => {
+    const stat = data[arg];
+    if (!stat || stat.totali === 0) return 0.6 + 0.1;
+    return (1 - stat.corretti / stat.totali) + 0.1;
+  });
+  const totale = pesi.reduce((a, b) => a + b, 0);
+  let r = Math.random() * totale;
+  for (let i = 0; i < ARGOMENTI.length; i++) {
+    r -= pesi[i];
+    if (r <= 0) return ARGOMENTI[i][1];
+  }
+  return ARGOMENTI[ARGOMENTI.length - 1][1];
+}
+
+function buildTopicButtons() {
+  const el = document.getElementById("topic-buttons");
+  el.innerHTML = "";
+  ARGOMENTI.forEach(([nome, chiave]) => {
+    const b = document.createElement("button");
+    b.className = "topic-btn";
+    b.textContent = nome;
+    b.dataset.chiave = chiave;
+    b.addEventListener("click", () => nuovoEsercizio(chiave));
+    el.appendChild(b);
+  });
+}
+function setActiveButton(chiave) {
+  document.querySelectorAll(".topic-btn").forEach(b => {
+    b.classList.toggle("active", b.dataset.chiave === chiave);
+  });
+}
+
+function setBusy(busy) {
+  ["btn-verifica", "btn-soluzione", "btn-grafico"].forEach(id => {
+    document.getElementById(id).disabled = busy || !argomentoCorrente;
+  });
+}
+
+function nuovoEsercizio(chiave) {
+  argomentoCorrente = chiave;
+  setActiveButton(chiave);
+  const r = JSON.parse(bridge.nuovo_esercizio(chiave));
+  document.getElementById("testo-esercizio").textContent = r.testo;
+  document.getElementById("hint").textContent = r.suggerimento || "";
+  document.getElementById("risposta").value = "";
+  document.getElementById("risposta").disabled = false;
+  document.getElementById("esito").innerHTML = "";
+  document.getElementById("grafico-area").innerHTML = "";
+  setBusy(false);
+}
+
+function mostraEsito(corretto, corpo) {
+  const badgeClass = corretto ? "ok" : "no";
+  const badgeText = corretto ? "CORRETTO" : "DA RIVEDERE";
+  document.getElementById("esito").innerHTML =
+    `<span class="badge ${badgeClass}">${badgeText}</span><pre>${escapeHtml(corpo)}</pre>`;
+}
+function mostraErrore(msg) {
+  document.getElementById("esito").innerHTML =
+    `<span class="badge err">ATTENZIONE</span><pre>${escapeHtml(msg)}</pre>`;
+}
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+function verificaRisposta() {
+  if (!argomentoCorrente) return;
+  const risposta = document.getElementById("risposta").value;
+  const r = JSON.parse(bridge.verifica(risposta));
+  if (r.errore) { mostraErrore(r.errore); return; }
+  mostraEsito(r.corretto, r.corpo);
+  registraProgresso(argomentoCorrente, r.corretto);
+}
+
+function mostraSoluzione() {
+  if (!argomentoCorrente) return;
+  const r = JSON.parse(bridge.mostra_soluzione());
+  if (r.errore) { mostraErrore(r.errore); return; }
+  document.getElementById("esito").innerHTML = `<pre>${escapeHtml(r.corpo)}</pre>`;
+}
+
+function mostraGrafico() {
+  if (!argomentoCorrente) return;
+  const area = document.getElementById("grafico-area");
+  area.innerHTML = '<span class="mini-spinner"></span>Genero il grafico...';
+  setTimeout(() => {
+    const r = JSON.parse(bridge.mostra_grafico_png());
+    if (r.errore) {
+      area.innerHTML = "";
+      mostraErrore(r.errore);
+      return;
+    }
+    area.innerHTML = `<img src="data:image/png;base64,${r.png_base64}" alt="Grafico dell'esercizio">`;
+  }, 30);
+}
+
+async function avvia() {
+  const detail = document.getElementById("loading-detail");
+  try {
+    detail.textContent = "Avvio del runtime Pyodide...";
+    pyodide = await loadPyodide();
+
+    detail.textContent = "Carico i package numpy, sympy, matplotlib...";
+    await pyodide.loadPackage(["numpy", "sympy", "matplotlib"]);
+
+    detail.textContent = "Carico i moduli del progetto...";
+    pyodide.FS.mkdirTree("/app");
+    for (const nome of PY_FILES) {
+      const testo = await (await fetch(nome)).text();
+      pyodide.FS.writeFile("/app/" + nome, testo);
+    }
+    pyodide.runPython("import sys\nif '/app' not in sys.path:\n    sys.path.insert(0, '/app')\n");
+    pyodide.runPython("import bridge");
+    bridge = pyodide.pyimport("bridge");
+
+    document.getElementById("loading-overlay").style.display = "none";
+    buildTopicButtons();
+    renderProgressTable();
+    document.getElementById("testo-esercizio").innerHTML =
+      'Scegli un argomento a sinistra per iniziare, oppure premi <strong>"Punto debole (auto)"</strong>.';
+
+    document.getElementById("btn-verifica").addEventListener("click", verificaRisposta);
+    document.getElementById("btn-soluzione").addEventListener("click", mostraSoluzione);
+    document.getElementById("btn-grafico").addEventListener("click", mostraGrafico);
+    document.getElementById("btn-debole").addEventListener("click", () => nuovoEsercizio(argomentoPiuDebole()));
+    document.getElementById("btn-reset").addEventListener("click", () => {
+      if (confirm("Azzerare tutti i progressi salvati in questo browser?")) {
+        localStorage.removeItem(PROGRESS_KEY);
+        renderProgressTable();
+      }
+    });
+  } catch (e) {
+    document.getElementById("loading-text").innerHTML = "<strong>Errore durante il caricamento.</strong>";
+    detail.textContent = String(e);
+    console.error(e);
+  }
+}
+
+avvia();
+</script>
+</body>
+</html>

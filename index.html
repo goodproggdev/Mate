@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Metodi Matematici per l'Ingegneria — Allenamento</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.hero { text-align: center; padding: 40px 0 10px; }
+.cards { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 30px 0; }
+@media (max-width: 700px) { .cards { grid-template-columns: 1fr; } }
+.link-card {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 24px; text-decoration: none; color: var(--text); display: block; transition: border-color .15s;
+}
+.link-card:hover { border-color: var(--accent); text-decoration: none; }
+.link-card .icon { font-size: 26px; margin-bottom: 10px; }
+.link-card h2 { border-bottom: none; margin: 0 0 6px; font-size: 18px; }
+.link-card p { margin: 0; font-size: 13.5px; }
+.topics-list { columns: 2; column-gap: 24px; font-size: 14px; }
+@media (max-width: 600px) { .topics-list { columns: 1; } }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">Metodi Matematici — Allenamento</div>
+  <nav>
+    <a href="index.html" class="active">Home</a>
+    <a href="esercizi.html">Esercizi</a>
+    <a href="teoria.html">Teoria &amp; Formulario</a>
+  </nav>
+</div>
+
+<div class="wrap">
+  <div class="hero">
+    <h1>Allenamento per l'esame di Metodi Matematici per l'Ingegneria</h1>
+    <p class="subtitle">Esercizi generati e verificati con SymPy, direttamente nel browser — nessuna installazione, nessun dato salvato su server.</p>
+  </div>
+
+  <div class="cards">
+    <a class="link-card" href="esercizi.html">
+      <div class="icon">✏️</div>
+      <h2>Esercizi</h2>
+      <p>Genera varianti infinite dei 5 tipi di esercizio d'esame, scrivi la risposta e ottieni una verifica immediata, la soluzione motivata passo-passo e il grafico del problema.</p>
+    </a>
+    <a class="link-card" href="teoria.html">
+      <div class="icon">📘</div>
+      <h2>Teoria &amp; Formulario</h2>
+      <p>Come riconoscere la casistica e quale processo risolutivo applicare, con richiami al formulario ufficiale ed esempi per ricordare i passaggi chiave.</p>
+    </a>
+  </div>
+
+  <div class="card">
+    <div class="sidebar-title" style="margin-bottom:10px;">Argomenti coperti</div>
+    <div class="topics-list">
+      <ul>
+        <li>Serie numeriche e criteri di convergenza</li>
+        <li>Sviluppi di Taylor / Mac Laurin</li>
+        <li>Punti critici e Hessiana</li>
+        <li>Moltiplicatori di Lagrange</li>
+        <li>EDO lineari del secondo ordine (Cauchy)</li>
+        <li>Integrali doppi in coordinate polari</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card" style="font-size:13.5px; color:var(--text2);">
+    <strong>Come funziona:</strong> la pagina Esercizi carica Pyodide (Python compilato per il browser via WebAssembly)
+    e riusa esattamente gli stessi moduli SymPy scritti per la versione desktop del progetto: stessa logica di
+    generazione, stessa verifica simbolica delle risposte, stesse spiegazioni passo-passo. Il primo caricamento
+    scarica qualche decina di MB (Python + librerie scientifiche) e può richiedere alcuni secondi; da lì in poi
+    il browser tiene tutto in cache. I progressi vengono salvati solo localmente, nel tuo browser.
+  </div>
+</div>
+
+<footer>Progetto di studio personale — nessun dato lascia il tuo dispositivo.</footer>
+
+</body>
+</html>
