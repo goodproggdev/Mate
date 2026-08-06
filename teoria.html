@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Teoria &amp; Formulario — Metodi Matematici</title>
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.18.1/dist/katex.min.css">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="favicon-32.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -20,6 +21,15 @@
 .cover { text-align: center; padding: 26px 0 6px; }
 .cover .sub { font-size: 19px; color: var(--accent2); font-weight: 700; margin-top: 6px; }
 .cover .tag { font-style: italic; color: var(--text2); margin-top: 4px; }
+
+.tex-line { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 10px 0; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.tex-line .note { font-family: var(--sans); font-size: 12.5px; color: #555; font-style: italic; }
+.formula-box, .example-box { font-family: var(--sans); white-space: normal; }
+.formula-box .katex-display, .example-box .katex-display { margin: 0; }
+@media (max-width: 600px) {
+  .tex-line { gap: 6px; }
+  .tex-line .note { font-size: 11.5px; }
+}
 </style>
 </head>
 <body>
@@ -103,12 +113,13 @@
 
   <h3>Cosa dice il Formulario</h3>
   <div class="formula-box">
-<span class="box-label">Dal formulario ufficiale</span>Σ 1/n                        sempre DIVERGENTE                         (serie armonica)
-Σ 1/n^p        p ≤ 1  divergente   |   p &gt; 1  convergente               (serie armonica generalizzata)
-Σ q^n  (n≥0)   q ≤ -1  irregolare  |  -1&lt;q&lt;1  convergente, somma=1/(1-q)  | q ≥ 1  divergente   (geometrica)
-Σ a·q^n (n≥0)  stessa soglia della geometrica, con punto iniziale a
-Σ 1/[n(n+1)] = 1              convergente                              (serie di Mengoli)
-<span class="box-caption">Fonte: Formulario Metodi.pdf (retro del testo d'esame)</span>
+    <span class="box-label">Dal formulario ufficiale</span>
+    <div class="tex-line">$$\sum_{n=1}^{\infty} \frac{1}{n}$$ <span class="note">sempre DIVERGENTE (serie armonica)</span></div>
+    <div class="tex-line">$$\sum_{n=1}^{\infty} \frac{1}{n^p}$$ <span class="note">p≤1 divergente, p&gt;1 convergente (serie armonica generalizzata)</span></div>
+    <div class="tex-line">$$\sum_{n=0}^{\infty} q^n$$ <span class="note">q≤-1 irregolare; -1&lt;q&lt;1 convergente, somma=1/(1-q); q≥1 divergente (geometrica)</span></div>
+    <div class="tex-line">$$\sum_{n=0}^{\infty} a\,q^n$$ <span class="note">stessa soglia della geometrica, con fattore iniziale a</span></div>
+    <div class="tex-line">$$\sum_{n=1}^{\infty} \frac{1}{n(n+1)} = 1$$ <span class="note">convergente (serie di Mengoli)</span></div>
+    <span class="box-caption">Fonte: Formulario Metodi.pdf (retro del testo d'esame)</span>
   </div>
 
   <h3>Procedimento consigliato (in ordine)</h3>
@@ -120,11 +131,11 @@
     <li>Se compare una variabile x, è una serie di potenze: trova il raggio R col rapporto o la radice sui coefficienti, poi analizza i due punti di frontiera x0±R separatamente (lì i criteri precedenti vanno riapplicati).</li>
   </ol>
   <div class="example-box">
-<span class="box-label">Esempio — riconoscimento rapido</span>Σ (3n+1)/(n²+5):  grado numeratore 1, grado denominatore 2  →  confronta con 1/n
-L = lim [n·(3n+1)/(n²+5)] = 3   (0&lt;L&lt;∞)   →  stesso comportamento di Σ1/n  →  DIVERGE
-
-Σ (1/2)^n·n³:  base fissa 1/2 con fattore polinomiale  →  criterio del rapporto
-L = lim a_(n+1)/a_n = 1/2 &lt; 1   →  CONVERGE  (il fattore n³ non cambia il limite)
+    <span class="box-label">Esempio — riconoscimento rapido</span>
+    <div class="tex-line">$$\sum \frac{3n+1}{n^2+5}$$ <span class="note">grado numeratore 1, grado denominatore 2 → confronta con 1/n</span></div>
+    <div class="tex-line">$$L=\lim_{n\to\infty} n\cdot\frac{3n+1}{n^2+5}=3$$ <span class="note">(0&lt;L&lt;∞) → stesso comportamento di Σ1/n → DIVERGE</span></div>
+    <div class="tex-line">$$\sum \left(\tfrac12\right)^n n^3$$ <span class="note">base fissa 1/2 con fattore polinomiale → criterio del rapporto</span></div>
+    <div class="tex-line">$$L=\lim_{n\to\infty} \frac{a_{n+1}}{a_n}=\tfrac12<1$$ <span class="note">→ CONVERGE (il fattore n³ non cambia il limite)</span></div>
   </div>
   <p><em>Puoi generare esercizi di questo tipo con soluzione motivata passo-passo nella pagina <a href="esercizi.html">Esercizi</a> (argomento "Serie numeriche", bottone "Mostra soluzione").</em></p>
 
@@ -139,13 +150,14 @@ L = lim a_(n+1)/a_n = 1/2 &lt; 1   →  CONVERGE  (il fattore n³ non cambia il 
 
   <h3>Cosa dice il Formulario (sviluppi di Mac Laurin)</h3>
   <div class="formula-box">
-<span class="box-label">Dal formulario ufficiale</span>e^x     = 1 + x + x²/2! + x³/3! + ⋯ + x^n/n! + o(x^n)
-sin x   = x − x³/3! + x⁵/5! − ⋯ + (−1)^n·x^(2n+1)/(2n+1)! + o(x^(2n+2))
-cos x   = 1 − x²/2! + x⁴/4! − ⋯ + (−1)^n·x^(2n)/(2n)! + o(x^(2n+1))
-ln(1+x) = x − x²/2 + x³/3 − ⋯ + (−1)^(n+1)·x^n/n + o(x^n)
-(1+x)^α = 1 + αx + [α(α−1)/2]·x² + ⋯ + o(x^n)               (α reale qualsiasi, es. radice quadrata con α=1/2)
-arctan x = x − x³/3 + x⁵/5 − ⋯ + (−1)^n·x^(2n+1)/(2n+1) + o(x^(2n+2))
-<span class="box-caption">Fonte: Formulario Metodi.pdf — tabella "sviluppo in serie di Mac Laurin di alcune funzioni elementari" (contiene anche tan, cot, sec, csc, arcsin, arccos, arccotg).</span>
+    <span class="box-label">Dal formulario ufficiale</span>
+    <div class="tex-line">$$e^x = 1+x+\frac{x^2}{2!}+\frac{x^3}{3!}+\cdots+\frac{x^n}{n!}+o(x^n)$$</div>
+    <div class="tex-line">$$\sin x = x-\frac{x^3}{3!}+\frac{x^5}{5!}-\cdots+(-1)^n\frac{x^{2n+1}}{(2n+1)!}+o(x^{2n+2})$$</div>
+    <div class="tex-line">$$\cos x = 1-\frac{x^2}{2!}+\frac{x^4}{4!}-\cdots+(-1)^n\frac{x^{2n}}{(2n)!}+o(x^{2n+1})$$</div>
+    <div class="tex-line">$$\ln(1+x) = x-\frac{x^2}{2}+\frac{x^3}{3}-\cdots+(-1)^{n+1}\frac{x^n}{n}+o(x^n)$$</div>
+    <div class="tex-line">$$(1+x)^\alpha = 1+\alpha x+\frac{\alpha(\alpha-1)}{2}x^2+\cdots+o(x^n)$$ <span class="note">(α reale qualsiasi, es. radice quadrata con α=1/2)</span></div>
+    <div class="tex-line">$$\arctan x = x-\frac{x^3}{3}+\frac{x^5}{5}-\cdots+(-1)^n\frac{x^{2n+1}}{2n+1}+o(x^{2n+2})$$</div>
+    <span class="box-caption">Fonte: Formulario Metodi.pdf — tabella "sviluppo in serie di Mac Laurin di alcune funzioni elementari" (contiene anche tan, cot, sec, csc, arcsin, arccos, arccotg).</span>
   </div>
 
   <h3>Procedimento generale (se la funzione non è tra quelle standard)</h3>
@@ -156,9 +168,10 @@ arctan x = x − x³/3 + x⁵/5 − ⋯ + (−1)^n·x^(2n+1)/(2n+1) + o(x^(2n+2)
     <li>Scrivi sempre il resto o((x−x0)^n): un polinomio senza resto non è uno sviluppo di Taylor completo.</li>
   </ol>
   <div class="example-box">
-<span class="box-label">Esempio — limite con Taylor</span>lim_(x→0) (e^x − 1 − x)/x²
-Sviluppo: e^x = 1 + x + x²/2 + o(x²)  →  numeratore = x²/2 + o(x²)
-Rapporto: [x²/2 + o(x²)]/x² = 1/2 + o(1)  →  LIMITE = 1/2
+    <span class="box-label">Esempio — limite con Taylor</span>
+    <div class="tex-line">$$\lim_{x\to0}\frac{e^x-1-x}{x^2}$$</div>
+    <div class="tex-line">$$e^x=1+x+\frac{x^2}2+o(x^2)$$ <span class="note">→ numeratore = x²/2 + o(x²)</span></div>
+    <div class="tex-line">$$\Rightarrow \text{limite}=\frac12$$</div>
   </div>
   <p><em>Nella pagina Esercizi, l'argomento "Sviluppi di Taylor" ricostruisce ogni derivata calcolata in x0 e come si assembla il polinomio termine per termine.</em></p>
 
@@ -176,11 +189,9 @@ Rapporto: [x²/2 + o(x²)]/x² = 1/2 + o(1)  →  LIMITE = 1/2
 
   <h3>Cosa dice il Formulario</h3>
   <div class="formula-box">
-<span class="box-label">Dal formulario ufficiale</span>Piano tangente in (x0,y0):
-  z = f(x0,y0) + ∂f/∂x(x0,y0)·(x−x0) + ∂f/∂y(x0,y0)·(y−y0)
-
-f è differenziabile in (x0,y0) se ammette derivate parziali e:
-  lim_{(x,y)→(x0,y0)}  [f(x,y) − f(x0,y0) − ∂f/∂x·(x−x0) − ∂f/∂y·(y−y0)] / √[(x−x0)²+(y−y0)²]  = 0
+    <span class="box-label">Dal formulario ufficiale</span>
+    <div class="tex-line">$$z = f(x_0,y_0)+\frac{\partial f}{\partial x}(x_0,y_0)(x-x_0)+\frac{\partial f}{\partial y}(x_0,y_0)(y-y_0)$$ <span class="note">piano tangente in (x0,y0)</span></div>
+    <div class="tex-line">$$\lim_{(x,y)\to(x_0,y_0)} \frac{f(x,y)-f(x_0,y_0)-\frac{\partial f}{\partial x}(x-x_0)-\frac{\partial f}{\partial y}(y-y_0)}{\sqrt{(x-x_0)^2+(y-y_0)^2}} = 0$$ <span class="note">condizione di differenziabilità</span></div>
   </div>
 
   <h3>Procedimento per verificare la differenziabilità in un punto sospetto</h3>
@@ -190,9 +201,9 @@ f è differenziabile in (x0,y0) se ammette derivate parziali e:
     <li>Se il rapporto (diviso r) tende a 0 uniformemente rispetto a θ, f è differenziabile lì. Se dipende da θ o non tende a 0, non è differenziabile.</li>
   </ol>
   <div class="example-box">
-<span class="box-label">Esempio — funzione con caso limite</span>f(x,y) = x³/(x²+y²) per (x,y)≠(0,0),  f(0,0)=0.  Le derivate parziali in (0,0) esistono, ma non basta.
-In polari: f(r,θ) = r·cos³θ   →   f(r,θ)/r = cos³θ
-Non tende a 0 per r→0 (dipende da θ)  →  f NON è differenziabile in (0,0)
+    <span class="box-label">Esempio — funzione con caso limite</span>
+    <div class="tex-line">$$f(x,y)=\frac{x^3}{x^2+y^2}\ (x,y)\ne(0,0),\quad f(0,0)=0$$ <span class="note">le derivate parziali in (0,0) esistono, ma non basta</span></div>
+    <div class="tex-line">$$f(r,\theta)=r\cos^3\theta \Rightarrow \frac{f(r,\theta)}{r}=\cos^3\theta$$ <span class="note">non tende a 0 per r→0 (dipende da θ) → f NON è differenziabile in (0,0)</span></div>
   </div>
 
   <!-- ============================== 4 ============================== -->
@@ -204,12 +215,10 @@ Non tende a 0 per r→0 (dipende da θ)  →  f NON è differenziabile in (0,0)
 
   <h3>Cosa dice il Formulario</h3>
   <div class="formula-box">
-<span class="box-label">Dal formulario ufficiale</span>Sia P0(x0,y0) un punto stazionario di f(x,y), continua e con derivate parziali seconde continue.
-Sia H(x0,y0) = f_xx·f_yy − (f_xy)²  (Hessiano). Allora:
-  H(x0,y0) &gt; 0  e  f_xx(x0,y0) &lt; 0   →   P0 è punto di MASSIMO relativo
-  H(x0,y0) &gt; 0  e  f_xx(x0,y0) &gt; 0   →   P0 è punto di MINIMO relativo
-  H(x0,y0) &lt; 0                       →   P0 è punto di SELLA
-  H(x0,y0) = 0                       →   nulla si può dire (serve un'analisi diretta)
+    <span class="box-label">Dal formulario ufficiale</span>
+    <p style="margin:0 0 8px;">Sia P0(x0,y0) un punto stazionario di f(x,y), continua e con derivate parziali seconde continue.</p>
+    <div class="tex-line">$$H(x_0,y_0) = f_{xx}f_{yy}-(f_{xy})^2$$ <span class="note">Hessiano</span></div>
+    <div class="tex-line">$$\begin{cases} H>0,\ f_{xx}<0 & \Rightarrow \text{MASSIMO relativo} \\ H>0,\ f_{xx}>0 & \Rightarrow \text{MINIMO relativo} \\ H<0 & \Rightarrow \text{SELLA} \\ H=0 & \Rightarrow \text{indeterminato} \end{cases}$$</div>
   </div>
 
   <h3>Procedimento — 5 passi sempre uguali</h3>
@@ -221,9 +230,9 @@ Sia H(x0,y0) = f_xx·f_yy − (f_xy)²  (Hessiano). Allora:
     <li>Classifica ciascun punto con la tabella del formulario. Se H=0, analizza il segno di f in un intorno del punto lungo direzioni diverse (rette, parabole) per decidere a mano.</li>
   </ol>
   <div class="example-box">
-<span class="box-label">Esempio — f(x,y) = xy − x² − y²</span>∂f/∂x = y−2x = 0,  ∂f/∂y = x−2y = 0   →   x=0, y=0   (unico punto critico)
-f_xx=−2, f_yy=−2, f_xy=1   →   H = (−2)(−2) − 1² = 3 &gt; 0,  f_xx=−2 &lt; 0
-→  MASSIMO relativo in (0,0), f(0,0)=0
+    <span class="box-label">Esempio — f(x,y) = xy − x² − y²</span>
+    <div class="tex-line">$$\frac{\partial f}{\partial x}=y-2x=0,\ \frac{\partial f}{\partial y}=x-2y=0 \Rightarrow (0,0)$$ <span class="note">unico punto critico</span></div>
+    <div class="tex-line">$$f_{xx}=-2,\ f_{yy}=-2,\ f_{xy}=1 \Rightarrow H=3>0,\ f_{xx}<0$$ <span class="note">→ MASSIMO relativo in (0,0), f(0,0)=0</span></div>
   </div>
   <div class="warning-box">
     <span class="box-label">Errore frequente</span>
@@ -239,11 +248,11 @@ f_xx=−2, f_yy=−2, f_xy=1   →   H = (−2)(−2) − 1² = 3 &gt; 0,  f_xx=
 
   <h3>Cosa dice il Formulario</h3>
   <div class="formula-box">
-<span class="box-label">Dal formulario ufficiale</span>Caso vincolato — Hessiano orlato Ā  (con λ0 moltiplicatore, g vincolo, L = f − λ·g):
-        | 0    g'x   g'y  |
-  Ā  =  | g'x  L''xx L''xy |
-        | g'y  L''yx L''yy |
-  det(Ā) &gt; 0  →  massimo vincolato in P0        det(Ā) &lt; 0  →  minimo vincolato in P0
+    <span class="box-label">Dal formulario ufficiale</span>
+    <p style="margin:0 0 8px;">Caso vincolato — Hessiano orlato Ā (con λ moltiplicatore, g vincolo, L = f − λ·g):</p>
+    <div class="tex-line">$$\bar A = \begin{pmatrix} 0 & g_x' & g_y' \\ g_x' & L_{xx}'' & L_{xy}'' \\ g_y' & L_{yx}'' & L_{yy}'' \end{pmatrix}$$</div>
+    <div class="tex-line">$$\det(\bar A)>0 \Rightarrow \text{massimo vincolato in } P_0$$</div>
+    <div class="tex-line">$$\det(\bar A)<0 \Rightarrow \text{minimo vincolato in } P_0$$</div>
   </div>
 
   <h3>Procedimento</h3>
@@ -259,16 +268,17 @@ f_xx=−2, f_yy=−2, f_xy=1   →   H = (−2)(−2) − 1² = 3 &gt; 0,  f_xx=
     Siccome eˣ è strettamente crescente, massimizzare e^u equivale a massimizzare u (e minimizzare e^u equivale a minimizzare u). Spesso risparmia molti calcoli: es. massimizzare e^(x²+y²) equivale a massimizzare x²+y².
   </div>
   <div class="example-box">
-<span class="box-label">Esempio — vincolo compatto (ellisse)</span>f(x,y)=e^(x²+y²)  vincolo: x² + (y−1/2)²/4 = 1   (ellisse, chiusa e limitata)
-Per Weierstrass f ammette sia massimo sia minimo assoluto sul vincolo.
-Risolvendo il sistema si trovano 4 punti candidati; il valore di u=x²+y² più grande dà il massimo,
-il più piccolo il minimo (essendo e^u crescente in u).
+    <span class="box-label">Esempio — vincolo compatto (ellisse)</span>
+    <div class="tex-line">$$f(x,y)=e^{x^2+y^2},\quad x^2+\frac{(y-1/2)^2}{4}=1$$ <span class="note">ellisse, chiusa e limitata</span></div>
+    <p style="margin:8px 0 0;">Per Weierstrass f ammette sia massimo sia minimo assoluto sul vincolo. Risolvendo il sistema si trovano 4 punti
+    candidati; il valore di u=x²+y² più grande dà il massimo, il più piccolo il minimo (essendo e^u crescente in u).</p>
   </div>
   <div class="example-box">
-<span class="box-label">Esempio — vincolo illimitato (retta), attenzione</span>f(x,y)=2x²+3y²  vincolo: x+y=2   (retta, illimitata)
-Il sistema di Lagrange dà UN solo punto: (6/5, 4/5), con f=24/5.
-Essendo f coerciva (coefficienti positivi) e il vincolo illimitato: quel punto è il MINIMO assoluto.
-NON esiste un massimo assoluto (f→+∞ allontanandosi sulla retta), anche se il punto trovato è unico.
+    <span class="box-label">Esempio — vincolo illimitato (retta), attenzione</span>
+    <div class="tex-line">$$f(x,y)=2x^2+3y^2,\quad x+y=2$$ <span class="note">retta, illimitata</span></div>
+    <div class="tex-line">$$\left(\tfrac65,\tfrac45\right),\ f=\tfrac{24}5$$ <span class="note">unico punto stazionario trovato</span></div>
+    <p style="margin:8px 0 0;">Essendo f coerciva (coefficienti positivi) e il vincolo illimitato: quel punto è il MINIMO assoluto. NON esiste
+    un massimo assoluto (f→+∞ allontanandosi sulla retta), anche se il punto trovato è unico.</p>
   </div>
   <div class="warning-box">
     <span class="box-label">Errore frequente</span>
@@ -283,10 +293,9 @@ NON esiste un massimo assoluto (f→+∞ allontanandosi sulla retta), anche se i
 
   <h3>Passo 1 — riconoscere il caso dell'omogenea</h3>
   <div class="formula-box">
-<span class="box-label">Dal formulario ufficiale</span>Equazione caratteristica:  a·λ² + b·λ + c = 0,   Δ = b² − 4ac
-Δ &gt; 0  (radici reali distinte λ1≠λ2):    y_o = c1·e^(λ1·x) + c2·e^(λ2·x)
-Δ = 0  (radice doppia λ):                y_o = (c1 + c2·x)·e^(λ·x)
-Δ &lt; 0  (radici complesse α±iβ):          y_o = e^(α·x)·(c1·cos(β·x) + c2·sin(β·x))
+    <span class="box-label">Dal formulario ufficiale</span>
+    <div class="tex-line">$$a\lambda^2+b\lambda+c=0,\quad \Delta=b^2-4ac$$ <span class="note">equazione caratteristica</span></div>
+    <div class="tex-line">$$\begin{cases} \Delta>0: & y_o=c_1e^{\lambda_1 x}+c_2e^{\lambda_2 x} \\ \Delta=0: & y_o=(c_1+c_2x)e^{\lambda x} \\ \Delta<0: & y_o=e^{\alpha x}(c_1\cos\beta x+c_2\sin\beta x) \end{cases}$$</div>
   </div>
 
   <h3>Passo 2 — riconoscere la forma del termine noto (metodo di somiglianza)</h3>
@@ -320,13 +329,16 @@ NON esiste un massimo assoluto (f→+∞ allontanandosi sulla retta), anche se i
     <li>Risolvi il sistema lineare 2×2 per c1, c2 e sostituisci nella soluzione generale.</li>
   </ol>
   <div class="example-box">
-<span class="box-label">Esempio — risonanza esatta (α+iβ coincide)</span>y'' − 4y' + 4y = (x+3)e^(2x)     λ²−4λ+4=0 → (λ−2)²=0 → λ=2 doppia,  y_o=(c1+c2x)e^(2x)
-Termine noto e^(2x)·(x+3): α=2 è radice DOPPIA  →  y_p tentativa = x²·(Ax+B)·e^(2x)
+    <span class="box-label">Esempio — risonanza esatta (α+iβ coincide)</span>
+    <div class="tex-line">$$y''-4y'+4y=(x+3)e^{2x}$$</div>
+    <div class="tex-line">$$\lambda^2-4\lambda+4=0\Rightarrow(\lambda-2)^2=0\Rightarrow\lambda=2\ \text{doppia}$$ <span class="note">y_o=(c1+c2x)e^(2x)</span></div>
+    <div class="tex-line">$$y_p=x^2(Ax+B)e^{2x}$$ <span class="note">termine noto (x+3)e^(2x): α=2 è radice doppia</span></div>
   </div>
   <div class="example-box">
-<span class="box-label">Esempio — nessuna risonanza (radici complesse)</span>y'' − 2y' + 5y = e^(2x)cos(x)     λ²−2λ+5=0 → Δ=−16 → λ=1±2i,  y_o=e^x(c1cos2x+c2sin2x)
-Termine noto e^(2x)cos(x): α=2, β=1  →  2+i ≠ 1±2i  →  NESSUNA risonanza
-y_p tentativa = e^(2x)(A·cosx + B·sinx)
+    <span class="box-label">Esempio — nessuna risonanza (radici complesse)</span>
+    <div class="tex-line">$$y''-2y'+5y=e^{2x}\cos x$$</div>
+    <div class="tex-line">$$\lambda^2-2\lambda+5=0\Rightarrow\Delta=-16\Rightarrow\lambda=1\pm2i$$ <span class="note">y_o=e^x(c1cos2x+c2sin2x)</span></div>
+    <div class="tex-line">$$y_p=e^{2x}(A\cos x+B\sin x)$$ <span class="note">α=2, β=1 → 2+i ≠ 1±2i → nessuna risonanza</span></div>
   </div>
   <div class="warning-box">
     <span class="box-label">Errore frequente</span>
@@ -366,9 +378,10 @@ y_p tentativa = e^(2x)(A·cosx + B·sinx)
 
   <h3>Coordinate polari — non dimenticare lo Jacobiano</h3>
   <div class="formula-box">
-<span class="box-label">Dal formulario ufficiale</span>x = r·cosθ,   y = r·sinθ,   dx dy = r dr dθ        ← il fattore r È lo Jacobiano, non va MAI omesso
-Per un'ellisse x²/a²+y²/b²≤1:  x=a·r·cosθ, y=b·r·sinθ,  dx dy = a·b·r dr dθ   (Jacobiano = a·b·r)
-<span class="box-caption">Jacobiano del cambio di variabili in coordinate polari — regola generale, coerente con il Formulario ufficiale.</span>
+    <span class="box-label">Dal formulario ufficiale</span>
+    <div class="tex-line">$$x=r\cos\theta,\ y=r\sin\theta,\quad dx\,dy=r\,dr\,d\theta$$ <span class="note">il fattore r È lo Jacobiano, non va mai omesso</span></div>
+    <div class="tex-line">$$x=ar\cos\theta,\ y=br\sin\theta,\quad dx\,dy=ab\,r\,dr\,d\theta$$ <span class="note">ellisse x²/a²+y²/b²≤1, Jacobiano = a·b·r</span></div>
+    <span class="box-caption">Jacobiano del cambio di variabili in coordinate polari — regola generale, coerente con il Formulario ufficiale.</span>
   </div>
 
   <h3>Procedimento</h3>
@@ -380,8 +393,9 @@ Per un'ellisse x²/a²+y²/b²≤1:  x=a·r·cosθ, y=b·r·sinθ,  dx dy = a·b
     <li>Se il calcolo dell'integrale interno è impossibile in quell'ordine, cambia ordine di integrazione e ricomincia dal passo 3.</li>
   </ol>
   <div class="example-box">
-<span class="box-label">Esempio — dominio anulare in polari</span>D = {(x,y): 2² ≤ x²+y² ≤ 3²},  f(x,y)=1   →   r ∈ [2,3], θ ∈ [0,2π]
-∫∫_D 1 dA = ∫₀^(2π) ∫₂³ r dr dθ = ∫₀^(2π) [r²/2]₂³ dθ = ∫₀^(2π) 5/2 dθ = 5π
+    <span class="box-label">Esempio — dominio anulare in polari</span>
+    <div class="tex-line">$$D=\{(x,y):4\le x^2+y^2\le9\},\ f(x,y)=1$$ <span class="note">→ r ∈ [2,3], θ ∈ [0,2π]</span></div>
+    <div class="tex-line">$$\iint_D 1\,dA=\int_0^{2\pi}\!\!\int_2^3 r\,dr\,d\theta=5\pi$$</div>
   </div>
   <div class="warning-box">
     <span class="box-label">Errore frequente</span>
@@ -422,7 +436,20 @@ Per un'ellisse x²/a²+y²/b²≤1:  x=a·r·cosθ, y=b·r·sinθ,  dx dy = a·b
 
 <footer>Teoria Applicata — versione web, adattata dal documento Word omonimo nella cartella del progetto.</footer>
 
+<script src="https://cdn.jsdelivr.net/npm/katex@0.18.1/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.18.1/dist/contrib/auto-render.min.js"></script>
 <script>
+document.addEventListener("DOMContentLoaded", () => {
+  if (typeof renderMathInElement === "function") {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+      ],
+      throwOnError: false,
+    });
+  }
+});
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker.register("service-worker.js").catch((e) => console.warn("SW non registrato:", e));

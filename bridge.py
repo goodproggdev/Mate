@@ -12,6 +12,8 @@ import json
 import io
 import base64
 
+import sympy as sp
+
 import matplotlib
 matplotlib.use("AGG")
 import matplotlib.pyplot as plt
@@ -22,6 +24,55 @@ import multivariabile
 import edo
 import integrali
 import grafico
+
+
+def _tex(x):
+    """Converte un'espressione sympy in LaTeX; per valori non-sympy la converte in stringa."""
+    try:
+        return sp.latex(x)
+    except Exception:
+        return str(x)
+
+
+def _pretty(testo):
+    """Piccolo restyling cosmetico del testo semplice (usato dove non generiamo LaTeX
+    dedicato, es. le spiegazioni passo-passo): rende leggibili gli operatori Python."""
+    if not isinstance(testo, str):
+        return testo
+    return testo.replace("**", "^").replace("*", "·")
+
+
+def _enunciato_latex(chiave, es):
+    """Costruisce una versione LaTeX (da rendere con KaTeX) dell'enunciato dell'esercizio,
+    in aggiunta al testo semplice 'testo' (usato come fallback e dalla versione desktop)."""
+    try:
+        if chiave == "serie":
+            n = serie.n
+            return r"\sum_{n=1}^{\infty} " + _tex(es["termine_generale"])
+        if chiave == "taylor":
+            return (r"f(x) = " + _tex(es["funzione"])
+                    + r",\quad x_0 = " + _tex(es["x0"])
+                    + r",\quad \text{ordine } " + str(es["ordine"]))
+        if chiave == "lagrange":
+            f_tex = _tex(es["f"])
+            if es["tipo_vincolo"] == "retta":
+                vincolo_tex = r"x + y = " + _tex(es["vincolo_c"])
+            else:
+                vincolo_tex = r"x^2 + y^2 = " + _tex(es["vincolo_r"] ** 2)
+            return r"f(x,y) = " + f_tex + r",\quad " + vincolo_tex
+        if chiave == "edo":
+            return (r"y'' + " + _tex(es["a"]) + r"y' + " + _tex(es["b"]) + r"y = " + _tex(es["forzante"])
+                    + r",\quad y(0) = " + _tex(es["y0"]) + r",\ y'(0) = " + _tex(es["y1"]))
+        if chiave == "integrali":
+            if es["tipo"] == "cerchio_pieno":
+                dominio_tex = r"D = \{(x,y): x^2+y^2 \le " + _tex(es["r_max"] ** 2) + r"\}"
+            else:
+                dominio_tex = (r"D = \{(x,y): " + _tex(es["r_min"] ** 2)
+                                + r" \le x^2+y^2 \le " + _tex(es["r_max"] ** 2) + r"\}")
+            return r"\iint_D " + _tex(es["integranda_xy"]) + r"\, dA, \quad " + dominio_tex
+    except Exception:
+        return None
+    return None
 
 ARGOMENTI = [
     ("Serie numeriche", "serie"),
@@ -72,9 +123,19 @@ def nuovo_esercizio(chiave):
     if chiave not in GENERATORI:
         return json.dumps({"errore": f"argomento sconosciuto: {chiave}"})
     es = GENERATORI[chiave]()
+    # Caso raro (soprattutto per 'lagrange'): il sistema puo' non avere soluzioni reali
+    # con i parametri casuali scelti. Rigeneriamo invece di mostrare un esercizio vuoto.
+    tentativi = 0
+    while chiave == "lagrange" and not es.get("punti") and tentativi < 5:
+        es = GENERATORI[chiave]()
+        tentativi += 1
     _stato["chiave"] = chiave
     _stato["es"] = es
-    return json.dumps({"testo": es["testo"], "suggerimento": SUGGERIMENTI[chiave]})
+    return json.dumps({
+        "testo": es["testo"],
+        "testo_latex": _enunciato_latex(chiave, es),
+        "suggerimento": SUGGERIMENTI[chiave],
+    })
 
 
 def verifica(risposta):
@@ -88,6 +149,7 @@ def verifica(risposta):
     if not risposta:
         return json.dumps({"errore": "Scrivi una risposta prima di verificare."})
 
+    corpo_latex = None
     try:
         if chiave == "serie":
             r = serie.verifica_convergenza(es, risposta)
@@ -95,6 +157,7 @@ def verifica(risposta):
         elif chiave == "taylor":
             r = taylor.verifica_taylor(es, risposta)
             corpo = f"Sviluppo atteso: {r['sviluppo_atteso']}"
+            corpo_latex = r"P_n(x) = " + _tex(r["sviluppo_atteso"])
         elif chiave == "lagrange":
             punti = []
             for riga in risposta.splitlines():
@@ -108,12 +171,22 @@ def verifica(risposta):
             corpo = (f"Punti attesi (x, y, f): {r['punti_attesi']}\n"
                      f"Massimo assoluto: {massimo}   "
                      f"Minimo assoluto: {r['valore_min']}")
+            punti_tex = r",\ ".join(
+                "(" + _tex(px) + ", " + _tex(py) + ", " + _tex(val) + ")"
+                for px, py, val in r["punti_attesi"]
+            )
+            massimo_tex = _tex(r["valore_max"]) if r["valore_max"] is not None else r"\text{non esiste}"
+            corpo_latex = (r"\text{Punti stazionari: } " + punti_tex
+                            + r"\quad\text{Massimo} = " + massimo_tex
+                            + r",\quad \text{Minimo} = " + _tex(r["valore_min"]))
         elif chiave == "edo":
             r = edo.verifica_edo(es, risposta)
             corpo = f"Soluzione attesa: {r['soluzione_attesa']}"
+            corpo_latex = r"y(x) = " + _tex(r["soluzione_attesa"].rhs)
         elif chiave == "integrali":
             r = integrali.verifica_integrale(es, risposta)
             corpo = f"Valore atteso: {r['valore_atteso']}"
+            corpo_latex = r"\text{Valore atteso: } " + _tex(r["valore_atteso"])
         else:
             return json.dumps({"errore": "argomento sconosciuto"})
     except Exception as e:
@@ -122,7 +195,7 @@ def verifica(risposta):
     if "errore" in r:
         return json.dumps({"errore": r["errore"]})
 
-    return json.dumps({"corretto": bool(r["corretto"]), "corpo": corpo})
+    return json.dumps({"corretto": bool(r["corretto"]), "corpo": corpo, "corpo_latex": corpo_latex})
 
 
 def mostra_soluzione():
@@ -130,7 +203,7 @@ def mostra_soluzione():
     es = _stato["es"]
     if chiave is None or es is None:
         return json.dumps({"errore": "Genera prima un esercizio."})
-    corpo = SPIEGATORI[chiave](es)
+    corpo = _pretty(SPIEGATORI[chiave](es))
     return json.dumps({"corpo": corpo})
 
 
