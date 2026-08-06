@@ -72,6 +72,16 @@
 #esito .badge.err { background: var(--gold-bg); color: var(--gold); }
 #esito pre { white-space: pre-wrap; font-family: var(--mono); font-size: 13px; color: var(--text2); margin: 0; }
 
+.soluzione-passi { display: flex; flex-direction: column; gap: 10px; }
+.passo-box {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+  padding: 10px 12px;
+}
+.passo-testo { font-size: 13.5px; color: var(--text2); margin: 0 0 6px; font-family: var(--sans); }
+.passo-box:last-child .passo-testo { font-weight: 700; color: var(--text); }
+.passo-math { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.passo-box .passo-math:only-child { margin: 0; }
+
 #grafico-area { margin-top: 14px; text-align: center; }
 #grafico-area img { max-width: 100%; border-radius: 8px; border: 1px solid var(--border); cursor: zoom-in; }
 #grafico-area .tap-hint { font-size: 11.5px; color: var(--text3); margin-top: 6px; font-style: italic; }
@@ -332,7 +342,31 @@ function mostraSoluzione() {
   if (!argomentoCorrente) return;
   const r = JSON.parse(bridge.mostra_soluzione());
   if (r.errore) { mostraErrore(r.errore); return; }
-  document.getElementById("esito").innerHTML = `<pre>${escapeHtml(r.corpo)}</pre>`;
+  const esito = document.getElementById("esito");
+
+  if (Array.isArray(r.passi)) {
+    esito.innerHTML = '<div class="soluzione-passi" id="soluzione-passi"></div>';
+    const cont = document.getElementById("soluzione-passi");
+    r.passi.forEach((passo, i) => {
+      const box = document.createElement("div");
+      box.className = "passo-box";
+      if (passo.testo) {
+        const p = document.createElement("p");
+        p.className = "passo-testo";
+        p.textContent = passo.testo;
+        box.appendChild(p);
+      }
+      if (passo.latex) {
+        const m = document.createElement("div");
+        m.className = "passo-math";
+        if (renderKatexInto(m, passo.latex, true)) box.appendChild(m);
+      }
+      if (box.childNodes.length) cont.appendChild(box);
+    });
+  } else {
+    // fallback: vecchio formato testo semplice
+    esito.innerHTML = `<pre>${escapeHtml(r.corpo)}</pre>`;
+  }
 }
 
 function apriLightbox(src) {

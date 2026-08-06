@@ -27,6 +27,31 @@
 .link-card p { margin: 0; font-size: 13.5px; }
 .topics-list { columns: 2; column-gap: 24px; font-size: 14px; }
 @media (max-width: 600px) { .topics-list { columns: 1; } }
+
+/* --- Banner di installazione PWA: sempre visibile in home, non condizionato --- */
+#install-banner {
+  display: flex; align-items: center; gap: 16px; margin: 26px 0;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border-radius: var(--radius); padding: 18px 22px; color: #fff;
+}
+#install-banner img { width: 56px; height: 56px; border-radius: 12px; flex: 0 0 auto; box-shadow: 0 2px 8px rgba(0,0,0,.25); }
+#install-banner .install-text { flex: 1 1 auto; min-width: 0; }
+#install-banner .install-text strong { display: block; font-size: 15.5px; margin-bottom: 2px; }
+#install-banner .install-text span { font-size: 12.5px; opacity: .92; }
+#install-banner .btn-install-cta {
+  flex: 0 0 auto; background: #fff; color: var(--accent); border: none; border-radius: 8px;
+  padding: 10px 18px; font-weight: 700; font-size: 13.5px; cursor: pointer; white-space: nowrap;
+}
+#install-banner .btn-install-cta:hover { background: #f0f3f8; }
+@media (max-width: 560px) {
+  #install-banner { flex-wrap: wrap; }
+  #install-banner .btn-install-cta { width: 100%; }
+}
+#install-instructions {
+  font-size: 13px; color: var(--text2); margin-top: 12px; padding-top: 12px;
+  border-top: 1px solid rgba(255,255,255,.35); display: none;
+}
+#install-instructions.open { display: block; color: rgba(255,255,255,.95); border-top-color: rgba(255,255,255,.35); }
 </style>
 </head>
 <body>
@@ -44,6 +69,16 @@
   <div class="hero">
     <h1>Allenamento per l'esame di Metodi Matematici per l'Ingegneria</h1>
     <p class="subtitle">Esercizi generati e verificati con SymPy, direttamente nel browser — nessuna installazione, nessun dato salvato su server.</p>
+  </div>
+
+  <div id="install-banner">
+    <img src="icon-192.png" alt="Icona app">
+    <div class="install-text">
+      <strong id="install-title">📱 Installa l'app sul telefono</strong>
+      <span id="install-subtitle">Funziona offline, si apre come un'app vera, nessuno store richiesto.</span>
+      <div id="install-instructions"></div>
+    </div>
+    <button class="btn-install-cta" id="btn-install">Installa l'app</button>
   </div>
 
   <div class="cards">
@@ -81,12 +116,6 @@
     il browser tiene tutto in cache. I progressi vengono salvati solo localmente, nel tuo browser.
   </div>
 
-  <div class="card" id="install-card" style="font-size:13.5px; color:var(--text2); display:none;">
-    <strong>📱 Usalo offline dal telefono:</strong> apri questa pagina da Chrome/Safari sul telefono,
-    poi <strong>Aggiungi a schermata Home</strong> (o premi il bottone qui sotto, se disponibile). Dopo la prima
-    apertura con internet, l'app resta installata e funziona anche senza connessione.
-    <div style="margin-top:10px;"><button class="btn" id="btn-install">Installa l'app</button></div>
-  </div>
 </div>
 
 <footer>Progetto di studio personale — nessun dato lascia il tuo dispositivo.</footer>
@@ -98,15 +127,66 @@ if ("serviceWorker" in navigator) {
   });
 }
 let deferredInstallPrompt = null;
+
+function isStandalone() {
+  return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+}
+function isIOS() {
+  return /iphone|ipad|ipod/i.test(window.navigator.userAgent);
+}
+
 window.addEventListener("beforeinstallprompt", (e) => {
   e.preventDefault();
   deferredInstallPrompt = e;
-  document.getElementById("install-card").style.display = "block";
-});
-document.addEventListener("DOMContentLoaded", () => {
   const btn = document.getElementById("btn-install");
-  if (btn) btn.addEventListener("click", async () => {
-    if (deferredInstallPrompt) await deferredInstallPrompt.prompt();
+  if (btn) btn.textContent = "Installa l'app";
+});
+
+window.addEventListener("appinstalled", () => {
+  deferredInstallPrompt = null;
+  showInstalledState();
+});
+
+function showInstalledState() {
+  document.getElementById("install-title").textContent = "✅ App già installata";
+  document.getElementById("install-subtitle").textContent = "La stai già usando come app — puoi trovarla nella schermata Home del telefono.";
+  document.getElementById("btn-install").style.display = "none";
+}
+
+function toggleInstructions(html) {
+  const box = document.getElementById("install-instructions");
+  box.innerHTML = html;
+  box.classList.toggle("open");
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  if (isStandalone()) {
+    showInstalledState();
+    return;
+  }
+
+  const btn = document.getElementById("btn-install");
+  if (!btn) return;
+
+  btn.addEventListener("click", async () => {
+    if (deferredInstallPrompt) {
+      deferredInstallPrompt.prompt();
+      const scelta = await deferredInstallPrompt.userChoice;
+      if (scelta.outcome === "accepted") deferredInstallPrompt = null;
+      return;
+    }
+    if (isIOS()) {
+      toggleInstructions(
+        "Su iPhone/iPad: apri questa pagina in <strong>Safari</strong>, tocca l'icona " +
+        "<strong>Condividi</strong> (il quadratino con la freccia in su), poi scegli " +
+        "<strong>Aggiungi a Home</strong>."
+      );
+      return;
+    }
+    toggleInstructions(
+      "Apri il menu del browser (⋮ in alto a destra su Chrome/Edge Android) e scegli " +
+      "<strong>Installa app</strong> oppure <strong>Aggiungi a schermata Home</strong>."
+    );
   });
 });
 </script>
