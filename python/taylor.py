@@ -7,17 +7,32 @@ import sympy as sp
 x = sp.symbols('x')
 
 FUNZIONI = [sp.exp(x), sp.sin(x), sp.cos(x), sp.log(1 + x), 1 / (1 - x), sp.sqrt(1 + x)]
+# exp/sin/cos sono intere (definite e sviluppabili attorno a qualunque x0);
+# log(1+x), 1/(1-x), sqrt(1+x) hanno una singolarita' (in x=-1, x=1, x=-1) quindi le
+# sviluppiamo sempre attorno a x0=0 per evitare di capitare esattamente sulla singolarita'.
+FUNZIONI_FACILI = [sp.exp(x), sp.sin(x), sp.cos(x)]
+FUNZIONI_INTERE = [sp.exp(x), sp.sin(x), sp.cos(x)]
+
+_POOLS_DIFFICOLTA = {
+    'facile': {'funzioni': FUNZIONI_FACILI, 'ordine': [2, 3]},
+    'medio': {'funzioni': FUNZIONI, 'ordine': [2, 3, 4]},
+    'difficile': {'funzioni': FUNZIONI, 'ordine': [4, 5]},
+}
 
 
-def genera_taylor():
-    f = random.choice(FUNZIONI)
-    x0 = 0
-    ordine = random.choice([2, 3, 4])
-    testo = (f"Scrivere lo sviluppo di Taylor (Mac Laurin) di f(x) = {f} "
+def genera_taylor(difficolta='medio'):
+    pool = _POOLS_DIFFICOLTA.get(difficolta, _POOLS_DIFFICOLTA['medio'])
+    f = random.choice(pool['funzioni'])
+    ordine = random.choice(pool['ordine'])
+    if difficolta == 'difficile' and f in FUNZIONI_INTERE:
+        x0 = random.choice([0, 1, -1])
+    else:
+        x0 = 0
+    testo = (f"Scrivere lo sviluppo di Taylor di f(x) = {f} "
              f"centrato in x0={x0}, fino all'ordine {ordine} incluso (con resto di Peano).")
     poly = sp.series(f, x, x0, ordine + 1).removeO()
     return {
-        'funzione': f, 'x0': x0, 'ordine': ordine,
+        'funzione': f, 'x0': x0, 'ordine': ordine, 'difficolta': difficolta,
         'testo': testo, 'sviluppo_atteso': sp.expand(poly),
     }
 

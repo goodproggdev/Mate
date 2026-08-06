@@ -10,7 +10,7 @@
  * il runtime di Pyodide e i package numpy/sympy/matplotlib: cosi' la PRIMA visita all'area
  * Esercizi e' gia' rapida, non solo la seconda.
  */
-const CACHE_APP = "mm-app-v2";
+const CACHE_APP = "mm-app-v3";
 const CACHE_RUNTIME = "mm-runtime-v1";
 
 const APP_ASSETS = [

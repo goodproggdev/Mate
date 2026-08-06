@@ -8,14 +8,43 @@ import sympy as sp
 n = sp.symbols('n', positive=True, integer=True)
 
 
-def genera_serie_numerica():
+_POOLS_DIFFICOLTA = {
+    'facile': {
+        'tipi': ['potenza_p', 'alternata'],
+        'p': [1, 2],
+        'r': [sp.Rational(1, 2), 2],
+        'k': [0],
+        'a': [1, 2],
+        'c': [1, 3],
+    },
+    'medio': {
+        'tipi': ['potenza_p', 'geometrica_polinomiale', 'alternata', 'confronto_asintotico'],
+        'p': [sp.Rational(1, 2), 1, sp.Rational(3, 2), 2, 3],
+        'r': [sp.Rational(1, 2), sp.Rational(1, 3), sp.Rational(2, 3), 2, 3, sp.Rational(3, 2)],
+        'k': [0, 1, 2, 3],
+        'a': [1, 2, 3],
+        'c': [1, 3, 5],
+    },
+    'difficile': {
+        'tipi': ['geometrica_polinomiale', 'alternata', 'confronto_asintotico'],
+        'p': [sp.Rational(1, 2), sp.Rational(3, 2)],
+        'r': [sp.Rational(3, 4), sp.Rational(4, 5), sp.Rational(5, 4), sp.Rational(6, 5)],
+        'k': [2, 3, 4],
+        'a': [2, 3, 4, 5],
+        'c': [5, 7, 9, 11],
+    },
+}
+
+
+def genera_serie_numerica(difficolta='medio'):
     """Genera un esercizio: 'studiare il carattere della serie'."""
-    tipo = random.choice(['potenza_p', 'geometrica_polinomiale', 'alternata', 'confronto_asintotico'])
+    pool = _POOLS_DIFFICOLTA.get(difficolta, _POOLS_DIFFICOLTA['medio'])
+    tipo = random.choice(pool['tipi'])
 
     parametri = {}
 
     if tipo == 'potenza_p':
-        p = random.choice([sp.Rational(1, 2), 1, sp.Rational(3, 2), 2, 3])
+        p = random.choice(pool['p'])
         converge = p > 1
         criterio = "Serie armonica generalizzata (serie p): converge se e solo se p > 1."
         testo = f"Studiare il carattere della serie:  Somma per n=1..infinito di 1/n^({p})"
@@ -24,9 +53,8 @@ def genera_serie_numerica():
         parametri['p'] = p
 
     elif tipo == 'geometrica_polinomiale':
-        r = random.choice([sp.Rational(1, 2), sp.Rational(1, 3), sp.Rational(2, 3),
-                            2, 3, sp.Rational(3, 2)])
-        k = random.choice([0, 1, 2, 3])
+        r = random.choice(pool['r'])
+        k = random.choice(pool['k'])
         converge = r < 1
         criterio = ("Criterio del rapporto: lim a_(n+1)/a_n = r (il fattore polinomiale n^k "
                     "non cambia il risultato). Converge se r < 1, diverge se r > 1.")
@@ -37,7 +65,7 @@ def genera_serie_numerica():
         parametri['k'] = k
 
     elif tipo == 'alternata':
-        p = random.choice([sp.Rational(1, 2), 1, 2])
+        p = random.choice(pool['p'])
         converge = True  # Leibniz: sempre convergente per p > 0
         assoluta = p > 1
         criterio = (f"Criterio di Leibniz: termini decrescenti e infinitesimi -> la serie converge "
@@ -47,8 +75,8 @@ def genera_serie_numerica():
         parametri['p'] = p
 
     else:  # confronto_asintotico
-        a = random.choice([1, 2, 3])
-        c = random.choice([1, 3, 5])
+        a = random.choice(pool['a'])
+        c = random.choice(pool['c'])
         converge = False  # ~ a/n -> diverge come la serie armonica
         assoluta = False
         criterio = ("Confronto asintotico: per n grande il termine si comporta come a/n "
@@ -65,6 +93,7 @@ def genera_serie_numerica():
         'assoluta': assoluta,
         'suggerimento': criterio,
         'termine_generale': termine_generale,
+        'difficolta': difficolta,
         **parametri,
     }
 

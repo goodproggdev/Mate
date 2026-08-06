@@ -8,17 +8,30 @@ import sympy as sp
 x, y, r, theta = sp.symbols('x y r theta')
 
 
-def genera_integrale_doppio_polare():
-    tipo = random.choice(['cerchio_pieno', 'corona_circolare'])
+_POOLS_INTEGRALI = {
+    'facile': {'tipi': ['cerchio_pieno'], 'R_pieno': [1, 2], 'R_corona': [1, 2, 3],
+               'integ_pieno': [x**2 + y**2, sp.Integer(1)], 'integ_corona': [sp.Integer(1)]},
+    'medio': {'tipi': ['cerchio_pieno', 'corona_circolare'], 'R_pieno': [1, 2], 'R_corona': [1, 2, 3],
+              'integ_pieno': [x**2 + y**2, x * y, sp.sqrt(x**2 + y**2)],
+              'integ_corona': [x**2 + y**2, sp.Integer(1)]},
+    'difficile': {'tipi': ['corona_circolare', 'cerchio_pieno'], 'R_pieno': [2, 3], 'R_corona': [1, 2, 3, 4],
+                  'integ_pieno': [x*y, sp.sqrt(x**2 + y**2), (x**2 + y**2)**2],
+                  'integ_corona': [x*y, (x**2 + y**2)**2, sp.sqrt(x**2 + y**2)]},
+}
+
+
+def genera_integrale_doppio_polare(difficolta='medio'):
+    pool = _POOLS_INTEGRALI.get(difficolta, _POOLS_INTEGRALI['medio'])
+    tipo = random.choice(pool['tipi'])
 
     if tipo == 'cerchio_pieno':
-        R = random.choice([1, 2])
-        integranda_xy = random.choice([x**2 + y**2, x*y, sp.sqrt(x**2 + y**2)])
+        R = random.choice(pool['R_pieno'])
+        integranda_xy = random.choice(pool['integ_pieno'])
         dominio_testo = f"D = {{ (x,y) : x^2 + y^2 <= {R**2} }}"
         r_min, r_max = 0, R
     else:
-        R1, R2 = sorted(random.sample([1, 2, 3], 2))
-        integranda_xy = random.choice([x**2 + y**2, sp.Integer(1)])
+        R1, R2 = sorted(random.sample(pool['R_corona'], 2))
+        integranda_xy = random.choice(pool['integ_corona'])
         dominio_testo = f"D = {{ (x,y) : {R1}^2 <= x^2+y^2 <= {R2}^2 }}"
         r_min, r_max = R1, R2
 
@@ -30,7 +43,7 @@ def genera_integrale_doppio_polare():
     integrale_totale = sp.integrate(integrale_interno, (theta, 0, 2*sp.pi))
 
     return {
-        'testo': testo, 'tipo': tipo, 'integranda_xy': integranda_xy,
+        'testo': testo, 'tipo': tipo, 'integranda_xy': integranda_xy, 'difficolta': difficolta,
         'dominio_testo': dominio_testo, 'r_min': r_min, 'r_max': r_max,
         'integranda_polare': integranda_polare, 'integranda_jacobiano': integranda_jacobiano,
         'integrale_interno': integrale_interno, 'valore_atteso': sp.simplify(integrale_totale),

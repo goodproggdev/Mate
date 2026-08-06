@@ -82,21 +82,29 @@ def spiega_punto_critico(esercizio):
     return "\n".join(righe)
 
 
-def genera_lagrange():
+_POOLS_LAGRANGE = {
+    'facile': {'tipi': ['cerchio'], 'ab': [1, 2], 'c': [1, 2], 'r': [1, 2]},
+    'medio': {'tipi': ['retta', 'cerchio'], 'ab': [1, 2, 3], 'c': [1, 2, 3, 4], 'r': [1, 2, 3]},
+    'difficile': {'tipi': ['retta', 'cerchio'], 'ab': [1, 2, 3, 4, 5], 'c': [3, 4, 5, 6, 7], 'r': [2, 3, 4]},
+}
+
+
+def genera_lagrange(difficolta='medio'):
     """Ottimizzazione vincolata: f(x,y) quadratica su retta o circonferenza."""
-    a = random.choice([1, 2, 3])
-    b = random.choice([1, 2, 3])
+    pool = _POOLS_LAGRANGE.get(difficolta, _POOLS_LAGRANGE['medio'])
+    a = random.choice(pool['ab'])
+    b = random.choice(pool['ab'])
     f = a * x**2 + b * y**2
 
-    tipo_vincolo = random.choice(['retta', 'cerchio'])
+    tipo_vincolo = random.choice(pool['tipi'])
     vincolo_c = vincolo_r = None
     if tipo_vincolo == 'retta':
-        c = random.choice([1, 2, 3, 4])
+        c = random.choice(pool['c'])
         g = x + y - c
         vincolo_testo = f"x + y = {c}"
         vincolo_c = c
     else:
-        r = random.choice([1, 2, 3])
+        r = random.choice(pool['r'])
         g = x**2 + y**2 - r**2
         vincolo_testo = f"x^2 + y^2 = {r**2}"
         vincolo_r = r
@@ -129,7 +137,7 @@ def genera_lagrange():
     valore_min = min((p[2] for p in punti), default=None)
 
     return {
-        'testo': testo, 'f': f, 'g': g, 'tipo_vincolo': tipo_vincolo,
+        'testo': testo, 'f': f, 'g': g, 'tipo_vincolo': tipo_vincolo, 'difficolta': difficolta,
         'vincolo_c': vincolo_c, 'vincolo_r': vincolo_r, 'punti': punti,
         'valore_max': valore_max, 'valore_min': valore_min,
     }

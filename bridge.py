@@ -14,16 +14,14 @@ import base64
 
 import sympy as sp
 
-import matplotlib
-matplotlib.use("AGG")
-import matplotlib.pyplot as plt
-
 import serie
 import taylor
 import multivariabile
 import edo
 import integrali
-import grafico
+# 'grafico' (e matplotlib) NON si importano qui: matplotlib e' un package pesante che
+# nel browser conviene scaricare solo se e quando serve davvero un grafico (vedi
+# mostra_grafico_png), non ad ogni avvio dell'app. L'import e' quindi rimandato lì.
 
 
 def _tex(x):
@@ -322,15 +320,20 @@ def suggerimento(chiave):
     return SUGGERIMENTI.get(chiave, "")
 
 
-def nuovo_esercizio(chiave):
+DIFFICOLTA_VALIDE = ("facile", "medio", "difficile")
+
+
+def nuovo_esercizio(chiave, difficolta="medio"):
     if chiave not in GENERATORI:
         return json.dumps({"errore": f"argomento sconosciuto: {chiave}"})
-    es = GENERATORI[chiave]()
+    if difficolta not in DIFFICOLTA_VALIDE:
+        difficolta = "medio"
+    es = GENERATORI[chiave](difficolta)
     # Caso raro (soprattutto per 'lagrange'): il sistema puo' non avere soluzioni reali
     # con i parametri casuali scelti. Rigeneriamo invece di mostrare un esercizio vuoto.
     tentativi = 0
     while chiave == "lagrange" and not es.get("punti") and tentativi < 5:
-        es = GENERATORI[chiave]()
+        es = GENERATORI[chiave](difficolta)
         tentativi += 1
     _stato["chiave"] = chiave
     _stato["es"] = es
@@ -338,6 +341,7 @@ def nuovo_esercizio(chiave):
         "testo": es["testo"],
         "testo_latex": _enunciato_latex(chiave, es),
         "suggerimento": SUGGERIMENTI[chiave],
+        "difficolta": difficolta,
     })
 
 
@@ -422,6 +426,10 @@ def mostra_grafico_png():
     if chiave is None or es is None:
         return json.dumps({"errore": "Genera prima un esercizio."})
     try:
+        import matplotlib
+        matplotlib.use("AGG")
+        import matplotlib.pyplot as plt
+        import grafico
         fig = grafico.GRAFICI[chiave](es)
     except Exception as e:
         return json.dumps({"errore": f"Non sono riuscito a disegnare il grafico: {e}"})

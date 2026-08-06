@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Metodi Matematici per l'Ingegneria — Allenamento</title>
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.18.1/dist/katex.min.css">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="favicon-32.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -14,12 +15,18 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Metodi Matematici">
 <style>
+/* --- Routing SPA: solo la vista attiva e' visibile --- */
+.view { display: none; }
+.view.active { display: block; }
+
+/* ===================== HOME ===================== */
 .hero { text-align: center; padding: 40px 0 10px; }
 .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 30px 0; }
 @media (max-width: 700px) { .cards { grid-template-columns: 1fr; } }
 .link-card {
   background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
   padding: 24px; text-decoration: none; color: var(--text); display: block; transition: border-color .15s;
+  cursor: pointer;
 }
 .link-card:hover { border-color: var(--accent); text-decoration: none; }
 .link-card .icon { font-size: 26px; margin-bottom: 10px; }
@@ -52,19 +59,158 @@
   border-top: 1px solid rgba(255,255,255,.35); display: none;
 }
 #install-instructions.open { display: block; color: rgba(255,255,255,.95); border-top-color: rgba(255,255,255,.35); }
+
+/* ===================== ESERCIZI ===================== */
+.eserc-layout { display: grid; grid-template-columns: 1fr 260px; gap: 24px; align-items: start; }
+@media (max-width: 760px) {
+  .eserc-layout { grid-template-columns: 1fr; gap: 16px; }
+}
+
+.topics-row {
+  display: flex; gap: 8px; overflow-x: auto; padding: 2px 2px 10px; margin-bottom: 6px;
+  -webkit-overflow-scrolling: touch; scrollbar-width: thin;
+}
+.topic-btn {
+  flex: 0 0 auto; white-space: nowrap; background: var(--bg-card);
+  border: 1px solid var(--border); border-radius: 999px; padding: 9px 16px;
+  font-size: 13.5px; font-weight: 600; color: var(--text);
+  cursor: pointer; font-family: var(--sans);
+}
+.topic-btn:hover { border-color: var(--accent); background: var(--blue-bg); }
+.topic-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+@media (max-width: 480px) {
+  .topic-btn { font-size: 13px; padding: 10px 14px; }
+}
+
+.difficolta-row {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 14px; flex-wrap: wrap;
+}
+.difficolta-label { font-size: 12px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: .05em; }
+.diff-btn {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 999px;
+  padding: 6px 14px; font-size: 12.5px; font-weight: 600; color: var(--text2);
+  cursor: pointer; font-family: var(--sans);
+}
+.diff-btn.active { background: var(--accent2); color: #fff; border-color: var(--accent2); }
+
+.sidebar-section { margin-bottom: 20px; }
+.sidebar-title { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--text3); font-weight: 700; margin-bottom: 8px; }
+
+.progress-row { display: flex; justify-content: space-between; font-size: 13px; padding: 6px 0; border-bottom: 1px solid var(--border); color: var(--text2); }
+.progress-row .pct { font-weight: 700; color: var(--accent2); }
+.progress-empty { font-size: 13px; color: var(--text3); font-style: italic; }
+
+#hint { font-size: 12.5px; color: var(--text3); font-style: italic; margin: 4px 0 10px; }
+#risposta {
+  width: 100%; min-height: 90px; font-family: var(--mono); font-size: 16px;
+  border: 1px solid var(--border); border-radius: 8px; padding: 10px; resize: vertical;
+  background: var(--bg-card); color: var(--text); box-sizing: border-box;
+}
+#risposta:focus { outline: none; border-color: var(--accent); }
+
+.action-row { display: flex; gap: 8px; margin: 12px 0; flex-wrap: wrap; }
+.action-row .btn { flex: 1 1 150px; text-align: center; }
+
+.math-box {
+  background: var(--blue-bg); border: 1px solid #c6d6ec; border-radius: 10px;
+  padding: 14px 16px; margin: 10px 0; overflow-x: auto; -webkit-overflow-scrolling: touch;
+}
+.math-box .katex-display { margin: 0; }
+.math-label { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--accent2); margin-bottom: 6px; display: block; }
+.esito-math { margin-top: 10px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+#esito { margin-top: 6px; }
+#esito .badge { display: inline-block; font-weight: 700; padding: 4px 10px; border-radius: 6px; font-size: 13px; margin-bottom: 8px; }
+#esito .badge.ok { background: var(--green-bg); color: var(--green); }
+#esito .badge.no { background: var(--red-bg); color: var(--red); }
+#esito .badge.err { background: var(--gold-bg); color: var(--gold); }
+#esito pre { white-space: pre-wrap; font-family: var(--mono); font-size: 13px; color: var(--text2); margin: 0; }
+
+.soluzione-passi { display: flex; flex-direction: column; gap: 10px; }
+.passo-box {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+  padding: 10px 12px;
+}
+.passo-testo { font-size: 13.5px; color: var(--text2); margin: 0 0 6px; font-family: var(--sans); }
+.passo-box:last-child .passo-testo { font-weight: 700; color: var(--text); }
+.passo-math { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.passo-box .passo-math:only-child { margin: 0; }
+
+#grafico-area { margin-top: 14px; text-align: center; }
+#grafico-area img { max-width: 100%; border-radius: 8px; border: 1px solid var(--border); cursor: zoom-in; }
+#grafico-area .tap-hint { font-size: 11.5px; color: var(--text3); margin-top: 6px; font-style: italic; }
+
+#lightbox {
+  position: fixed; inset: 0; background: rgba(10, 10, 10, 0.92); z-index: 2000;
+  display: none; align-items: center; justify-content: center; padding: 16px;
+  -webkit-overflow-scrolling: touch; overflow: auto;
+}
+#lightbox.open { display: flex; }
+#lightbox img { max-width: 100%; width: 100%; border-radius: 6px; }
+#lightbox .lightbox-close {
+  position: fixed; top: 14px; right: 16px; background: rgba(255,255,255,0.15); color: #fff;
+  border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 20px; cursor: pointer;
+}
+
+.placeholder { color: var(--text3); font-style: italic; padding: 30px 0; text-align: center; }
+.mini-spinner {
+  width: 18px; height: 18px; border-radius: 50%; display: inline-block;
+  border: 3px solid var(--border); border-top-color: var(--accent);
+  animation: spin 0.8s linear infinite; vertical-align: -3px; margin-right: 6px;
+}
+
+#loading-overlay {
+  position: fixed; inset: 0; background: var(--bg); z-index: 1000;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 14px; text-align: center; padding: 20px;
+}
+.spinner {
+  width: 40px; height: 40px; border-radius: 50%;
+  border: 4px solid var(--border); border-top-color: var(--accent);
+  animation: spin 0.9s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+#loading-overlay p { max-width: 380px; }
+#loading-overlay .small { font-size: 12px; color: var(--text3); }
+
+/* ===================== TEORIA ===================== */
+.toc { columns: 2; column-gap: 24px; font-size: 13.5px; }
+@media (max-width: 600px) { .toc { columns: 1; } }
+.toc a { display: block; padding: 3px 0; }
+.cover { text-align: center; padding: 26px 0 6px; }
+.cover .sub { font-size: 19px; color: var(--accent2); font-weight: 700; margin-top: 6px; }
+.cover .tag { font-style: italic; color: var(--text2); margin-top: 4px; }
+
+.tex-line { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 10px 0; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.tex-line .note { font-family: var(--sans); font-size: 12.5px; color: #555; font-style: italic; }
+.formula-box, .example-box { font-family: var(--sans); white-space: normal; }
+.formula-box .katex-display, .example-box .katex-display { margin: 0; }
+@media (max-width: 600px) {
+  .tex-line { gap: 6px; }
+  .tex-line .note { font-size: 11.5px; }
+}
 </style>
 </head>
 <body>
 
+<div id="lightbox">
+  <button class="lightbox-close" id="lightbox-close" aria-label="Chiudi">✕</button>
+  <img id="lightbox-img" alt="Grafico ingrandito">
+</div>
+
 <div class="topbar">
   <div class="brand">Metodi Matematici — Allenamento</div>
   <nav>
-    <a href="index.html" class="active">Home</a>
-    <a href="esercizi.html">Esercizi</a>
-    <a href="teoria.html">Teoria &amp; Formulario</a>
+    <a href="#" data-goto="home" class="active">Home</a>
+    <a href="#" data-goto="esercizi">Esercizi</a>
+    <a href="#" data-goto="teoria">Teoria &amp; Formulario</a>
   </nav>
 </div>
 
+<!-- ============================================================ -->
+<!-- VISTA: HOME                                                   -->
+<!-- ============================================================ -->
+<div id="view-home" class="view active">
 <div class="wrap">
   <div class="hero">
     <h1>Allenamento per l'esame di Metodi Matematici per l'Ingegneria</h1>
@@ -82,12 +228,12 @@
   </div>
 
   <div class="cards">
-    <a class="link-card" href="esercizi.html">
+    <a class="link-card" href="#" data-goto="esercizi">
       <div class="icon">✏️</div>
       <h2>Esercizi</h2>
-      <p>Genera varianti infinite dei 5 tipi di esercizio d'esame, scrivi la risposta e ottieni una verifica immediata, la soluzione motivata passo-passo e il grafico del problema.</p>
+      <p>Genera varianti infinite dei 5 tipi di esercizio d'esame su 3 livelli di difficoltà, scrivi la risposta e ottieni una verifica immediata, la soluzione motivata passo-passo e il grafico del problema.</p>
     </a>
-    <a class="link-card" href="teoria.html">
+    <a class="link-card" href="#" data-goto="teoria">
       <div class="icon">📘</div>
       <h2>Teoria &amp; Formulario</h2>
       <p>Come riconoscere la casistica e quale processo risolutivo applicare, con richiami al formulario ufficiale ed esempi per ricordare i passaggi chiave.</p>
@@ -109,23 +255,795 @@
   </div>
 
   <div class="card" style="font-size:13.5px; color:var(--text2);">
-    <strong>Come funziona:</strong> la pagina Esercizi carica Pyodide (Python compilato per il browser via WebAssembly)
+    <strong>Come funziona:</strong> la sezione Esercizi carica Pyodide (Python compilato per il browser via WebAssembly)
     e riusa esattamente gli stessi moduli SymPy scritti per la versione desktop del progetto: stessa logica di
-    generazione, stessa verifica simbolica delle risposte, stesse spiegazioni passo-passo. Il primo caricamento
-    scarica qualche decina di MB (Python + librerie scientifiche) e può richiedere alcuni secondi; da lì in poi
-    il browser tiene tutto in cache. I progressi vengono salvati solo localmente, nel tuo browser.
+    generazione, stessa verifica simbolica delle risposte, stesse spiegazioni passo-passo. Il caricamento avviene
+    una sola volta per sessione, alla prima apertura della sezione Esercizi (non ad ogni cambio di pagina): da lì in
+    poi passare tra Home, Esercizi e Teoria è istantaneo. I progressi vengono salvati solo localmente, nel tuo browser.
   </div>
 
 </div>
+</div>
 
-<footer>Progetto di studio personale — nessun dato lascia il tuo dispositivo.</footer>
+<!-- ============================================================ -->
+<!-- VISTA: ESERCIZI                                               -->
+<!-- ============================================================ -->
+<div id="view-esercizi" class="view">
+  <div id="loading-overlay">
+    <div class="spinner"></div>
+    <p id="loading-text"><strong>Caricamento del motore Python...</strong><br>Sto avviando SymPy e NumPy nel browser (Pyodide). La prima volta può richiedere qualche secondo; da qui in poi, per tutta la sessione, la sezione Esercizi resterà pronta all'istante.</p>
+    <p class="small" id="loading-detail"></p>
+  </div>
 
+  <div class="wrap wide">
+    <div class="topics-row" id="topic-buttons"></div>
+    <div class="difficolta-row" id="difficolta-buttons">
+      <span class="difficolta-label">Difficoltà:</span>
+      <button class="diff-btn" data-diff="facile">Facile</button>
+      <button class="diff-btn" data-diff="medio">Medio</button>
+      <button class="diff-btn" data-diff="difficile">Difficile</button>
+    </div>
+
+    <div class="eserc-layout">
+      <div>
+        <div class="card">
+          <div class="sidebar-title">Esercizio</div>
+          <p id="testo-esercizio" style="color: var(--text); font-size: 15px; margin-top:8px;">Scegli un argomento qui sopra per iniziare.</p>
+          <div id="testo-math" class="math-box" style="display:none;">
+            <span class="math-label">In formule</span>
+            <div id="testo-math-content"></div>
+          </div>
+          <div id="hint"></div>
+
+          <div class="sidebar-title" style="margin-top:14px;">La tua risposta</div>
+          <textarea id="risposta" placeholder="Scrivi qui la risposta..." disabled></textarea>
+
+          <div class="action-row">
+            <button class="btn" id="btn-verifica" disabled>Verifica risposta</button>
+            <button class="btn secondary" id="btn-soluzione" disabled>Mostra soluzione</button>
+            <button class="btn secondary" id="btn-grafico" disabled>Mostra grafico</button>
+          </div>
+
+          <div id="esito"></div>
+          <div id="grafico-area"></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="sidebar-section">
+          <button class="btn secondary" id="btn-debole" style="width:100%;">Punto debole (auto)</button>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-title">Progressi</div>
+          <div id="progress-table"></div>
+          <button class="btn secondary" id="btn-reset" style="width:100%; margin-top:10px; font-size:12px;">Azzera progressi</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- VISTA: TEORIA                                                 -->
+<!-- ============================================================ -->
+<div id="view-teoria" class="view">
+<div class="wrap">
+
+  <div class="cover">
+    <h1>Teoria Applicata</h1>
+    <div class="sub">Metodi Matematici per l'Ingegneria</div>
+    <div class="tag">Come riconoscere la casistica e scegliere il procedimento giusto</div>
+  </div>
+
+  <div class="info-box">
+    Questo documento non è un elenco di esercizi svolti, ma una guida al riconoscimento: per ogni argomento del
+    programma, come capire in che caso ti trovi guardando l'enunciato, quale procedimento applicare, quale formula
+    del formulario ufficiale usare, e un esempio minimo per fissarlo in memoria. Si affianca alla sezione
+    <a href="#" data-goto="esercizi">Esercizi</a>, dove puoi generare varianti infinite di ciascun caso e verificare le tue risposte.
+  </div>
+
+  <div class="card">
+    <div class="sidebar-title" style="margin-bottom:8px;">Indice</div>
+    <div class="toc">
+      <a href="#s0">0. Come è fatto l'esame</a>
+      <a href="#s1">1. Serie numeriche</a>
+      <a href="#s2">2. Sviluppi di Taylor</a>
+      <a href="#s3">3. Continuità e differenziabilità</a>
+      <a href="#s4">4. Punti stazionari liberi</a>
+      <a href="#s5">5. Moltiplicatori di Lagrange</a>
+      <a href="#s6">6. Equazioni differenziali (EDO)</a>
+      <a href="#s7">7. Integrali doppi</a>
+      <a href="#s8">8. Checklist anti-errori</a>
+      <a href="#s9">9. Come esercitarti</a>
+      <a href="#sf">Fonti</a>
+    </div>
+  </div>
+
+  <!-- ============================== 0 ============================== -->
+  <h2 id="s0">0. Come è fatto l'esame</h2>
+  <p>Prova scritta di 2 ore, 3 esercizi su qualsiasi argomento del programma. Niente libri o appunti: solo
+  calcolatrice scientifica non programmabile e il breve formulario riportato sul retro del testo. Vanno riportati
+  tutti i passaggi: il punteggio premia soprattutto il procedimento.</p>
+
+  <h3>Il programma ufficiale, in 4 blocchi</h3>
+  <div class="table-scroll">
+  <table>
+    <tr><th>Blocco</th><th>Argomenti</th><th>Sezione</th></tr>
+    <tr><td>1</td><td>Serie e serie di Taylor</td><td>§1 – §2</td></tr>
+    <tr><td>2</td><td>Funzioni di più variabili: continuità, differenziabilità, ottimizzazione</td><td>§3 – §5</td></tr>
+    <tr><td>3</td><td>Equazioni differenziali ordinarie</td><td>§6</td></tr>
+    <tr><td>4</td><td>Integrazione multipla (Riemann, riduzione, cambio variabili)</td><td>§7</td></tr>
+  </table>
+  </div>
+  <p>Nei compiti analizzati, i tre esercizi d'esame ricadono quasi sempre sui blocchi 2, 3 e 4 (punti
+  stazionari/ottimizzazione, EDO con Cauchy, integrale doppio) — ma la traccia può chiedere qualunque argomento,
+  quindi anche serie e Taylor (blocco 1) vanno padroneggiati.</p>
+
+  <!-- ============================== 1 ============================== -->
+  <h2 id="s1">1. Serie numeriche — riconoscere il criterio giusto</h2>
+  <p>La difficoltà non è calcolare, ma scegliere il criterio giusto guardando la forma del termine generale a_n.
+  Usa questa tabella come primo filtro.</p>
+  <div class="table-scroll">
+  <table>
+    <tr><th>Cosa vedi in a_n</th><th>Criterio da usare</th><th>Dove va a parare</th></tr>
+    <tr><td>Solo 1/n^p (nessun altro fattore)</td><td>Serie armonica generalizzata</td><td>converge se p&gt;1, diverge se p≤1</td></tr>
+    <tr><td>a_n ~ potenza di n grandi (rapporto di polinomi)</td><td>Confronto asintotico con 1/n^k</td><td>stesso comportamento della serie campione</td></tr>
+    <tr><td>Fattoriali, n^n, oppure r^n con base fissa</td><td>Criterio del rapporto (D'Alembert)</td><td>L=lim a_(n+1)/a_n: L&lt;1 converge, L&gt;1 diverge</td></tr>
+    <tr><td>Radice n-esima esplicita, es. (...)^n</td><td>Criterio della radice (Cauchy)</td><td>L=lim (a_n)^(1/n): stessa soglia del rapporto</td></tr>
+    <tr><td>(-1)^n oppure (-1)^(n+1) a fattore</td><td>Criterio di Leibniz (serie alternate)</td><td>converge se |a_n| è decrescente e → 0</td></tr>
+    <tr><td>x^n oppure (x-x0)^n con x variabile</td><td>Serie di potenze: raggio di convergenza</td><td>converge per |x-x0|&lt;R, R da rapporto/radice</td></tr>
+  </table>
+  </div>
+
+  <h3>Cosa dice il Formulario</h3>
+  <div class="formula-box">
+    <span class="box-label">Dal formulario ufficiale</span>
+    <div class="tex-line">$$\sum_{n=1}^{\infty} \frac{1}{n}$$ <span class="note">sempre DIVERGENTE (serie armonica)</span></div>
+    <div class="tex-line">$$\sum_{n=1}^{\infty} \frac{1}{n^p}$$ <span class="note">p≤1 divergente, p&gt;1 convergente (serie armonica generalizzata)</span></div>
+    <div class="tex-line">$$\sum_{n=0}^{\infty} q^n$$ <span class="note">q≤-1 irregolare; -1&lt;q&lt;1 convergente, somma=1/(1-q); q≥1 divergente (geometrica)</span></div>
+    <div class="tex-line">$$\sum_{n=0}^{\infty} a\,q^n$$ <span class="note">stessa soglia della geometrica, con fattore iniziale a</span></div>
+    <div class="tex-line">$$\sum_{n=1}^{\infty} \frac{1}{n(n+1)} = 1$$ <span class="note">convergente (serie di Mengoli)</span></div>
+    <span class="box-caption">Fonte: Formulario Metodi.pdf (retro del testo d'esame)</span>
+  </div>
+
+  <h3>Procedimento consigliato (in ordine)</h3>
+  <ol>
+    <li>Guarda se a_n è esattamente una delle forme del formulario (armonica, geometrica, Mengoli): se sì, la risposta è immediata, non serve altro.</li>
+    <li>Se a_n è un rapporto di polinomi in n, confronta con 1/n^k dove k = grado denominatore − grado numeratore: calcola L = lim a_n/(1/n^k); se 0&lt;L&lt;∞ le due serie si comportano allo stesso modo.</li>
+    <li>Se compaiono fattoriali, potenze n-esime o basi costanti elevate a n, usa il rapporto: L=lim a_(n+1)/a_n (L&lt;1 converge, L&gt;1 diverge, L=1 non decide).</li>
+    <li>Se la serie è alternata (-1)^n·b_n con b_n&gt;0, verifica che b_n sia decrescente e → 0: se sì, converge per Leibniz. Verifica poi la convergenza assoluta studiando Σ b_n separatamente (serve per dire se è assoluta o solo condizionata).</li>
+    <li>Se compare una variabile x, è una serie di potenze: trova il raggio R col rapporto o la radice sui coefficienti, poi analizza i due punti di frontiera x0±R separatamente (lì i criteri precedenti vanno riapplicati).</li>
+  </ol>
+  <div class="example-box">
+    <span class="box-label">Esempio — riconoscimento rapido</span>
+    <div class="tex-line">$$\sum \frac{3n+1}{n^2+5}$$ <span class="note">grado numeratore 1, grado denominatore 2 → confronta con 1/n</span></div>
+    <div class="tex-line">$$L=\lim_{n\to\infty} n\cdot\frac{3n+1}{n^2+5}=3$$ <span class="note">(0&lt;L&lt;∞) → stesso comportamento di Σ1/n → DIVERGE</span></div>
+    <div class="tex-line">$$\sum \left(\tfrac12\right)^n n^3$$ <span class="note">base fissa 1/2 con fattore polinomiale → criterio del rapporto</span></div>
+    <div class="tex-line">$$L=\lim_{n\to\infty} \frac{a_{n+1}}{a_n}=\tfrac12<1$$ <span class="note">→ CONVERGE (il fattore n³ non cambia il limite)</span></div>
+  </div>
+  <p><em>Puoi generare esercizi di questo tipo con soluzione motivata passo-passo nella sezione <a href="#" data-goto="esercizi">Esercizi</a> (argomento "Serie numeriche", bottone "Mostra soluzione").</em></p>
+
+  <!-- ============================== 2 ============================== -->
+  <h2 id="s2">2. Sviluppi di Taylor / Mac Laurin — quando e come si usano</h2>
+  <h3>Quando ti servono</h3>
+  <ul>
+    <li>L'esercizio chiede esplicitamente lo sviluppo di f(x) fino a un certo ordine.</li>
+    <li>Devi calcolare un limite che si presenta in forma indeterminata 0/0 o ∞/∞ (sostituisci gli sviluppi al posto delle funzioni e semplifica).</li>
+    <li>Devi stimare l'errore di un'approssimazione (il resto o(x^n) ti dice l'ordine di grandezza trascurato).</li>
+  </ul>
+
+  <h3>Cosa dice il Formulario (sviluppi di Mac Laurin)</h3>
+  <div class="formula-box">
+    <span class="box-label">Dal formulario ufficiale</span>
+    <div class="tex-line">$$e^x = 1+x+\frac{x^2}{2!}+\frac{x^3}{3!}+\cdots+\frac{x^n}{n!}+o(x^n)$$</div>
+    <div class="tex-line">$$\sin x = x-\frac{x^3}{3!}+\frac{x^5}{5!}-\cdots+(-1)^n\frac{x^{2n+1}}{(2n+1)!}+o(x^{2n+2})$$</div>
+    <div class="tex-line">$$\cos x = 1-\frac{x^2}{2!}+\frac{x^4}{4!}-\cdots+(-1)^n\frac{x^{2n}}{(2n)!}+o(x^{2n+1})$$</div>
+    <div class="tex-line">$$\ln(1+x) = x-\frac{x^2}{2}+\frac{x^3}{3}-\cdots+(-1)^{n+1}\frac{x^n}{n}+o(x^n)$$</div>
+    <div class="tex-line">$$(1+x)^\alpha = 1+\alpha x+\frac{\alpha(\alpha-1)}{2}x^2+\cdots+o(x^n)$$ <span class="note">(α reale qualsiasi, es. radice quadrata con α=1/2)</span></div>
+    <div class="tex-line">$$\arctan x = x-\frac{x^3}{3}+\frac{x^5}{5}-\cdots+(-1)^n\frac{x^{2n+1}}{2n+1}+o(x^{2n+2})$$</div>
+    <span class="box-caption">Fonte: Formulario Metodi.pdf — tabella "sviluppo in serie di Mac Laurin di alcune funzioni elementari" (contiene anche tan, cot, sec, csc, arcsin, arccos, arccotg).</span>
+  </div>
+
+  <h3>Procedimento generale (se la funzione non è tra quelle standard)</h3>
+  <ol>
+    <li>Calcola f, f', f'', ... fino all'ordine n richiesto.</li>
+    <li>Valuta ciascuna derivata in x0 (di solito x0=0, sviluppo di Mac Laurin).</li>
+    <li>Componi il polinomio: P_n(x) = Σ f^(k)(x0)/k! · (x−x0)^k.</li>
+    <li>Scrivi sempre il resto o((x−x0)^n): un polinomio senza resto non è uno sviluppo di Taylor completo.</li>
+  </ol>
+  <div class="example-box">
+    <span class="box-label">Esempio — limite con Taylor</span>
+    <div class="tex-line">$$\lim_{x\to0}\frac{e^x-1-x}{x^2}$$</div>
+    <div class="tex-line">$$e^x=1+x+\frac{x^2}2+o(x^2)$$ <span class="note">→ numeratore = x²/2 + o(x²)</span></div>
+    <div class="tex-line">$$\Rightarrow \text{limite}=\frac12$$</div>
+  </div>
+  <p><em>Nella sezione Esercizi, l'argomento "Sviluppi di Taylor" ricostruisce ogni derivata calcolata in x0 e come si assembla il polinomio termine per termine.</em></p>
+
+  <!-- ============================== 3 ============================== -->
+  <h2 id="s3">3. Continuità e differenziabilità di funzioni di più variabili</h2>
+  <h3>Come riconoscere quando serve la verifica diretta</h3>
+  <div class="table-scroll">
+  <table>
+    <tr><th>Situazione</th><th>Cosa fare</th></tr>
+    <tr><td>f è somma/prodotto/composizione di funzioni elementari (polinomi, exp, log, trig) ovunque nel dominio</td><td>f è automaticamente C¹ (continua e differenziabile): non serve verificare con la definizione</td></tr>
+    <tr><td>f è definita a tratti, con un valore speciale in un punto (es. f(0,0)=0) o un denominatore che si annulla in un punto</td><td>Il punto "critico" va verificato a mano con la definizione di limite: continuità e differenziabilità non sono garantite lì</td></tr>
+    <tr><td>Un limite in più variabili sembra dare valori diversi lungo cammini diversi</td><td>Prova cammini semplici (x=0, y=0, y=x, y=x²): se ottieni risultati diversi, il limite non esiste</td></tr>
+  </table>
+  </div>
+
+  <h3>Cosa dice il Formulario</h3>
+  <div class="formula-box">
+    <span class="box-label">Dal formulario ufficiale</span>
+    <div class="tex-line">$$z = f(x_0,y_0)+\frac{\partial f}{\partial x}(x_0,y_0)(x-x_0)+\frac{\partial f}{\partial y}(x_0,y_0)(y-y_0)$$ <span class="note">piano tangente in (x0,y0)</span></div>
+    <div class="tex-line">$$\lim_{(x,y)\to(x_0,y_0)} \frac{f(x,y)-f(x_0,y_0)-\frac{\partial f}{\partial x}(x-x_0)-\frac{\partial f}{\partial y}(y-y_0)}{\sqrt{(x-x_0)^2+(y-y_0)^2}} = 0$$ <span class="note">condizione di differenziabilità</span></div>
+  </div>
+
+  <h3>Procedimento per verificare la differenziabilità in un punto sospetto</h3>
+  <ol>
+    <li>Verifica che esistano le derivate parziali in quel punto (spesso vanno calcolate con la definizione di derivata direzionale, non con le regole di derivazione, perché il punto è un caso limite).</li>
+    <li>Scrivi il rapporto della definizione sopra e prova a farne il limite passando in coordinate polari: x=x0+r·cosθ, y=y0+r·sinθ, r→0⁺.</li>
+    <li>Se il rapporto (diviso r) tende a 0 uniformemente rispetto a θ, f è differenziabile lì. Se dipende da θ o non tende a 0, non è differenziabile.</li>
+  </ol>
+  <div class="example-box">
+    <span class="box-label">Esempio — funzione con caso limite</span>
+    <div class="tex-line">$$f(x,y)=\frac{x^3}{x^2+y^2}\ (x,y)\ne(0,0),\quad f(0,0)=0$$ <span class="note">le derivate parziali in (0,0) esistono, ma non basta</span></div>
+    <div class="tex-line">$$f(r,\theta)=r\cos^3\theta \Rightarrow \frac{f(r,\theta)}{r}=\cos^3\theta$$ <span class="note">non tende a 0 per r→0 (dipende da θ) → f NON è differenziabile in (0,0)</span></div>
+  </div>
+
+  <!-- ============================== 4 ============================== -->
+  <h2 id="s4">4. Punti stazionari liberi — Hessiano</h2>
+  <h3>Come riconoscere il caso</h3>
+  <p>Nessun vincolo g(x,y)=0 esplicito: la funzione f(x,y) è definita (e derivabile due volte con continuità) su
+  tutto un aperto, e ti si chiede di trovare/classificare i suoi punti stazionari. È l'esercizio più frequente in
+  assoluto nei compiti analizzati.</p>
+
+  <h3>Cosa dice il Formulario</h3>
+  <div class="formula-box">
+    <span class="box-label">Dal formulario ufficiale</span>
+    <p style="margin:0 0 8px;">Sia P0(x0,y0) un punto stazionario di f(x,y), continua e con derivate parziali seconde continue.</p>
+    <div class="tex-line">$$H(x_0,y_0) = f_{xx}f_{yy}-(f_{xy})^2$$ <span class="note">Hessiano</span></div>
+    <div class="tex-line">$$\begin{cases} H>0,\ f_{xx}<0 & \Rightarrow \text{MASSIMO relativo} \\ H>0,\ f_{xx}>0 & \Rightarrow \text{MINIMO relativo} \\ H<0 & \Rightarrow \text{SELLA} \\ H=0 & \Rightarrow \text{indeterminato} \end{cases}$$</div>
+  </div>
+
+  <h3>Procedimento — 5 passi sempre uguali</h3>
+  <ol>
+    <li>Calcola ∂f/∂x e ∂f/∂y (l'altra variabile è trattata come costante).</li>
+    <li>Risolvi il sistema ∂f/∂x=0, ∂f/∂y=0: i punti (x0,y0) soluzione sono i punti critici. Tecnica più usata: ricava una variabile dalla seconda equazione e sostituisci nella prima.</li>
+    <li>Calcola le derivate seconde f_xx, f_yy, f_xy.</li>
+    <li>Calcola H(x0,y0)=f_xx·f_yy−(f_xy)² in ogni punto critico separatamente (non esiste un H generico valido per tutti i punti).</li>
+    <li>Classifica ciascun punto con la tabella del formulario. Se H=0, analizza il segno di f in un intorno del punto lungo direzioni diverse (rette, parabole) per decidere a mano.</li>
+  </ol>
+  <div class="example-box">
+    <span class="box-label">Esempio — f(x,y) = xy − x² − y²</span>
+    <div class="tex-line">$$\frac{\partial f}{\partial x}=y-2x=0,\ \frac{\partial f}{\partial y}=x-2y=0 \Rightarrow (0,0)$$ <span class="note">unico punto critico</span></div>
+    <div class="tex-line">$$f_{xx}=-2,\ f_{yy}=-2,\ f_{xy}=1 \Rightarrow H=3>0,\ f_{xx}<0$$ <span class="note">→ MASSIMO relativo in (0,0), f(0,0)=0</span></div>
+  </div>
+  <div class="warning-box">
+    <span class="box-label">Errore frequente</span>
+    Calcolare un solo Hessiano "generico" e riapplicarlo a tutti i punti critici trovati: H va ricalcolato in ogni punto, perché f_xx, f_yy, f_xy dipendono da x e y.
+  </div>
+  <p><em>Nella sezione Esercizi, il modulo di multivariabile permette di esercitarsi anche su questo caso con soluzione motivata (i punti critici liberi non sono uno dei 5 argomenti scelti a menu, ma la stessa logica sostiene l'argomento "Lagrange").</em></p>
+
+  <!-- ============================== 5 ============================== -->
+  <h2 id="s5">5. Ottimizzazione vincolata — Moltiplicatori di Lagrange</h2>
+  <h3>Come riconoscere il caso</h3>
+  <p>f è soggetta a un vincolo esplicito g(x,y)=0 (una curva: retta, circonferenza, ellisse...). L'Hessiano libero
+  (§4) non si applica più: va usato il metodo di Lagrange.</p>
+
+  <h3>Cosa dice il Formulario</h3>
+  <div class="formula-box">
+    <span class="box-label">Dal formulario ufficiale</span>
+    <p style="margin:0 0 8px;">Caso vincolato — Hessiano orlato Ā (con λ moltiplicatore, g vincolo, L = f − λ·g):</p>
+    <div class="tex-line">$$\bar A = \begin{pmatrix} 0 & g_x' & g_y' \\ g_x' & L_{xx}'' & L_{xy}'' \\ g_y' & L_{yx}'' & L_{yy}'' \end{pmatrix}$$</div>
+    <div class="tex-line">$$\det(\bar A)>0 \Rightarrow \text{massimo vincolato in } P_0$$</div>
+    <div class="tex-line">$$\det(\bar A)<0 \Rightarrow \text{minimo vincolato in } P_0$$</div>
+  </div>
+
+  <h3>Procedimento</h3>
+  <ol>
+    <li>Scrivi il sistema di Lagrange (3 equazioni, 3 incognite x, y, λ): ∂f/∂x=λ·∂g/∂x, ∂f/∂y=λ·∂g/∂y, g(x,y)=0.</li>
+    <li>Risolvi il sistema: trova tutti i punti (x,y) candidati (il valore di λ di solito non serve al risultato finale).</li>
+    <li>Prima di dire "massimo e minimo assoluto esistono", chiediti se il vincolo è un insieme chiuso e limitato (compatto): una circonferenza o un'ellisse lo sono (per Weierstrass f ammette sicuramente sia massimo sia minimo assoluto); una retta o una parabola non sono limitate.</li>
+    <li>Se il vincolo è compatto: calcola f in ogni punto candidato, il valore più grande è il massimo assoluto, il più piccolo il minimo assoluto.</li>
+    <li>Se il vincolo è illimitato (es. una retta) e f è una forma quadratica con coefficienti positivi: f tende a +infinito allontanandosi sulla retta, quindi esiste solo il minimo assoluto, mai il massimo (l'estremo superiore è +infinito ma non è raggiunto). Verificalo sempre prima di dichiarare un "massimo" che non esiste.</li>
+  </ol>
+  <div class="info-box">
+    <span class="box-label">Trucco per f = e^u</span>
+    Siccome eˣ è strettamente crescente, massimizzare e^u equivale a massimizzare u (e minimizzare e^u equivale a minimizzare u). Spesso risparmia molti calcoli: es. massimizzare e^(x²+y²) equivale a massimizzare x²+y².
+  </div>
+  <div class="example-box">
+    <span class="box-label">Esempio — vincolo compatto (ellisse)</span>
+    <div class="tex-line">$$f(x,y)=e^{x^2+y^2},\quad x^2+\frac{(y-1/2)^2}{4}=1$$ <span class="note">ellisse, chiusa e limitata</span></div>
+    <p style="margin:8px 0 0;">Per Weierstrass f ammette sia massimo sia minimo assoluto sul vincolo. Risolvendo il sistema si trovano 4 punti
+    candidati; il valore di u=x²+y² più grande dà il massimo, il più piccolo il minimo (essendo e^u crescente in u).</p>
+  </div>
+  <div class="example-box">
+    <span class="box-label">Esempio — vincolo illimitato (retta), attenzione</span>
+    <div class="tex-line">$$f(x,y)=2x^2+3y^2,\quad x+y=2$$ <span class="note">retta, illimitata</span></div>
+    <div class="tex-line">$$\left(\tfrac65,\tfrac45\right),\ f=\tfrac{24}5$$ <span class="note">unico punto stazionario trovato</span></div>
+    <p style="margin:8px 0 0;">Essendo f coerciva (coefficienti positivi) e il vincolo illimitato: quel punto è il MINIMO assoluto. NON esiste
+    un massimo assoluto (f→+∞ allontanandosi sulla retta), anche se il punto trovato è unico.</p>
+  </div>
+  <div class="warning-box">
+    <span class="box-label">Errore frequente</span>
+    Dichiarare "massimo e minimo assoluto" senza controllare se il vincolo è compatto: su una retta o una curva illimitata, una forma quadratica coerciva ha solo il minimo, mai il massimo.
+  </div>
+  <p><em>Questo è esattamente il caso che l'argomento "Lagrange" della sezione Esercizi allena, incluso il controllo automatico su vincolo retta/cerchio.</em></p>
+
+  <!-- ============================== 6 ============================== -->
+  <h2 id="s6">6. Equazioni differenziali del II ordine — riconoscere il caso</h2>
+  <p>Forma generale: a·y'' + b·y' + c·y = f(x). Soluzione generale: y = y_omogenea + y_particolare. È il più
+  meccanico dei tre esercizi tipici: con il metodo giusto è quasi algoritmico.</p>
+
+  <h3>Passo 1 — riconoscere il caso dell'omogenea</h3>
+  <div class="formula-box">
+    <span class="box-label">Dal formulario ufficiale</span>
+    <div class="tex-line">$$a\lambda^2+b\lambda+c=0,\quad \Delta=b^2-4ac$$ <span class="note">equazione caratteristica</span></div>
+    <div class="tex-line">$$\begin{cases} \Delta>0: & y_o=c_1e^{\lambda_1 x}+c_2e^{\lambda_2 x} \\ \Delta=0: & y_o=(c_1+c_2x)e^{\lambda x} \\ \Delta<0: & y_o=e^{\alpha x}(c_1\cos\beta x+c_2\sin\beta x) \end{cases}$$</div>
+  </div>
+
+  <h3>Passo 2 — riconoscere la forma del termine noto (metodo di somiglianza)</h3>
+  <div class="table-scroll">
+  <table>
+    <tr><th>Forma di f(x)</th><th>y_p tentativa (nessuna risonanza)</th><th>Se c'è risonanza</th></tr>
+    <tr><td>Polinomio grado n</td><td>Polinomio grado n</td><td>se 0 è radice: grado n+1 (o n+2 se anche radice doppia)</td></tr>
+    <tr><td>A·e^(λx)</td><td>c·e^(λx)</td><td>se λ radice semplice: c·x·e^(λx); se doppia: c·x²·e^(λx)</td></tr>
+    <tr><td>A·cos(ωx)+B·sin(ωx)</td><td>c1·cos(ωx)+c2·sin(ωx)</td><td>se ±iω radice: moltiplica per x</td></tr>
+    <tr><td>e^(λx)·(A·cosωx+B·sinωx)</td><td>e^(λx)·(c1·cosωx+c2·sinωx)</td><td>se λ±iω radice: moltiplica per x</td></tr>
+    <tr><td>e^(λx)·p(x), p polinomio grado n</td><td>e^(λx)·q(x), q polinomio grado n</td><td>moltiplica per x^k se λ ha molteplicità k</td></tr>
+  </table>
+  </div>
+
+  <div class="info-box">
+    <span class="box-label">Regola esatta della risonanza (l'errore più comune)</span>
+    Per un termine e^(αx)·[P(x)cosβx + Q(x)sinβx], la risonanza scatta solo se il numero α+iβ coincide esattamente
+    con una radice dell'equazione caratteristica — non basta che α da solo coincida con una radice reale. Esempio:
+    radici λ=−1 doppia (reale, β=0) e termine noto e^(−x)·sin(x) (α=−1, β=1): −1+i ≠ −1, quindi non c'è risonanza,
+    anche se e^(−x) da solo è soluzione dell'omogenea.
+  </div>
+  <div class="card" style="background:var(--gray-bg);">
+    <span class="box-label" style="color:var(--text2);">Sovrapposizione</span>
+    Se f(x) = f1(x) + f2(x), risolvi separatamente y_p1 e y_p2 e sommale: y_p = y_p1 + y_p2. Compare in quasi ogni compito.
+  </div>
+
+  <h3>Passo 3 — problema di Cauchy</h3>
+  <ol>
+    <li>Scrivi y(x) e y'(x) con c1, c2 ancora incognite.</li>
+    <li>Sostituisci x=0 e uguaglia a y(0), y'(0) assegnati (ricorda: e⁰=1, cos0=1, sin0=0).</li>
+    <li>Risolvi il sistema lineare 2×2 per c1, c2 e sostituisci nella soluzione generale.</li>
+  </ol>
+  <div class="example-box">
+    <span class="box-label">Esempio — risonanza esatta (α+iβ coincide)</span>
+    <div class="tex-line">$$y''-4y'+4y=(x+3)e^{2x}$$</div>
+    <div class="tex-line">$$\lambda^2-4\lambda+4=0\Rightarrow(\lambda-2)^2=0\Rightarrow\lambda=2\ \text{doppia}$$ <span class="note">y_o=(c1+c2x)e^(2x)</span></div>
+    <div class="tex-line">$$y_p=x^2(Ax+B)e^{2x}$$ <span class="note">termine noto (x+3)e^(2x): α=2 è radice doppia</span></div>
+  </div>
+  <div class="example-box">
+    <span class="box-label">Esempio — nessuna risonanza (radici complesse)</span>
+    <div class="tex-line">$$y''-2y'+5y=e^{2x}\cos x$$</div>
+    <div class="tex-line">$$\lambda^2-2\lambda+5=0\Rightarrow\Delta=-16\Rightarrow\lambda=1\pm2i$$ <span class="note">y_o=e^x(c1cos2x+c2sin2x)</span></div>
+    <div class="tex-line">$$y_p=e^{2x}(A\cos x+B\sin x)$$ <span class="note">α=2, β=1 → 2+i ≠ 1±2i → nessuna risonanza</span></div>
+  </div>
+  <div class="warning-box">
+    <span class="box-label">Errore frequente</span>
+    Per un termine noto polinomiale, tentare y_p con lo stesso numero di termini del polinomio dato invece del polinomio completo dello stesso grado (es. per 3x² serve Ax²+Bx+C, non solo Ax²).
+  </div>
+  <p><em>L'argomento "EDO / Cauchy" della sezione Esercizi controlla automaticamente radici, ansatz e risonanza per ogni esercizio generato.</em></p>
+
+  <!-- ============================== 7 ============================== -->
+  <h2 id="s7">7. Integrali doppi — riconoscere dominio e strategia</h2>
+  <p>Qui la parte difficile è leggere il dominio D e scegliere la strategia prima di mettersi a calcolare. Guarda
+  il dominio e l'integranda insieme.</p>
+
+  <h3>Riconoscere le curve del dominio</h3>
+  <div class="table-scroll">
+  <table>
+    <tr><th>Equazione</th><th>Curva</th></tr>
+    <tr><td>x²+y² = R²</td><td>Cerchio, centro origine, raggio R → in polari: r=R</td></tr>
+    <tr><td>(x−a)²+y² = a²</td><td>Cerchio centro (a,0) raggio a → in polari: r=2a·cosθ</td></tr>
+    <tr><td>x²+(y−b)² = b²</td><td>Cerchio centro (0,b) raggio b → in polari: r=2b·sinθ</td></tr>
+    <tr><td>x²/a² + y²/b² = 1</td><td>Ellisse, semiassi a e b → polari generalizzate</td></tr>
+    <tr><td>y=x² , y=√x</td><td>Parabole (asse verticale / orizzontale)</td></tr>
+    <tr><td>x·y = k</td><td>Iperbole equilatera</td></tr>
+  </table>
+  </div>
+
+  <h3>Come scegliere il metodo</h3>
+  <div class="table-scroll">
+  <table>
+    <tr><th>Cosa vedi</th><th>Strategia</th></tr>
+    <tr><td>Cerchi / ellissi nel dominio</td><td>Coordinate polari (o polari generalizzate per l'ellisse)</td></tr>
+    <tr><td>Solo rette e/o parabole</td><td>Dominio normale tipo I o II — scegli l'ordine di integrazione più semplice</td></tr>
+    <tr><td>Integranda con e^(y²), sin(x²), 1/√(a²−y²)...</td><td>Cambia ordine di integrazione (non è integrabile elementarmente in quella variabile)</td></tr>
+    <tr><td>Integranda tipo xy su dominio circolare</td><td>Polari: xy diventa r²·cosθ·sinθ, con lo Jacobiano r³·cosθ·sinθ</td></tr>
+    <tr><td>Due cerchi che si intersecano</td><td>Trova l'angolo θ* di intersezione e dividi l'integrale in due parti</td></tr>
+  </table>
+  </div>
+
+  <h3>Coordinate polari — non dimenticare lo Jacobiano</h3>
+  <div class="formula-box">
+    <span class="box-label">Dal formulario ufficiale</span>
+    <div class="tex-line">$$x=r\cos\theta,\ y=r\sin\theta,\quad dx\,dy=r\,dr\,d\theta$$ <span class="note">il fattore r È lo Jacobiano, non va mai omesso</span></div>
+    <div class="tex-line">$$x=ar\cos\theta,\ y=br\sin\theta,\quad dx\,dy=ab\,r\,dr\,d\theta$$ <span class="note">ellisse x²/a²+y²/b²≤1, Jacobiano = a·b·r</span></div>
+    <span class="box-caption">Jacobiano del cambio di variabili in coordinate polari — regola generale, coerente con il Formulario ufficiale.</span>
+  </div>
+
+  <h3>Procedimento</h3>
+  <ol>
+    <li>Disegna (anche solo mentalmente) il dominio D e trova le intersezioni tra le curve che lo delimitano.</li>
+    <li>Scegli la strategia dalla tabella sopra, guardando sia il dominio sia l'integranda.</li>
+    <li>Scrivi i limiti di integrazione nell'ordine scelto (in polari: r tra le curve, θ tra gli angoli che delimitano il settore).</li>
+    <li>Integra prima la variabile interna (l'altra è trattata come costante), poi la esterna.</li>
+    <li>Se il calcolo dell'integrale interno è impossibile in quell'ordine, cambia ordine di integrazione e ricomincia dal passo 3.</li>
+  </ol>
+  <div class="example-box">
+    <span class="box-label">Esempio — dominio anulare in polari</span>
+    <div class="tex-line">$$D=\{(x,y):4\le x^2+y^2\le9\},\ f(x,y)=1$$ <span class="note">→ r ∈ [2,3], θ ∈ [0,2π]</span></div>
+    <div class="tex-line">$$\iint_D 1\,dA=\int_0^{2\pi}\!\!\int_2^3 r\,dr\,d\theta=5\pi$$</div>
+  </div>
+  <div class="warning-box">
+    <span class="box-label">Errore frequente</span>
+    Scrivere dx dy = dr dθ dimenticando il fattore r (o a·b·r per le ellissi): lo Jacobiano non va mai omesso nel cambio a coordinate polari.
+  </div>
+  <p><em>L'argomento "Integrali doppi" della sezione Esercizi mostra il passaggio completo in coordinate polari con lo Jacobiano esplicito per ogni esercizio generato.</em></p>
+
+  <!-- ============================== 8 ============================== -->
+  <h2 id="s8">8. Checklist anti-errori — da rileggere prima di consegnare</h2>
+  <ul>
+    <li>Vincolo g(x,y)=0 presente? Ho controllato se è compatto (esistono max e min) o illimitato (spesso solo un estremo esiste)?</li>
+    <li>Ho calcolato l'Hessiano in ogni punto critico separatamente, non uno solo per tutti?</li>
+    <li>Nell'EDO, la risonanza l'ho verificata sulla coppia completa (α,β) e non solo su α?</li>
+    <li>Il polinomio nella y_p è completo (tutti i gradi fino a n), anche se nel termine noto mancano alcuni monomi?</li>
+    <li>Nell'integrale doppio, ho scritto lo Jacobiano r (o a·b·r per l'ellisse) e non dx dy = dr dθ?</li>
+    <li>Ho verificato se serve cambiare l'ordine di integrazione perché l'integranda non è integrabile elementarmente in quella variabile?</li>
+    <li>Ho scritto tutti i passaggi nel dettaglio, non solo il risultato finale (il punteggio premia il procedimento)?</li>
+  </ul>
+
+  <!-- ============================== 9 ============================== -->
+  <h2 id="s9">9. Come esercitarti</h2>
+  <p>Questo documento aiuta a riconoscere il caso e ricordare il procedimento. Per la pratica vera e propria, usa insieme:</p>
+  <ul>
+    <li>La sezione <a href="#" data-goto="esercizi">Esercizi</a> di questo sito: genera esercizi casuali per ciascun argomento su 3 livelli di difficoltà, verifica le tue risposte con SymPy e mostra la soluzione motivata passo-passo.</li>
+    <li>Guida_Metodi_Matematici.docx e guida_integrata.html: soluzioni complete, passaggio per passaggio, a 7 compiti reali di gennaio 2026.</li>
+    <li>prerequisiti_esame_metodi_matematici.html: checklist dei prerequisiti (derivate, sistemi, integrali elementari) organizzata per esercizio.</li>
+  </ul>
+
+  <!-- ============================== FONTI ============================== -->
+  <h2 id="sf">Fonti</h2>
+  <ul>
+    <li>Formulario Metodi.pdf — formulario ufficiale fornito a esame (citato nei riquadri "Dal Formulario ufficiale").</li>
+    <li>GUIDA 25-26.pdf — struttura e programma ufficiale dell'esame (Prof.ssa Gabriella Campo, rev. 15/09/2025).</li>
+    <li>Guida_Metodi_Matematici.docx, guida_integrata.html, prerequisiti_esame_metodi_matematici.html — analisi di 7 compiti reali di gennaio 2026.</li>
+  </ul>
+
+</div>
+</div>
+
+<footer>Progetto di studio personale per l'esame di Metodi Matematici — eseguito interamente nel browser, nessun dato lascia il tuo dispositivo.</footer>
+
+<script src="https://cdn.jsdelivr.net/pyodide/v314.0.4/full/pyodide.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.18.1/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.18.1/dist/contrib/auto-render.min.js"></script>
 <script>
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("service-worker.js").catch((e) => console.warn("SW non registrato:", e));
+// ============================================================
+// Routing SPA: Home / Esercizi / Teoria sono div nella stessa
+// pagina. Si passa da una all'altra con semplice show/hide via
+// JS (nessun cambio di pagina, nessuna hash-route): Pyodide, una
+// volta avviato aprendo Esercizi, resta vivo per tutta la sessione
+// anche quando si torna in Home o si va in Teoria.
+// ============================================================
+function showView(name) {
+  document.querySelectorAll(".view").forEach((v) => v.classList.remove("active"));
+  const el = document.getElementById("view-" + name);
+  if (el) el.classList.add("active");
+  document.querySelectorAll(".topbar nav a[data-goto]").forEach((a) => {
+    a.classList.toggle("active", a.dataset.goto === name);
+  });
+  window.scrollTo(0, 0);
+  if (name === "esercizi") avviaPyodideSeNecessario();
+}
+document.addEventListener("click", (e) => {
+  const a = e.target.closest("a[data-goto]");
+  if (a) { e.preventDefault(); showView(a.dataset.goto); }
+});
+
+// ============================================================
+// ESERCIZI — stato condiviso
+// ============================================================
+const ARGOMENTI = [
+  ["Serie numeriche", "serie"],
+  ["Sviluppi di Taylor", "taylor"],
+  ["Lagrange (multivariabile)", "lagrange"],
+  ["EDO / Cauchy", "edo"],
+  ["Integrali doppi", "integrali"],
+];
+const NOMI = Object.fromEntries(ARGOMENTI.map(([n, k]) => [k, n]));
+const PY_FILES = ["serie.py", "taylor.py", "multivariabile.py", "edo.py", "integrali.py", "grafico.py", "bridge.py"];
+const PROGRESS_KEY = "mm_progress_v1";
+const DIFFICOLTA_KEY = "mm_difficolta_v1";
+const DIFFICOLTA_VALIDE = ["facile", "medio", "difficile"];
+
+let pyodide = null;
+let bridge = null;
+let argomentoCorrente = null;
+let difficoltaCorrente = localStorage.getItem(DIFFICOLTA_KEY) || "medio";
+if (!DIFFICOLTA_VALIDE.includes(difficoltaCorrente)) difficoltaCorrente = "medio";
+let matplotlibCaricato = false;
+let pyodideAvviato = false;
+let pyodideAvviando = false;
+
+function loadProgress() {
+  try { return JSON.parse(localStorage.getItem(PROGRESS_KEY)) || {}; }
+  catch (e) { return {}; }
+}
+function saveProgress(data) { localStorage.setItem(PROGRESS_KEY, JSON.stringify(data)); }
+function registraProgresso(argomento, corretto) {
+  const data = loadProgress();
+  const stat = data[argomento] || { corretti: 0, totali: 0 };
+  stat.totali += 1;
+  if (corretto) stat.corretti += 1;
+  data[argomento] = stat;
+  saveProgress(data);
+  renderProgressTable();
+}
+function renderProgressTable() {
+  const data = loadProgress();
+  const righe = Object.entries(data).map(([arg, stat]) => {
+    const perc = stat.totali ? (100 * stat.corretti / stat.totali) : 0;
+    return { arg, corretti: stat.corretti, totali: stat.totali, perc };
+  }).sort((a, b) => a.perc - b.perc);
+
+  const el = document.getElementById("progress-table");
+  if (righe.length === 0) {
+    el.innerHTML = '<div class="progress-empty">Nessun esercizio ancora</div>';
+    return;
+  }
+  el.innerHTML = righe.map(r =>
+    `<div class="progress-row"><span>${NOMI[r.arg] || r.arg}: ${r.corretti}/${r.totali}</span><span class="pct">${r.perc.toFixed(0)}%</span></div>`
+  ).join("");
+}
+function argomentoPiuDebole() {
+  const data = loadProgress();
+  const pesi = ARGOMENTI.map(([, arg]) => {
+    const stat = data[arg];
+    if (!stat || stat.totali === 0) return 0.6 + 0.1;
+    return (1 - stat.corretti / stat.totali) + 0.1;
+  });
+  const totale = pesi.reduce((a, b) => a + b, 0);
+  let r = Math.random() * totale;
+  for (let i = 0; i < ARGOMENTI.length; i++) {
+    r -= pesi[i];
+    if (r <= 0) return ARGOMENTI[i][1];
+  }
+  return ARGOMENTI[ARGOMENTI.length - 1][1];
+}
+
+function buildDifficultyButtons() {
+  document.querySelectorAll(".diff-btn").forEach((b) => {
+    b.classList.toggle("active", b.dataset.diff === difficoltaCorrente);
+    b.addEventListener("click", () => {
+      difficoltaCorrente = b.dataset.diff;
+      localStorage.setItem(DIFFICOLTA_KEY, difficoltaCorrente);
+      document.querySelectorAll(".diff-btn").forEach((x) => x.classList.toggle("active", x === b));
+      if (argomentoCorrente) nuovoEsercizio(argomentoCorrente);
+    });
   });
 }
+
+function buildTopicButtons() {
+  const el = document.getElementById("topic-buttons");
+  el.innerHTML = "";
+  ARGOMENTI.forEach(([nome, chiave]) => {
+    const b = document.createElement("button");
+    b.className = "topic-btn";
+    b.textContent = nome;
+    b.dataset.chiave = chiave;
+    b.addEventListener("click", () => nuovoEsercizio(chiave));
+    el.appendChild(b);
+  });
+}
+function setActiveButton(chiave) {
+  document.querySelectorAll(".topic-btn").forEach(b => {
+    b.classList.toggle("active", b.dataset.chiave === chiave);
+  });
+}
+
+function setBusy(busy) {
+  ["btn-verifica", "btn-soluzione", "btn-grafico"].forEach(id => {
+    document.getElementById(id).disabled = busy || !argomentoCorrente;
+  });
+}
+
+function renderKatexInto(el, latex, displayMode) {
+  if (!latex || typeof katex === "undefined") { el.style.display = "none"; return false; }
+  try {
+    katex.render(latex, el, { throwOnError: false, displayMode: !!displayMode });
+    return true;
+  } catch (e) {
+    console.warn("KaTeX render error:", e);
+    el.style.display = "none";
+    return false;
+  }
+}
+
+function nuovoEsercizio(chiave) {
+  argomentoCorrente = chiave;
+  setActiveButton(chiave);
+  const r = JSON.parse(bridge.nuovo_esercizio(chiave, difficoltaCorrente));
+  document.getElementById("testo-esercizio").textContent = r.testo;
+
+  const mathBox = document.getElementById("testo-math");
+  const mathContent = document.getElementById("testo-math-content");
+  if (r.testo_latex && renderKatexInto(mathContent, r.testo_latex, true)) {
+    mathBox.style.display = "block";
+  } else {
+    mathBox.style.display = "none";
+  }
+
+  document.getElementById("hint").textContent = r.suggerimento || "";
+  document.getElementById("risposta").value = "";
+  document.getElementById("risposta").disabled = false;
+  document.getElementById("esito").innerHTML = "";
+  document.getElementById("grafico-area").innerHTML = "";
+  setBusy(false);
+}
+
+function mostraEsito(corretto, corpo, corpoLatex) {
+  const badgeClass = corretto ? "ok" : "no";
+  const badgeText = corretto ? "CORRETTO" : "DA RIVEDERE";
+  const esito = document.getElementById("esito");
+  esito.innerHTML = `<span class="badge ${badgeClass}">${badgeText}</span><pre>${escapeHtml(corpo)}</pre><div class="esito-math" id="esito-math"></div>`;
+  if (corpoLatex) {
+    const mathEl = document.getElementById("esito-math");
+    if (!renderKatexInto(mathEl, corpoLatex, true)) mathEl.remove();
+  } else {
+    document.getElementById("esito-math").remove();
+  }
+}
+function mostraErrore(msg) {
+  document.getElementById("esito").innerHTML =
+    `<span class="badge err">ATTENZIONE</span><pre>${escapeHtml(msg)}</pre>`;
+}
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+function verificaRisposta() {
+  if (!argomentoCorrente) return;
+  const risposta = document.getElementById("risposta").value;
+  const r = JSON.parse(bridge.verifica(risposta));
+  if (r.errore) { mostraErrore(r.errore); return; }
+  mostraEsito(r.corretto, r.corpo, r.corpo_latex);
+  registraProgresso(argomentoCorrente, r.corretto);
+}
+
+function mostraSoluzione() {
+  if (!argomentoCorrente) return;
+  const r = JSON.parse(bridge.mostra_soluzione());
+  if (r.errore) { mostraErrore(r.errore); return; }
+  const esito = document.getElementById("esito");
+
+  if (Array.isArray(r.passi)) {
+    esito.innerHTML = '<div class="soluzione-passi" id="soluzione-passi"></div>';
+    const cont = document.getElementById("soluzione-passi");
+    r.passi.forEach((passo) => {
+      const box = document.createElement("div");
+      box.className = "passo-box";
+      if (passo.testo) {
+        const p = document.createElement("p");
+        p.className = "passo-testo";
+        p.textContent = passo.testo;
+        box.appendChild(p);
+      }
+      if (passo.latex) {
+        const m = document.createElement("div");
+        m.className = "passo-math";
+        if (renderKatexInto(m, passo.latex, true)) box.appendChild(m);
+      }
+      if (box.childNodes.length) cont.appendChild(box);
+    });
+  } else {
+    esito.innerHTML = `<pre>${escapeHtml(r.corpo)}</pre>`;
+  }
+}
+
+function apriLightbox(src) {
+  document.getElementById("lightbox-img").src = src;
+  document.getElementById("lightbox").classList.add("open");
+}
+function chiudiLightbox() {
+  document.getElementById("lightbox").classList.remove("open");
+}
+
+async function assicuraMatplotlib() {
+  if (matplotlibCaricato) return;
+  const area = document.getElementById("grafico-area");
+  area.innerHTML = '<span class="mini-spinner"></span>Carico la libreria dei grafici (solo la prima volta)...';
+  await pyodide.loadPackage("matplotlib");
+  matplotlibCaricato = true;
+}
+
+async function mostraGrafico() {
+  if (!argomentoCorrente) return;
+  const area = document.getElementById("grafico-area");
+  area.innerHTML = '<span class="mini-spinner"></span>Preparo il grafico...';
+  try {
+    await assicuraMatplotlib();
+  } catch (e) {
+    area.innerHTML = "";
+    mostraErrore("Non sono riuscito a caricare la libreria dei grafici: " + e);
+    return;
+  }
+  area.innerHTML = '<span class="mini-spinner"></span>Genero il grafico...';
+  await new Promise((res) => setTimeout(res, 30));
+  const r = JSON.parse(bridge.mostra_grafico_png());
+  if (r.errore) {
+    area.innerHTML = "";
+    mostraErrore(r.errore);
+    return;
+  }
+  const src = `data:image/png;base64,${r.png_base64}`;
+  area.innerHTML = `<img src="${src}" alt="Grafico dell'esercizio"><div class="tap-hint">Tocca l'immagine per ingrandirla</div>`;
+  area.querySelector("img").addEventListener("click", () => apriLightbox(src));
+}
+
+async function avviaPyodideSeNecessario() {
+  if (pyodideAvviato || pyodideAvviando) return;
+  pyodideAvviando = true;
+  const overlay = document.getElementById("loading-overlay");
+  const detail = document.getElementById("loading-detail");
+  try {
+    detail.textContent = "Avvio del runtime Pyodide...";
+    pyodide = await loadPyodide();
+
+    detail.textContent = "Carico i package numpy e sympy...";
+    await pyodide.loadPackage(["numpy", "sympy"]);
+
+    detail.textContent = "Carico i moduli del progetto...";
+    pyodide.FS.mkdirTree("/app");
+    for (const nome of PY_FILES) {
+      const testo = await (await fetch(nome)).text();
+      pyodide.FS.writeFile("/app/" + nome, testo);
+    }
+    pyodide.runPython("import sys\nif '/app' not in sys.path:\n    sys.path.insert(0, '/app')\n");
+    pyodide.runPython("import bridge");
+    bridge = pyodide.pyimport("bridge");
+
+    overlay.style.display = "none";
+    pyodideAvviato = true;
+    buildTopicButtons();
+    buildDifficultyButtons();
+    renderProgressTable();
+    document.getElementById("testo-esercizio").innerHTML =
+      'Scegli un argomento qui sopra per iniziare, oppure premi <strong>"Punto debole (auto)"</strong>.';
+
+    document.getElementById("btn-verifica").addEventListener("click", verificaRisposta);
+    document.getElementById("btn-soluzione").addEventListener("click", mostraSoluzione);
+    document.getElementById("btn-grafico").addEventListener("click", mostraGrafico);
+    document.getElementById("btn-debole").addEventListener("click", () => nuovoEsercizio(argomentoPiuDebole()));
+    document.getElementById("btn-reset").addEventListener("click", () => {
+      if (confirm("Azzerare tutti i progressi salvati in questo browser?")) {
+        localStorage.removeItem(PROGRESS_KEY);
+        renderProgressTable();
+      }
+    });
+    document.getElementById("lightbox-close").addEventListener("click", chiudiLightbox);
+    document.getElementById("lightbox").addEventListener("click", (e) => {
+      if (e.target.id === "lightbox") chiudiLightbox();
+    });
+  } catch (e) {
+    document.getElementById("loading-text").innerHTML = "<strong>Errore durante il caricamento.</strong>";
+    detail.textContent = String(e);
+    console.error(e);
+  } finally {
+    pyodideAvviando = false;
+  }
+}
+
+// ============================================================
+// INSTALLAZIONE PWA (banner in Home)
+// ============================================================
 let deferredInstallPrompt = null;
 
 function isStandalone() {
@@ -162,33 +1080,62 @@ function toggleInstructions(html) {
 document.addEventListener("DOMContentLoaded", () => {
   if (isStandalone()) {
     showInstalledState();
-    return;
+  } else {
+    const btn = document.getElementById("btn-install");
+    if (btn) {
+      btn.addEventListener("click", async () => {
+        if (deferredInstallPrompt) {
+          deferredInstallPrompt.prompt();
+          const scelta = await deferredInstallPrompt.userChoice;
+          if (scelta.outcome === "accepted") deferredInstallPrompt = null;
+          return;
+        }
+        if (isIOS()) {
+          toggleInstructions(
+            "Su iPhone/iPad: apri questa pagina in <strong>Safari</strong>, tocca l'icona " +
+            "<strong>Condividi</strong> (il quadratino con la freccia in su), poi scegli " +
+            "<strong>Aggiungi a Home</strong>."
+          );
+          return;
+        }
+        toggleInstructions(
+          "Apri il menu del browser (⋮ in alto a destra su Chrome/Edge Android) e scegli " +
+          "<strong>Installa app</strong> oppure <strong>Aggiungi a schermata Home</strong>."
+        );
+      });
+    }
   }
 
-  const btn = document.getElementById("btn-install");
-  if (!btn) return;
+  // Teoria e' contenuto statico: la formattiamo in LaTeX una sola volta, a prescindere
+  // da quale vista sia attiva all'avvio (e' un lavoro leggero, non richiede Pyodide).
+  if (typeof renderMathInElement === "function") {
+    renderMathInElement(document.getElementById("view-teoria"), {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+      ],
+      throwOnError: false,
+    });
+  }
 
-  btn.addEventListener("click", async () => {
-    if (deferredInstallPrompt) {
-      deferredInstallPrompt.prompt();
-      const scelta = await deferredInstallPrompt.userChoice;
-      if (scelta.outcome === "accepted") deferredInstallPrompt = null;
-      return;
+  // Se si arriva da un vecchio link/segnalibro a esercizi.html o teoria.html
+  // (redirect stub), apri direttamente quella vista invece della Home.
+  let vistaIniziale = "home";
+  try {
+    const richiesta = sessionStorage.getItem("mm_apri_vista");
+    if (richiesta === "esercizi" || richiesta === "teoria") {
+      vistaIniziale = richiesta;
+      sessionStorage.removeItem("mm_apri_vista");
     }
-    if (isIOS()) {
-      toggleInstructions(
-        "Su iPhone/iPad: apri questa pagina in <strong>Safari</strong>, tocca l'icona " +
-        "<strong>Condividi</strong> (il quadratino con la freccia in su), poi scegli " +
-        "<strong>Aggiungi a Home</strong>."
-      );
-      return;
-    }
-    toggleInstructions(
-      "Apri il menu del browser (⋮ in alto a destra su Chrome/Edge Android) e scegli " +
-      "<strong>Installa app</strong> oppure <strong>Aggiungi a schermata Home</strong>."
-    );
-  });
+  } catch (e) { /* sessionStorage non disponibile, si apre la Home */ }
+  showView(vistaIniziale);
 });
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("service-worker.js").catch((e) => console.warn("SW non registrato:", e));
+  });
+}
 </script>
 </body>
 </html>

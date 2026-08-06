@@ -8,12 +8,22 @@ import sympy as sp
 x = sp.symbols('x')
 
 
-def genera_edo_lineare_secondo_ordine():
-    a = random.choice([0, 2, 4])
-    b = random.choice([1, 4, 5])
-    y0 = random.choice([0, 1, -1, 2])
-    y1 = random.choice([0, 1, -1, 2])
-    forzante = random.choice([sp.Integer(0), x, sp.exp(x), sp.cos(x)])
+_POOLS_EDO = {
+    'facile': {'a': [0], 'b': [1, 4], 'forzante': [sp.Integer(0), x], 'y0y1': [0, 1]},
+    'medio': {'a': [0, 2, 4], 'b': [1, 4, 5], 'forzante': [sp.Integer(0), x, sp.exp(x), sp.cos(x)],
+              'y0y1': [0, 1, -1, 2]},
+    'difficile': {'a': [2, 4, 6], 'b': [4, 5, 6, 8, 10], 'forzante': [x, sp.exp(x), sp.cos(x)],
+                  'y0y1': [0, 1, -1, 2, 3]},
+}
+
+
+def genera_edo_lineare_secondo_ordine(difficolta='medio'):
+    pool = _POOLS_EDO.get(difficolta, _POOLS_EDO['medio'])
+    a = random.choice(pool['a'])
+    b = random.choice(pool['b'])
+    y0 = random.choice(pool['y0y1'])
+    y1 = random.choice(pool['y0y1'])
+    forzante = random.choice(pool['forzante'])
 
     testo = (f"Risolvere il problema di Cauchy:  y'' + {a}y' + {b}y = {forzante},  "
              f"con y(0) = {y0}, y'(0) = {y1}.")
@@ -25,7 +35,7 @@ def genera_edo_lineare_secondo_ordine():
     soluzione = sp.dsolve(eq, Y(x), ics=ics)
 
     return {
-        'testo': testo, 'a': a, 'b': b, 'y0': y0, 'y1': y1,
+        'testo': testo, 'a': a, 'b': b, 'y0': y0, 'y1': y1, 'difficolta': difficolta,
         'forzante': forzante, 'soluzione_generale': soluzione_generale,
         'soluzione_attesa': soluzione,
     }
