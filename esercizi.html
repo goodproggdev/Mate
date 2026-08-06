@@ -2,10 +2,25 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Esercizi — Metodi Matematici</title>
 <link rel="stylesheet" href="style.css">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#2e5c8a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Metodi Matematici">
 <style>
+.eserc-layout { display: grid; grid-template-columns: 260px 1fr; gap: 24px; }
+@media (max-width: 760px) {
+  .eserc-layout { grid-template-columns: 1fr; }
+  .topic-btn { font-size: 15px; padding: 12px 14px; }
+  #risposta { font-size: 15px; }
+  .action-row .btn { flex: 1 1 auto; text-align: center; }
+}
 #loading-overlay {
   position: fixed; inset: 0; background: var(--bg); z-index: 1000;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -82,7 +97,7 @@
 </div>
 
 <div class="wrap wide">
-  <div class="grid2" style="grid-template-columns: 260px 1fr;">
+  <div class="eserc-layout">
 
     <div>
       <div class="sidebar-section">
@@ -314,6 +329,12 @@ async function avvia() {
 }
 
 avvia();
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("service-worker.js").catch((e) => console.warn("SW non registrato:", e));
+  });
+}
 </script>
 </body>
 </html>

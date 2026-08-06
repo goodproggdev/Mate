@@ -2,9 +2,17 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Metodi Matematici per l'Ingegneria — Allenamento</title>
 <link rel="stylesheet" href="style.css">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#2e5c8a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Metodi Matematici">
 <style>
 .hero { text-align: center; padding: 40px 0 10px; }
 .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 30px 0; }
@@ -72,9 +80,35 @@
     scarica qualche decina di MB (Python + librerie scientifiche) e può richiedere alcuni secondi; da lì in poi
     il browser tiene tutto in cache. I progressi vengono salvati solo localmente, nel tuo browser.
   </div>
+
+  <div class="card" id="install-card" style="font-size:13.5px; color:var(--text2); display:none;">
+    <strong>📱 Usalo offline dal telefono:</strong> apri questa pagina da Chrome/Safari sul telefono,
+    poi <strong>Aggiungi a schermata Home</strong> (o premi il bottone qui sotto, se disponibile). Dopo la prima
+    apertura con internet, l'app resta installata e funziona anche senza connessione.
+    <div style="margin-top:10px;"><button class="btn" id="btn-install">Installa l'app</button></div>
+  </div>
 </div>
 
 <footer>Progetto di studio personale — nessun dato lascia il tuo dispositivo.</footer>
 
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("service-worker.js").catch((e) => console.warn("SW non registrato:", e));
+  });
+}
+let deferredInstallPrompt = null;
+window.addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  document.getElementById("install-card").style.display = "block";
+});
+document.addEventListener("DOMContentLoaded", () => {
+  const btn = document.getElementById("btn-install");
+  if (btn) btn.addEventListener("click", async () => {
+    if (deferredInstallPrompt) await deferredInstallPrompt.prompt();
+  });
+});
+</script>
 </body>
 </html>

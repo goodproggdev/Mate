@@ -1,0 +1,16 @@
+{
+  "name": "Metodi Matematici — Allenamento",
+  "short_name": "Metodi Matematici",
+  "description": "Esercizi, teoria e formulario per l'esame di Metodi Matematici per l'Ingegneria, con generazione e verifica offline via SymPy.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#f7f6f2",
+  "theme_color": "#2e5c8a",
+  "lang": "it",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

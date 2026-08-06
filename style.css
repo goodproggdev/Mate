@@ -82,6 +82,18 @@ table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 13.5p
 th { background: var(--accent); color: #fff; text-align: left; padding: 8px 10px; font-size: 12px; }
 td { padding: 8px 10px; border-bottom: 1px solid var(--border); color: var(--text2); vertical-align: top; }
 tr:nth-child(even) td { background: #faf9f6; }
+.table-scroll { overflow-x: auto; margin: 14px 0; -webkit-overflow-scrolling: touch; }
+.table-scroll table { margin: 0; }
+@media (max-width: 600px) {
+  .table-scroll table { min-width: 560px; }
+}
+
+@media (max-width: 600px) {
+  .wrap { padding: 20px 14px 60px; }
+  h1 { font-size: 25px; }
+  h2 { font-size: 18px; }
+  .formula-box, .example-box, .warning-box, .info-box { font-size: 12.5px; padding: 12px 14px; }
+}
 
 ol, ul { color: var(--text2); padding-left: 22px; }
 li { margin-bottom: 6px; }

@@ -2,9 +2,17 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Teoria &amp; Formulario — Metodi Matematici</title>
 <link rel="stylesheet" href="style.css">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#2e5c8a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Metodi Matematici">
 <style>
 .toc { columns: 2; column-gap: 24px; font-size: 13.5px; }
 @media (max-width: 600px) { .toc { columns: 1; } }
@@ -64,6 +72,7 @@
   tutti i passaggi: il punteggio premia soprattutto il procedimento.</p>
 
   <h3>Il programma ufficiale, in 4 blocchi</h3>
+  <div class="table-scroll">
   <table>
     <tr><th>Blocco</th><th>Argomenti</th><th>Sezione</th></tr>
     <tr><td>1</td><td>Serie e serie di Taylor</td><td>§1 – §2</td></tr>
@@ -71,6 +80,7 @@
     <tr><td>3</td><td>Equazioni differenziali ordinarie</td><td>§6</td></tr>
     <tr><td>4</td><td>Integrazione multipla (Riemann, riduzione, cambio variabili)</td><td>§7</td></tr>
   </table>
+  </div>
   <p>Nei compiti analizzati, i tre esercizi d'esame ricadono quasi sempre sui blocchi 2, 3 e 4 (punti
   stazionari/ottimizzazione, EDO con Cauchy, integrale doppio) — ma la traccia può chiedere qualunque argomento,
   quindi anche serie e Taylor (blocco 1) vanno padroneggiati.</p>
@@ -79,6 +89,7 @@
   <h2 id="s1">1. Serie numeriche — riconoscere il criterio giusto</h2>
   <p>La difficoltà non è calcolare, ma scegliere il criterio giusto guardando la forma del termine generale a_n.
   Usa questa tabella come primo filtro.</p>
+  <div class="table-scroll">
   <table>
     <tr><th>Cosa vedi in a_n</th><th>Criterio da usare</th><th>Dove va a parare</th></tr>
     <tr><td>Solo 1/n^p (nessun altro fattore)</td><td>Serie armonica generalizzata</td><td>converge se p&gt;1, diverge se p≤1</td></tr>
@@ -88,6 +99,7 @@
     <tr><td>(-1)^n oppure (-1)^(n+1) a fattore</td><td>Criterio di Leibniz (serie alternate)</td><td>converge se |a_n| è decrescente e → 0</td></tr>
     <tr><td>x^n oppure (x-x0)^n con x variabile</td><td>Serie di potenze: raggio di convergenza</td><td>converge per |x-x0|&lt;R, R da rapporto/radice</td></tr>
   </table>
+  </div>
 
   <h3>Cosa dice il Formulario</h3>
   <div class="formula-box">
@@ -153,12 +165,14 @@ Rapporto: [x²/2 + o(x²)]/x² = 1/2 + o(1)  →  LIMITE = 1/2
   <!-- ============================== 3 ============================== -->
   <h2 id="s3">3. Continuità e differenziabilità di funzioni di più variabili</h2>
   <h3>Come riconoscere quando serve la verifica diretta</h3>
+  <div class="table-scroll">
   <table>
     <tr><th>Situazione</th><th>Cosa fare</th></tr>
     <tr><td>f è somma/prodotto/composizione di funzioni elementari (polinomi, exp, log, trig) ovunque nel dominio</td><td>f è automaticamente C¹ (continua e differenziabile): non serve verificare con la definizione</td></tr>
     <tr><td>f è definita a tratti, con un valore speciale in un punto (es. f(0,0)=0) o un denominatore che si annulla in un punto</td><td>Il punto "critico" va verificato a mano con la definizione di limite: continuità e differenziabilità non sono garantite lì</td></tr>
     <tr><td>Un limite in più variabili sembra dare valori diversi lungo cammini diversi</td><td>Prova cammini semplici (x=0, y=0, y=x, y=x²): se ottieni risultati diversi, il limite non esiste</td></tr>
   </table>
+  </div>
 
   <h3>Cosa dice il Formulario</h3>
   <div class="formula-box">
@@ -276,6 +290,7 @@ NON esiste un massimo assoluto (f→+∞ allontanandosi sulla retta), anche se i
   </div>
 
   <h3>Passo 2 — riconoscere la forma del termine noto (metodo di somiglianza)</h3>
+  <div class="table-scroll">
   <table>
     <tr><th>Forma di f(x)</th><th>y_p tentativa (nessuna risonanza)</th><th>Se c'è risonanza</th></tr>
     <tr><td>Polinomio grado n</td><td>Polinomio grado n</td><td>se 0 è radice: grado n+1 (o n+2 se anche radice doppia)</td></tr>
@@ -284,6 +299,7 @@ NON esiste un massimo assoluto (f→+∞ allontanandosi sulla retta), anche se i
     <tr><td>e^(λx)·(A·cosωx+B·sinωx)</td><td>e^(λx)·(c1·cosωx+c2·sinωx)</td><td>se λ±iω radice: moltiplica per x</td></tr>
     <tr><td>e^(λx)·p(x), p polinomio grado n</td><td>e^(λx)·q(x), q polinomio grado n</td><td>moltiplica per x^k se λ ha molteplicità k</td></tr>
   </table>
+  </div>
 
   <div class="info-box">
     <span class="box-label">Regola esatta della risonanza (l'errore più comune)</span>
@@ -324,6 +340,7 @@ y_p tentativa = e^(2x)(A·cosx + B·sinx)
   il dominio e l'integranda insieme.</p>
 
   <h3>Riconoscere le curve del dominio</h3>
+  <div class="table-scroll">
   <table>
     <tr><th>Equazione</th><th>Curva</th></tr>
     <tr><td>x²+y² = R²</td><td>Cerchio, centro origine, raggio R → in polari: r=R</td></tr>
@@ -333,8 +350,10 @@ y_p tentativa = e^(2x)(A·cosx + B·sinx)
     <tr><td>y=x² , y=√x</td><td>Parabole (asse verticale / orizzontale)</td></tr>
     <tr><td>x·y = k</td><td>Iperbole equilatera</td></tr>
   </table>
+  </div>
 
   <h3>Come scegliere il metodo</h3>
+  <div class="table-scroll">
   <table>
     <tr><th>Cosa vedi</th><th>Strategia</th></tr>
     <tr><td>Cerchi / ellissi nel dominio</td><td>Coordinate polari (o polari generalizzate per l'ellisse)</td></tr>
@@ -343,6 +362,7 @@ y_p tentativa = e^(2x)(A·cosx + B·sinx)
     <tr><td>Integranda tipo xy su dominio circolare</td><td>Polari: xy diventa r²·cosθ·sinθ, con lo Jacobiano r³·cosθ·sinθ</td></tr>
     <tr><td>Due cerchi che si intersecano</td><td>Trova l'angolo θ* di intersezione e dividi l'integrale in due parti</td></tr>
   </table>
+  </div>
 
   <h3>Coordinate polari — non dimenticare lo Jacobiano</h3>
   <div class="formula-box">
@@ -402,5 +422,12 @@ Per un'ellisse x²/a²+y²/b²≤1:  x=a·r·cosθ, y=b·r·sinθ,  dx dy = a·b
 
 <footer>Teoria Applicata — versione web, adattata dal documento Word omonimo nella cartella del progetto.</footer>
 
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("service-worker.js").catch((e) => console.warn("SW non registrato:", e));
+  });
+}
+</script>
 </body>
 </html>
