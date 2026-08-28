@@ -58,11 +58,19 @@ def _grafico_png(chiave, es):
     except Exception as e:
         print(f"  [!] grafico fallito per {chiave}: {e}")
         return None
+    # dpi 88 + palette adattiva a 96 colori: visivamente indistinguibile dal PNG
+    # pieno per questi grafici tecnici, ma pesa circa 1/4-1/5 in meno (verificato
+    # a campione) -- importante per il peso totale di esercizi.json in cache offline.
     buf = io.BytesIO()
-    fig.savefig(buf, format="png", dpi=105, bbox_inches="tight")
+    fig.savefig(buf, format="png", dpi=88, bbox_inches="tight")
     plt.close(fig)
     buf.seek(0)
-    return base64.b64encode(buf.read()).decode("ascii")
+    from PIL import Image
+    im = Image.open(buf).convert("RGB").convert("P", palette=Image.ADAPTIVE, colors=96)
+    out = io.BytesIO()
+    im.save(out, format="PNG", optimize=True)
+    out.seek(0)
+    return base64.b64encode(out.read()).decode("ascii")
 
 
 def _campioni_funzione(f_num_expr, var, punti_x):

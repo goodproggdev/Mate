@@ -9,12 +9,11 @@ spiegazione gia' pronti). A differenza del banco procedurale, questi esercizi so
 scritti a mano uno per uno (non generati da un pool), perche' ciascuno riproduce un
 problema specifico e non parametrico.
 
-Copertura: non tutti i ~90 esercizi individuati nelle 6 dispense sono stati inclusi
-(molti erano danneggiati dall'estrazione OCR delle formule, specialmente le funzioni
-a tratti di 'continuita'); questa e' una selezione di quelli che si sono potuti
-decifrare e verificare con sicurezza, rappresentativa dello stile e della difficolta'
-di ciascun argomento. Taylor non ha problemi reali (non compare in nessun appello
-trovato) e Serie non ha, per ora, esempi reali sufficientemente leggibili.
+Copertura: non tutti gli esercizi individuati nelle dispense sono stati inclusi (molti
+erano danneggiati dall'estrazione OCR delle formule); questa e' una selezione di quelli
+che si sono potuti decifrare (rileggendo le pagine originali quando serviva) e
+verificare con sicurezza, rappresentativa dello stile e della difficolta' di ciascun
+argomento. Taylor non ha problemi reali (non compare in nessun appello trovato).
 """
 import io
 import base64
@@ -42,11 +41,21 @@ def _tex(v):
 
 
 def _png(fig):
+    # dpi 88 + palette adattiva a 96 colori: per grafici "tecnici" (linee, curve,
+    # riempimenti semi-trasparenti) e' visivamente indistinguibile dal PNG pieno,
+    # ma pesa circa 1/4-1/5 in meno (verificato a campione). Con ~140 grafici nel
+    # banco fa la differenza tra un file da ~20MB e uno da ~4MB da scaricare/
+    # tenere in cache offline sul telefono.
     buf = io.BytesIO()
-    fig.savefig(buf, format="png", dpi=105, bbox_inches="tight")
+    fig.savefig(buf, format="png", dpi=88, bbox_inches="tight")
     plt.close(fig)
     buf.seek(0)
-    return base64.b64encode(buf.read()).decode("ascii")
+    from PIL import Image
+    im = Image.open(buf).convert("RGB").convert("P", palette=Image.ADAPTIVE, colors=96)
+    out = io.BytesIO()
+    im.save(out, format="PNG", optimize=True)
+    out.seek(0)
+    return base64.b64encode(out.read()).decode("ascii")
 
 
 def _voce(fonte, testo, testo_latex, suggerimento, passi, risposta, grafico_png=None):
@@ -59,6 +68,103 @@ def _voce(fonte, testo, testo_latex, suggerimento, passi, risposta, grafico_png=
 ESAME = {"serie": [], "taylor": [], "lagrange": [], "punti_liberi": [], "edo": [],
           "edo1": [], "integrali": [], "continuita": []}
 
+# ---------------------------------------------------------------------------
+# SERIE (3 problemi, appello di ottobre 2025)
+# ---------------------------------------------------------------------------
+
+def _serie_generico(fonte, testo, testo_latex, passi, valore_somma):
+    risposta = {"tipo": "numero", "atteso_numero": float(sp.N(valore_somma)),
+                "atteso_display": str(valore_somma)}
+    return _voce(fonte, testo, testo_latex,
+                 "Scrivi il valore della somma (numerico o simbolico), es: 1/5.",
+                 passi, risposta, None)
+
+
+def _serie_telescopica():
+    n_ = sp.symbols('n', positive=True, integer=True)
+    termine = sp.Integer(2) / (4*n_**2 + 8*n_ + 3)
+    fatt = sp.factor(4*n_**2 + 8*n_ + 3)
+    parziali = sp.apart(termine, n_)
+    somma = sp.summation(termine, (n_, 2, sp.oo))
+    testo = ("[22 ottobre 2025, Esercizio 3] Data la serie Σ (n≥2) 2/(4n²+8n+3), verificare che si "
+             "tratta di una serie telescopica e calcolarne la somma.")
+    testo_latex = r"\sum_{n\ge2}\frac{2}{4n^2+8n+3}"
+    passi = [
+        _passo("Serie:", testo_latex),
+        _passo("Passo 1 — fattorizziamo il denominatore:", "4n^2+8n+3 = " + _tex(fatt)),
+        _passo("Passo 2 — scomponiamo in fratti semplici: si ottiene la forma tipica "
+               "1/(2n+1) - 1/(2n+3), cioè una serie TELESCOPICA (i cui termini si elidono a coppie):",
+               r"\frac{2}{(2n+1)(2n+3)} = " + _tex(parziali)),
+        _passo("Passo 3 — la somma parziale N-esima si 'accorcia': tutti i termini centrali si "
+               "cancellano a due a due, restano solo il primo e l'ultimo:",
+               r"\sum_{n=2}^{N}\left(\frac{1}{2n+1}-\frac{1}{2n+3}\right) = \frac15-\frac{1}{2N+3}"),
+        _passo("Passo 4 — per N→∞ il secondo termine tende a 0, quindi la serie converge:",
+               "\\text{somma} = " + _tex(somma)),
+    ]
+    return _serie_generico("22 ottobre 2025", testo, testo_latex, passi, somma)
+
+
+def _serie_geometrica():
+    n_ = sp.symbols('n', positive=True, integer=True)
+    termine = sp.Rational(2)**(1-2*n_) / sp.Rational(3)**(n_-2)
+    termine_semplificato = sp.simplify(termine)
+    ratio = sp.Rational(1, 12)
+    primo_termine = termine.subs(n_, 2)
+    somma = sp.summation(termine, (n_, 2, sp.oo))
+    testo = ("[25 ottobre 2025, Esercizio 3] Data la serie Σ (n≥2) 2^(1-2n)/3^(n-2), dopo averla "
+             "ricondotta a una serie geometrica, studiarne la convergenza e calcolarne la somma.")
+    testo_latex = r"\sum_{n\ge2}\frac{2^{1-2n}}{3^{n-2}}"
+    passi = [
+        _passo("Serie:", testo_latex),
+        _passo("Passo 1 — separiamo le potenze in base n raccogliendo le costanti:",
+               r"\frac{2^{1-2n}}{3^{n-2}} = 2\cdot3^2\cdot\left(\frac14\right)^n\left(\frac13\right)^n"
+               " = " + _tex(termine_semplificato)),
+        _passo("Passo 2 — è una serie geometrica di ragione q=1/12:",
+               "q = " + _tex(ratio) + r",\ \ |q|<1 \Rightarrow \textbf{CONVERGE}"),
+        _passo("Passo 3 — il primo termine (per n=2, dove parte la sommatoria) vale:",
+               "a_2 = " + _tex(primo_termine)),
+        _passo("Passo 4 — somma di una serie geometrica: (primo termine)/(1-ragione):",
+               r"\text{somma} = \frac{" + _tex(primo_termine) + "}{1-" + _tex(ratio) + "} = "
+               + _tex(somma)),
+    ]
+    return _serie_generico("25 ottobre 2025", testo, testo_latex, passi, somma)
+
+
+def _serie_parametrica():
+    xs = sp.symbols('x')
+    q = (1 - xs + xs**2) / (xs + 1)
+    q_at_1 = sp.nsimplify(q.subs(xs, 1))
+    testo = ("[29 ottobre 2025, Esercizio 3] Data la serie Σ (n≥1) [(1-x+x²)/(x+1)]^n, determinare "
+             "per quali valori reali di x la serie diverge. (Per la verifica automatica qui sotto: "
+             "indica se per x=1 la serie CONVERGE o DIVERGE — la discussione completa per ogni x è "
+             "nei passaggi della soluzione.)")
+    testo_latex = r"\sum_{n\ge1}\left(\frac{1-x+x^2}{x+1}\right)^n"
+    passi = [
+        _passo("Serie:", testo_latex),
+        _passo("Passo 1 — è una serie geometrica di ragione q(x) = (1-x+x²)/(x+1), definita per "
+               "x≠-1 (il numeratore x²-x+1 ha discriminante negativo, quindi è sempre positivo).",
+               None),
+        _passo("Passo 2 — una serie geometrica converge se e solo se |q|<1, e diverge se |q|≥1 "
+               "(anche nel caso limite q=±1, dove il termine generale non tende a 0).", None),
+        _passo("Passo 3 — per x>-1 si ha q>0 (stesso segno del numeratore): risolviamo q≥1:",
+               r"\frac{x^2-x+1}{x+1}\ge1 \iff x^2-2x\ge0 \iff x\le0 \text{ oppure } x\ge2"),
+        _passo("Passo 4 — per x<-1 si ha q<0 (denominatore negativo): risolviamo q≤-1; l'algebra si "
+               "riduce a x²+2≥0, SEMPRE vera. Quindi per ogni x<-1 la serie diverge sempre.",
+               r"\frac{x^2-x+1}{x+1}\le-1 \iff x^2+2\ge0\ \ (\text{sempre vero})"),
+        _passo("Conclusione — la serie converge SOLO per 0<x<2 (dove |q|<1); diverge per ogni altro "
+               "x reale (con x≠-1, dove non è definita):",
+               r"\textbf{diverge per } x\in(-\infty,0]\cup[2,+\infty),\ x\ne-1"),
+        _passo(f"Verifica per x=1 (nell'intervallo di convergenza 0<x<2): q(1)={_tex(q_at_1)}, "
+               "|q|<1 → CONVERGE.", None),
+    ]
+    risposta = {"tipo": "scelta", "atteso": "converge"}
+    return _voce("29 ottobre 2025", testo, testo_latex,
+                 "Scrivi 'converge' o 'diverge' (riferito al caso x=1).", passi, risposta, None)
+
+
+ESAME["serie"].append(_serie_telescopica())
+ESAME["serie"].append(_serie_geometrica())
+ESAME["serie"].append(_serie_parametrica())
 # ---------------------------------------------------------------------------
 # LAGRANGE (1 problema: 18 ottobre 2025, Esercizio 1)
 # ---------------------------------------------------------------------------
@@ -569,5 +675,55 @@ def _continuita_maggio():
                  "Scrivi: continua,differenziabile", passi, risposta, png)
 
 
+def _continuita_dicembre():
+    f_expr = y**2*(x-2)
+    testo = ("[6 dicembre 2025, Esercizio 1] Data la funzione f(x,y) = y²(x-2): a) studiare e "
+             "rappresentare graficamente il segno; b) determinare gli eventuali punti di massimo e "
+             "minimo utilizzando la matrice Hessiana; c) studiare continuità e differenziabilità; "
+             "d) determinare, se esiste, il piano tangente in (-1,-2).")
+    testo_latex = r"f(x,y) = y^2(x-2)"
+    fx = sp.diff(f_expr, x); fy = sp.diff(f_expr, y)
+    hess = sp.hessian(f_expr, (x, y))
+    passi = [_passo("Funzione (polinomiale):", testo_latex)]
+    passi.append(_passo("Passo a) — segno: y² ≥ 0 sempre, quindi il segno di f dipende solo dal "
+                         "fattore (x-2):",
+                         r"f\ge0 \iff x\ge2,\qquad f\le0 \iff x\le2,\qquad f=0 \iff x=2 \text{ o } y=0"))
+    passi.append(_passo("Passo b) — annulliamo il gradiente per trovare i punti stazionari:",
+                         _tex(fx) + "=0,\\quad" + _tex(fy) + "=0"))
+    passi.append(_passo("Il sistema (y²=0, 2y(x-2)=0) impone y=0 per QUALSIASI x: i punti stazionari "
+                         "non sono isolati, ma formano l'intera retta y=0 (caso degenere).", None))
+    passi.append(_passo("Matrice Hessiana generale, e ristretta alla retta y=0:",
+                         "H(x,y) = " + _tex(hess) + r",\quad H(x,0) = " + _tex(hess.subs(y, 0))))
+    passi.append(_passo("Lungo y=0 si ha sempre det H = 0: il test dell'Hessiano NON decide da solo. "
+                         "Studiando il segno direttamente, f(x0,y)-f(x0,0)=y^2(x0-2): per x0>2 è un "
+                         "minimo (debole) locale, per x0<2 un massimo (debole) locale, per x0=2 f è "
+                         "identicamente nulla su entrambe le rette che si incrociano lì (nessun "
+                         "estremo stretto in alcun caso).", None))
+    passi.append(_passo("Passo c) — continuità e differenziabilità: f è un POLINOMIO (somma e "
+                         "prodotto di funzioni continue e derivabili con continuità), quindi è "
+                         "automaticamente continua e differenziabile (di classe C^∞) in TUTTO R², "
+                         "incluso (0,0) — a differenza degli esercizi precedenti (funzioni definite a "
+                         "tratti vicino all'origine), qui non serve nessuna analisi di limite.", None))
+    f_m1m2 = f_expr.subs({x: -1, y: -2})
+    fx_m1m2 = fx.subs({x: -1, y: -2}); fy_m1m2 = fy.subs({x: -1, y: -2})
+    piano = sp.expand(f_m1m2 + fx_m1m2*(x+1) + fy_m1m2*(y+2))
+    passi.append(_passo("Passo d) — piano tangente in (-1,-2): valori di f e delle derivate parziali "
+                         "in quel punto:",
+                         f"f(-1,-2)={_tex(f_m1m2)},\\ f_x(-1,-2)={_tex(fx_m1m2)},\\ "
+                         f"f_y(-1,-2)={_tex(fy_m1m2)}"))
+    passi.append(_passo("Piano tangente:", "z = " + _tex(piano)))
+
+    es_fake = {"f": f_expr, "continua": True, "differenziabile": True}
+    try:
+        fig = _grafico.grafico_continuita(es_fake)
+        png = _png(fig)
+    except Exception:
+        png = None
+    risposta = {"tipo": "continuita", "continua": True, "differenziabile": True}
+    return _voce("6 dicembre 2025", testo, testo_latex,
+                 "Scrivi: continua,differenziabile", passi, risposta, png)
+
+
 ESAME["continuita"].append(_continuita_aprile())
 ESAME["continuita"].append(_continuita_maggio())
+ESAME["continuita"].append(_continuita_dicembre())

@@ -12,7 +12,7 @@
  * scaricare un runtime Python + numpy/sympy/matplotlib nel browser (erano decine di MB
  * e qualche secondo di avvio); il banco statico e' piu' piccolo e si apre all'istante.
  */
-const CACHE_APP = "mm-app-v5";
+const CACHE_APP = "mm-app-v6";
 const CACHE_RUNTIME = "mm-runtime-v2";
 
 const APP_ASSETS = [
@@ -35,12 +35,25 @@ const MATHJS_URL = "https://cdn.jsdelivr.net/npm/mathjs@12.4.3/lib/browser/math.
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_APP)
-      .then((cache) => cache.addAll(APP_ASSETS))
+    precacheAppAssets()
       .then(() => precacheRuntimeAssets())
       .then(() => self.skipWaiting())
   );
 });
+
+/*
+ * Mettiamo in cache ogni file dell'app separatamente (invece di cache.addAll, che e'
+ * "tutto o niente": se anche un solo file fallisce -- es. esercizi.json su una rete
+ * mobile instabile -- l'intera installazione va in errore e NON resta in cache
+ * nemmeno index.html, vanificando l'uso offline). Cosi', anche se un file fallisce al
+ * primo tentativo, gli altri restano comunque disponibili offline da subito; quello
+ * fallito verra' comunque messo in cache al primo utilizzo con successo (vedi il
+ * gestore "fetch" piu' sotto, che salva in cache ogni risposta valida).
+ */
+async function precacheAppAssets() {
+  const cache = await caches.open(CACHE_APP);
+  await Promise.all(APP_ASSETS.map((url) => precacheOne(cache, url)));
+}
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(

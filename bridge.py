@@ -121,10 +121,14 @@ def _spiega_serie_latex(es):
 
     elif tipo == "alternata":
         p = es["p"]
-        passi.append(_passo("Passo 1 — la serie è alternata con |a_n| positivo, decrescente e infinitesimo:",
+        passi.append(_passo("Passo 1 — la serie è alternata (compare (-1)^n); isoliamo il valore assoluto:",
                              r"|a_n| = \frac{1}{n^{" + _tex(p) + r"}}"))
-        passi.append(_passo("Passo 2 — per il criterio di Leibniz, la serie converge "
-                             "(almeno condizionatamente).", None))
+        passi.append(_passo("Verifichiamo le due ipotesi del criterio di Leibniz: |a_n| è DECRESCENTE "
+                             "(perché n^p, con p>0, è crescente in n, quindi 1/n^p è decrescente) ed "
+                             "è INFINITESIMA (perché 1/n^p → 0 per n→∞).",
+                             r"|a_{n+1}|<|a_n|,\qquad \lim_{n\to\infty}|a_n|=0"))
+        passi.append(_passo("Passo 2 — essendo entrambe le ipotesi verificate, per il criterio di "
+                             "Leibniz la serie converge (almeno condizionatamente).", None))
         passi.append(_passo("Passo 3 — verifichiamo la convergenza assoluta studiando la serie p:",
                              r"\sum \frac{1}{n^{" + _tex(p) + r"}}"))
         assoluta = (r"p>1 \Rightarrow \text{converge ANCHE assolutamente}" if p > 1
@@ -195,10 +199,21 @@ def _spiega_lagrange_latex(es):
                          _tex(grad_f[0]) + r"=\lambda(" + _tex(grad_g[0]) + r")\quad,\quad "
                          + _tex(grad_f[1]) + r"=\lambda(" + _tex(grad_g[1]) + r")\quad,\quad "
                          + _tex(g) + "=0"))
-    passi.append(_passo("Passo 2 — risolvendo il sistema si trovano i punti stazionari "
-                         "(con il valore di f in ciascuno):", None))
-    for px, py, val in es["punti"]:
-        passi.append(_passo("", "(x,y)=(" + _tex(px) + "," + _tex(py) + r")\ \Rightarrow\ f=" + _tex(val)))
+    passi.append(_passo("Un modo pratico per eliminare λ senza calcolarlo subito: essendo i due "
+                         "gradienti paralleli, il loro \"prodotto incrociato\" deve annullarsi -- "
+                         "equazione equivalente al sistema sopra, ma senza λ:",
+                         _tex(sp.expand(grad_f[0] * grad_g[1] - grad_f[1] * grad_g[0])) + "=0"))
+    passi.append(_passo("Passo 2 — risolvendo questa equazione insieme al vincolo g=0 si trovano i "
+                         "punti stazionari; per ciascuno, λ si ricava da una delle due equazioni del "
+                         "sistema. Verifica (il gradiente di f deve essere esattamente λ volte quello "
+                         "di g):", None))
+    for (px, py, val), lam_v in zip(es["punti"], es["lambda_per_punto"]):
+        gfx = grad_f[0].subs({x: px, y: py}); gfy = grad_f[1].subs({x: px, y: py})
+        ggx = grad_g[0].subs({x: px, y: py}); ggy = grad_g[1].subs({x: px, y: py})
+        passi.append(_passo("", "(x,y)=(" + _tex(px) + "," + _tex(py) + r"),\ \lambda=" + _tex(lam_v)
+                             + r":\quad \nabla f=(" + _tex(gfx) + "," + _tex(gfy) + r")\ =\ \lambda\nabla g="
+                             + r"(" + _tex(sp.simplify(lam_v * ggx)) + "," + _tex(sp.simplify(lam_v * ggy))
+                             + r")\ \Rightarrow\ f=" + _tex(val)))
 
     passi.append(_passo("Passo 3 — classifichiamo ogni punto con l'Hessiano orlato (dal formulario): "
                          "posto L=f-\\lambda g,",
@@ -223,13 +238,19 @@ def _spiega_lagrange_latex(es):
 
 
 def _spiega_edo_latex(es):
-    """Ricostruisce spiega_edo() di edo.py passo per passo, in LaTeX."""
+    """Ricostruisce spiega_edo() di edo.py passo per passo, in LaTeX -- con lo svolgimento
+    completo della particolare (per sostituzione dell'ansatz) e del sistema lineare per le
+    condizioni iniziali, non solo il risultato finale (che resta comunque quello
+    pre-verificato in es["soluzione_generale"]/es["soluzione_attesa"]: i passaggi aggiuntivi
+    sono ricalcolati qui solo per mostrarli, e vengono scartati silenziosamente se per
+    qualche motivo non tornano coerenti con quel risultato)."""
     x = edo.x
     a, b = es["a"], es["b"]
     forzante = es["forzante"]
     y0, y1 = es["y0"], es["y1"]
     r_sym = sp.symbols("r")
     radici = sp.solve(sp.Eq(r_sym ** 2 + a * r_sym + b, 0), r_sym)
+    C1, C2 = sp.symbols("C1 C2")
 
     passi = [_passo("Equazione:",
                      "y''+" + _tex(a) + "y'+" + _tex(b) + "y=" + _tex(forzante)
@@ -237,17 +258,25 @@ def _spiega_edo_latex(es):
     passi.append(_passo("Passo 1 — equazione caratteristica dell'omogenea associata:",
                          "r^2+" + _tex(a) + "r+" + _tex(b) + r"=0\ \Rightarrow\ " + _tex(radici)))
 
+    y_om_alt = None
     if len(radici) == 1:
         r0 = radici[0]
+        y_om = C1 * sp.exp(r0 * x) + C2 * x * sp.exp(r0 * x)
         passi.append(_passo("Radice reale doppia:",
                              "r=" + _tex(r0) + r"\ \Rightarrow\ y_{om}(x)=c_1e^{" + _tex(r0)
                              + "x}+c_2xe^{" + _tex(r0) + "x}"))
     elif all(rad.is_real for rad in radici):
+        y_om = C1 * sp.exp(radici[0] * x) + C2 * sp.exp(radici[1] * x)
+        y_om_alt = C1 * sp.exp(radici[1] * x) + C2 * sp.exp(radici[0] * x)
         passi.append(_passo("Radici reali distinte:",
                              r"y_{om}(x)=c_1e^{" + _tex(radici[0]) + "x}+c_2e^{" + _tex(radici[1]) + "x}"))
     else:
         alpha = sp.re(radici[0])
         beta = sp.Abs(sp.im(radici[0]))
+        # sympy scrive sempre la parte omogenea come C1*sin(..)+C2*cos(..), in quest'ordine
+        # (verificato empiricamente): costruiamo y_om con la stessa convenzione, altrimenti la
+        # sottrazione sotto (per isolare y_p) non si cancella e resta sporca di C1/C2.
+        y_om = sp.exp(alpha * x) * (C1 * sp.sin(beta * x) + C2 * sp.cos(beta * x))
         passi.append(_passo("Radici complesse coniugate:",
                              _tex(alpha) + r"\pm i" + _tex(beta)
                              + r"\ \Rightarrow\ y_{om}(x)=e^{" + _tex(alpha) + "x}\\left(c_1\\cos(" + _tex(beta)
@@ -255,9 +284,61 @@ def _spiega_edo_latex(es):
 
     passi.append(_passo("Passo 2 — forma della soluzione particolare (metodo di somiglianza): "
                          + edo._descrivi_ansatz(a, b, forzante), None))
+
+    # y_p isolata per sottrazione dalla soluzione generale (stessi simboli C1,C2 di sympy);
+    # verificata per sostituzione diretta nell'equazione prima di mostrarla, cosi' non si
+    # rischia mai di esporre un passaggio inconsistente con la soluzione gia' calcolata.
+    try:
+        y_gen_expr = es["soluzione_generale"].rhs
+        y_p = None
+        # per radici reali distinte sympy a volte assegna C1/C2 alla radice "opposta"
+        # rispetto all'ordine restituito dal nostro solve() qui sopra (capita con radici
+        # irrazionali): proviamo entrambi gli abbinamenti e teniamo quello che si cancella
+        # in una y_p pulita (senza C1/C2 residui).
+        for tentativo in [y_om] + ([y_om_alt] if y_om_alt is not None else []):
+            cand = sp.simplify(sp.expand(y_gen_expr - tentativo))
+            residuo = sp.simplify(sp.diff(cand, x, 2) + a * sp.diff(cand, x) + b * cand - forzante)
+            if residuo == 0 and cand != 0 and not cand.has(C1, C2):
+                y_p = cand
+                break
+        if y_p is not None:
+            passi.append(_passo("Sostituendo l'ansatz nell'equazione e uguagliando i coefficienti (metodo "
+                                 "dei coefficienti indeterminati) si trova la soluzione particolare:",
+                                 "y_p(x) = " + _tex(y_p)))
+    except Exception:
+        pass
+
     passi.append(_passo("Passo 3 — per sovrapposizione, la soluzione generale è omogenea + particolare:",
                          "y(x)=" + _tex(es["soluzione_generale"].rhs)))
-    passi.append(_passo("Passo 4 — imponendo le condizioni iniziali, la soluzione del problema di Cauchy è:",
+
+    # Sistema di Cauchy risolto esplicitamente (con controllo di coerenza col risultato
+    # gia' precalcolato: se il confronto non tornasse identico, si torna silenziosamente
+    # alla versione sintetica invece di mostrare un procedimento che sembra contraddirlo).
+    mostrato = False
+    try:
+        y_gen_expr = es["soluzione_generale"].rhs
+        dy_gen_expr = sp.diff(y_gen_expr, x)
+        y0_espr = y_gen_expr.subs(x, 0)
+        dy0_espr = dy_gen_expr.subs(x, 0)
+        soluz = sp.solve([sp.Eq(y0_espr, y0), sp.Eq(dy0_espr, y1)], [C1, C2], dict=True)
+        if soluz:
+            costanti = soluz[0]
+            y_finale = sp.simplify(y_gen_expr.subs(costanti))
+            if sp.simplify(y_finale - es["soluzione_attesa"].rhs) == 0:
+                passi.append(_passo("Passo 4 — imponiamo le condizioni iniziali: calcoliamo y(x) e y'(x) "
+                                     "in x=0 e li uguagliamo ai valori assegnati:",
+                                     "y(0)=" + _tex(y0_espr) + "=" + _tex(y0)
+                                     + r",\quad y'(0)=" + _tex(dy0_espr) + "=" + _tex(y1)))
+                passi.append(_passo("Risolvendo il sistema lineare in C1, C2:",
+                                     "C_1=" + _tex(costanti.get(C1, C1)) + r",\quad C_2="
+                                     + _tex(costanti.get(C2, C2))))
+                mostrato = True
+    except Exception:
+        pass
+    if not mostrato:
+        passi.append(_passo("Passo 4 — imponendo le condizioni iniziali:", None))
+
+    passi.append(_passo("Soluzione del problema di Cauchy:",
                          "y(x)=" + _tex(es["soluzione_attesa"].rhs)))
     return passi
 
@@ -270,7 +351,11 @@ def _dominio_latex(es):
 
 
 def _spiega_integrali_latex(es):
-    """Ricostruisce spiega_integrale() di integrali.py passo per passo, in LaTeX."""
+    """Ricostruisce spiega_integrale() di integrali.py passo per passo, in LaTeX -- mostrando
+    anche le primitive (integrali indefiniti) intermedie, non solo i valori gia' calcolati
+    agli estremi. Se sympy non riuscisse a calcolarle in forma chiusa per qualche caso raro,
+    si torna silenziosamente alla versione sintetica (comunque corretta)."""
+    r, theta = integrali.r, integrali.theta
     passi = [_passo("Dominio e integranda:",
                      _dominio_latex(es) + r",\quad f(x,y)=" + _tex(es["integranda_xy"]))]
     passi.append(_passo("Passo 1 — cambio in coordinate polari (Jacobiano = r):",
@@ -279,12 +364,31 @@ def _spiega_integrali_latex(es):
                          r"f(r,\theta)\cdot r = " + _tex(es["integranda_jacobiano"])))
     passi.append(_passo(f"Passo 2 — estremi di integrazione: r ∈ [{es['r_min']}, {es['r_max']}], "
                          "θ nell'angolo giro [0, 2π].", None))
-    passi.append(_passo("Passo 3 — integrale interno (rispetto a r):",
-                         r"\int_{" + _tex(es["r_min"]) + "}^{" + _tex(es["r_max"]) + "} "
-                         + _tex(es["integranda_jacobiano"]) + r"\,dr = " + _tex(es["integrale_interno"])))
-    passi.append(_passo("Passo 4 — integrale esterno (rispetto a θ):",
-                         r"\int_0^{2\pi} " + _tex(es["integrale_interno"]) + r"\,d\theta = "
-                         + _tex(es["valore_atteso"])))
+
+    try:
+        primitiva_r = sp.simplify(sp.integrate(es["integranda_jacobiano"], r))
+        passi.append(_passo("Passo 3 — calcoliamo prima la primitiva rispetto a r:",
+                             r"\int " + _tex(es["integranda_jacobiano"]) + r"\,dr = " + _tex(primitiva_r)))
+        passi.append(_passo("e la valutiamo tra gli estremi (primitiva(r_max) − primitiva(r_min)):",
+                             r"\Big[" + _tex(primitiva_r) + r"\Big]_{" + _tex(es["r_min"]) + "}^{"
+                             + _tex(es["r_max"]) + "} = " + _tex(es["integrale_interno"])))
+    except Exception:
+        passi.append(_passo("Passo 3 — integrale interno (rispetto a r):",
+                             r"\int_{" + _tex(es["r_min"]) + "}^{" + _tex(es["r_max"]) + "} "
+                             + _tex(es["integranda_jacobiano"]) + r"\,dr = " + _tex(es["integrale_interno"])))
+
+    try:
+        primitiva_theta = sp.simplify(sp.integrate(es["integrale_interno"], theta))
+        passi.append(_passo("Passo 4 — allo stesso modo, la primitiva rispetto a θ:",
+                             r"\int " + _tex(es["integrale_interno"]) + r"\,d\theta = "
+                             + _tex(primitiva_theta)))
+        passi.append(_passo("valutata tra 0 e 2π:",
+                             r"\Big[" + _tex(primitiva_theta) + r"\Big]_0^{2\pi} = "
+                             + _tex(es["valore_atteso"])))
+    except Exception:
+        passi.append(_passo("Passo 4 — integrale esterno (rispetto a θ):",
+                             r"\int_0^{2\pi} " + _tex(es["integrale_interno"]) + r"\,d\theta = "
+                             + _tex(es["valore_atteso"])))
     return passi
 
 
@@ -293,18 +397,25 @@ def _spiega_punti_liberi_latex(es):
     x, y = multivariabile.x, multivariabile.y
     f = es["f"]
     grad = [sp.diff(f, v) for v in (x, y)]
+    fxx = sp.diff(f, x, 2); fyy = sp.diff(f, y, 2); fxy = sp.diff(f, x, y)
     hess = sp.hessian(f, (x, y))
     passi = [_passo("Funzione:", "f(x,y) = " + _tex(sp.expand(f)))]
     passi.append(_passo("Passo 1 — annulliamo il gradiente per trovare i punti stazionari:",
                          _tex(grad[0]) + "=0,\\quad" + _tex(grad[1]) + "=0"))
-    passi.append(_passo("Passo 2 — matrice Hessiana:", "H(x,y) = " + _tex(hess)))
-    passi.append(_passo("Passo 3 — per ogni punto stazionario valutiamo H e ne studiamo il segno "
-                         "(det>0 e traccia>0 → minimo; det>0 e traccia<0 → massimo; det<0 → sella; "
-                         "det=0 → indeterminato):", None))
+    passi.append(_passo("Passo 2 — calcoliamo le tre derivate parziali seconde:",
+                         r"f_{xx}=" + _tex(fxx) + r",\quad f_{yy}=" + _tex(fyy)
+                         + r",\quad f_{xy}=" + _tex(fxy)))
+    passi.append(_passo("...e ne formiamo la matrice Hessiana:", "H(x,y) = " + _tex(hess)))
+    passi.append(_passo("Passo 3 — per ogni punto stazionario verifichiamo che annulli il gradiente, poi "
+                         "valutiamo H e ne studiamo il segno (det>0 e traccia>0 → minimo; det>0 e "
+                         "traccia<0 → massimo; det<0 → sella; det=0 → indeterminato):", None))
     for c in es["classificazioni"]:
         px, py = c["punto"]
+        gx = grad[0].subs({x: px, y: py}); gy = grad[1].subs({x: px, y: py})
         H = hess.subs({x: px, y: py})
-        passi.append(_passo(f"Punto ({_tex(px)}, {_tex(py)}):",
+        passi.append(_passo(f"Punto ({_tex(px)}, {_tex(py)}) — verifica del gradiente:",
+                             r"f_x=" + _tex(gx) + r",\ f_y=" + _tex(gy)))
+        passi.append(_passo("",
                              "H=" + _tex(H) + r",\ \det H=" + _tex(H.det())
                              + r",\ \mathrm{tr}\,H=" + _tex(H.trace())
                              + r"\ \Rightarrow\ \textbf{" + c["tipo"].upper() + "}"))
@@ -312,24 +423,93 @@ def _spiega_punti_liberi_latex(es):
 
 
 def _spiega_edo1_latex(es):
-    """Ricostruisce spiega_edo_primo_ordine() di edo.py passo per passo, in LaTeX."""
+    """Ricostruisce spiega_edo_primo_ordine() di edo.py passo per passo, in LaTeX -- con il
+    calcolo esplicito del fattore integrante (o della sostituzione di Bernoulli, o dei due
+    integrali della separazione di variabili), non solo il risultato finale. Il risultato
+    finale mostrato resta sempre quello gia' pre-verificato in es["soluzione_generale"]/
+    es["soluzione_attesa"]; i passaggi intermedi qui sono calcoli aggiuntivi (fattore
+    integrante, primitive) mostrati per trasparenza, con un fallback alla versione sintetica
+    se per qualche esercizio non si riescono a calcolare (raro, ma es. un'integrazione che
+    sympy non sa risolvere in forma chiusa)."""
     eq = es["equazione"]
     x0, y0 = es["x0"], es["y0"]
     tipo = es["tipo"]
+    x = edo.x
+    Yx = edo.Y_(x)
+    y_sym = sp.symbols("y")
     passi = [_passo("Equazione:", _tex(eq.lhs) + "=" + _tex(eq.rhs)
                      + r",\quad y(" + _tex(x0) + ")=" + _tex(y0))]
-    if tipo.startswith("lineare"):
-        passi.append(_passo("Passo 1 — equazione lineare del primo ordine: si risolve con il "
-                             "fattore integrante μ(x) = e^{∫p(x)dx}.", None))
-    elif tipo.startswith("bernoulli"):
-        passi.append(_passo("Passo 1 — equazione di Bernoulli: sostituendo v = y^{1-n} si riconduce "
-                             "a un'equazione lineare in v.", None))
-    else:
-        passi.append(_passo("Passo 1 — equazione a variabili separabili: si separano le variabili e "
-                             "si integrano entrambi i membri.", None))
-    passi.append(_passo("Passo 2 — soluzione generale (costante arbitraria C1):",
-                         "y(x) = " + _tex(es["soluzione_generale"].rhs)))
-    passi.append(_passo("Passo 3 — imponendo la condizione iniziale si ottiene:",
+
+    dettagliato = False
+    try:
+        if tipo.startswith("lineare"):
+            p_expr = sp.simplify(eq.lhs.coeff(Yx))
+            q_expr = sp.simplify(eq.rhs)
+            passi.append(_passo("Passo 1 — è lineare, nella forma y' + p(x)y = q(x), con:",
+                                 "p(x)=" + _tex(p_expr) + r",\quad q(x)=" + _tex(q_expr)))
+            integrale_p = sp.integrate(p_expr, x)
+            mu = sp.simplify(sp.exp(integrale_p))
+            passi.append(_passo("Passo 2 — fattore integrante μ(x) = e^{∫p(x)dx}:",
+                                 r"\int p(x)\,dx=" + _tex(integrale_p) + r"\ \Rightarrow\ \mu(x)="
+                                 + _tex(mu)))
+            integrando = sp.simplify(mu * q_expr)
+            integrale_mu_q = sp.integrate(integrando, x)
+            passi.append(_passo("Passo 3 — la soluzione generale è y(x) = (1/μ(x))·[∫μ(x)q(x)dx + C1]; "
+                                 "calcoliamo l'integrale:",
+                                 r"\int \mu(x)q(x)\,dx=" + _tex(integrale_mu_q)))
+            passi.append(_passo("Quindi (a meno della costante arbitraria C1):",
+                                 "y(x) = " + _tex(es["soluzione_generale"].rhs)))
+            dettagliato = True
+
+        elif tipo.startswith("bernoulli"):
+            n = 2
+            p_expr = sp.simplify(eq.lhs.coeff(Yx))
+            q_expr = sp.simplify(sp.cancel(eq.rhs / Yx ** n))
+            passi.append(_passo(f"Passo 1 — è di Bernoulli, nella forma y' + p(x)y = q(x)y^{n}, con:",
+                                 "p(x)=" + _tex(p_expr) + r",\quad q(x)=" + _tex(q_expr)
+                                 + r",\quad n=" + str(n)))
+            passi.append(_passo(f"Passo 2 — sostituzione v = y^(1-{n}) = 1/y: dividendo l'equazione per "
+                                 f"y^{n} e sostituendo, si ottiene un'equazione LINEARE in v:",
+                                 "v'+(" + _tex(-p_expr) + ")v=" + _tex(-q_expr)))
+            passi.append(_passo("Passo 3 — si risolve questa equazione lineare in v con lo stesso metodo "
+                                 "del fattore integrante (Passo 2-3 del caso 'lineare'), e infine si torna "
+                                 "a y=1/v. La soluzione generale (costante arbitraria C1) è:",
+                                 "y(x) = " + _tex(es["soluzione_generale"].rhs)))
+            dettagliato = True
+
+        else:  # separabile
+            rhs = eq.rhs
+            g_expr, h_expr_y = rhs.as_independent(Yx)
+            h_expr = sp.simplify(h_expr_y.subs(Yx, y_sym))
+            passi.append(_passo("Passo 1 — è a variabili separabili, y' = g(x)·h(y), con:",
+                                 "g(x)=" + _tex(g_expr) + r",\quad h(y)=" + _tex(h_expr)))
+            passi.append(_passo("Passo 2 — separiamo le variabili e integriamo entrambi i membri:",
+                                 r"\int\frac{dy}{h(y)}=\int g(x)\,dx"))
+            integrale_y = sp.integrate(1 / h_expr, y_sym)
+            integrale_x = sp.integrate(g_expr, x)
+            passi.append(_passo("Calcolando i due integrali:",
+                                 r"\int\frac{dy}{h(y)}=" + _tex(integrale_y)
+                                 + r"\qquad,\qquad \int g(x)\,dx=" + _tex(integrale_x) + "+C_1"))
+            passi.append(_passo("Passo 3 — isolando y si ottiene la soluzione generale:",
+                                 "y(x) = " + _tex(es["soluzione_generale"].rhs)))
+            dettagliato = True
+    except Exception:
+        dettagliato = False
+
+    if not dettagliato:
+        if tipo.startswith("lineare"):
+            passi.append(_passo("Passo 1 — equazione lineare del primo ordine: si risolve con il "
+                                 "fattore integrante μ(x) = e^{∫p(x)dx}.", None))
+        elif tipo.startswith("bernoulli"):
+            passi.append(_passo("Passo 1 — equazione di Bernoulli: sostituendo v = y^{1-n} si riconduce "
+                                 "a un'equazione lineare in v.", None))
+        else:
+            passi.append(_passo("Passo 1 — equazione a variabili separabili: si separano le variabili e "
+                                 "si integrano entrambi i membri.", None))
+        passi.append(_passo("Passo 2 — soluzione generale (costante arbitraria C1):",
+                             "y(x) = " + _tex(es["soluzione_generale"].rhs)))
+
+    passi.append(_passo("Passo finale — imponendo la condizione iniziale si ottiene:",
                          "y(x) = " + _tex(es["soluzione_attesa"].rhs)))
     return passi
 

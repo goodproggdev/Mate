@@ -278,6 +278,7 @@
   </div>
 
   <div class="wrap wide">
+    <div id="simulazione-banner" class="card" style="display:none; margin-bottom:14px;"></div>
     <div class="topics-row" id="topic-buttons"></div>
     <div class="difficolta-row" id="difficolta-buttons">
       <span class="difficolta-label">Difficoltà:</span>
@@ -309,11 +310,20 @@
           </div>
 
           <div id="esito"></div>
+          <div id="simulazione-controlli" style="display:none; margin-top:10px;"></div>
           <div id="grafico-area"></div>
         </div>
       </div>
 
       <div>
+        <div class="sidebar-section">
+          <button class="btn" id="btn-simulazione" style="width:100%;">📝 Simulazione compito (2h)</button>
+        </div>
+
+        <div class="sidebar-section">
+          <button class="btn secondary" id="btn-ripassa-errori" style="width:100%;">Ripassa i tuoi errori (<span id="conteggio-errori">0</span>)</button>
+        </div>
+
         <div class="sidebar-section">
           <button class="btn secondary" id="btn-debole" style="width:100%;">Punto debole (auto)</button>
         </div>
@@ -885,21 +895,7 @@ function renderKatexInto(el, latex, displayMode) {
   }
 }
 
-function nuovoEsercizio(chiave) {
-  argomentoCorrente = chiave;
-  setActiveButton(chiave);
-  aggiornaDisponibilitaEsame();
-
-  const lista = (BANCO.esercizi[chiave] || {})[difficoltaCorrente] || [];
-  if (lista.length === 0) {
-    // capitato solo se si passa a 'esame' su un argomento senza banco esame: torna a medio
-    difficoltaCorrente = "medio";
-    aggiornaDisponibilitaEsame();
-  }
-  const listaFinale = (BANCO.esercizi[chiave] || {})[difficoltaCorrente] || [];
-  const idx = Math.floor(Math.random() * listaFinale.length);
-  esercizioCorrente = listaFinale[idx];
-
+function renderEsercizioCorrente() {
   document.getElementById("testo-esercizio").textContent = esercizioCorrente.testo
     + (esercizioCorrente.fonte ? `  [${esercizioCorrente.fonte}]` : "");
 
@@ -917,6 +913,85 @@ function nuovoEsercizio(chiave) {
   document.getElementById("esito").innerHTML = "";
   document.getElementById("grafico-area").innerHTML = "";
   setBusy(false);
+}
+
+function nuovoEsercizio(chiave) {
+  argomentoCorrente = chiave;
+  setActiveButton(chiave);
+  aggiornaDisponibilitaEsame();
+
+  const lista = (BANCO.esercizi[chiave] || {})[difficoltaCorrente] || [];
+  if (lista.length === 0) {
+    // capitato solo se si passa a 'esame' su un argomento senza banco esame: torna a medio
+    difficoltaCorrente = "medio";
+    aggiornaDisponibilitaEsame();
+  }
+  const listaFinale = (BANCO.esercizi[chiave] || {})[difficoltaCorrente] || [];
+  const idx = Math.floor(Math.random() * listaFinale.length);
+  esercizioCorrente = listaFinale[idx];
+  renderEsercizioCorrente();
+}
+
+// ============================================================
+// TROVARE UN ESERCIZIO PER ID (usato da "Ripassa i tuoi errori" e dalla
+// Simulazione compito per riaprire esattamente lo stesso esercizio dopo un
+// ricaricamento della pagina). L'id ha la forma "chiave/difficolta/indice" ed
+// e' stabile perche' la generazione del banco e' deterministica.
+// ============================================================
+function trovaEsercizioPerId(id) {
+  if (!id || !BANCO) return null;
+  const parti = id.split("/");
+  if (parti.length !== 3) return null;
+  const [chiave, difficolta, idxStr] = parti;
+  const idx = parseInt(idxStr, 10);
+  const lista = (BANCO.esercizi[chiave] || {})[difficolta] || [];
+  return lista[idx] || null;
+}
+
+function apriEsercizioSingolo(chiave, difficolta, esercizio) {
+  if (!esercizio) return false;
+  argomentoCorrente = chiave;
+  difficoltaCorrente = difficolta;
+  localStorage.setItem(DIFFICOLTA_KEY, difficolta);
+  setActiveButton(chiave);
+  aggiornaDisponibilitaEsame();
+  document.querySelectorAll(".diff-btn").forEach((x) => x.classList.toggle("active", x.dataset.diff === difficoltaCorrente));
+  esercizioCorrente = esercizio;
+  renderEsercizioCorrente();
+  return true;
+}
+
+// ============================================================
+// RIPASSO MIRATO SUGLI ERRORI — a differenza di "Punto debole (auto)" (che
+// pesa a caso un ARGOMENTO intero in base alla percentuale di errori), questo
+// tiene traccia dei singoli ESERCIZI sbagliati (per id) e li ripropone uno
+// per uno; quando uno viene rifatto correttamente esce dall'elenco.
+// ============================================================
+const ERRORI_KEY = "mm_errori_v1";
+function loadErrori() {
+  try { return JSON.parse(localStorage.getItem(ERRORI_KEY)) || {}; }
+  catch (e) { return {}; }
+}
+function saveErrori(data) { localStorage.setItem(ERRORI_KEY, JSON.stringify(data)); }
+function registraErrore(id, corretto) {
+  if (!id) return;
+  const data = loadErrori();
+  if (corretto) {
+    if (id in data) { delete data[id]; saveErrori(data); }
+  } else if (!(id in data)) {
+    data[id] = true;
+    saveErrori(data);
+  }
+  aggiornaConteggioErrori();
+}
+function aggiornaConteggioErrori() {
+  const el = document.getElementById("conteggio-errori");
+  if (el) el.textContent = Object.keys(loadErrori()).length;
+}
+function esercizioCasualeSbagliato() {
+  const ids = Object.keys(loadErrori()).filter((id) => trovaEsercizioPerId(id));
+  if (ids.length === 0) return null;
+  return ids[Math.floor(Math.random() * ids.length)];
 }
 
 function mostraEsito(corretto, corpo, corpoLatex) {
@@ -1082,6 +1157,196 @@ function verificaRisposta() {
   const corpo = corpoRisultato(spec);
   mostraEsito(esito.corretto, corpo.testo, corpo.latex);
   registraProgresso(argomentoCorrente, esito.corretto);
+  registraErrore(esercizioCorrente.id, esito.corretto);
+  if (simulazione && !simulazione.terminata) {
+    simulazione.risultati[simulazione.correnteIdx] = esito.corretto;
+    salvaSimulazione();
+  }
+}
+
+// ============================================================
+// SIMULAZIONE COMPITO — 3 esercizi (uno per blocco tipico dell'esame reale:
+// funzioni di piu' variabili, EDO, integrali), timer di 2 ore che parte subito
+// e continua a scorrere anche chiudendo l'app (basato su un timestamp salvato,
+// non su un countdown JS che si fermerebbe). Stato persistito in localStorage
+// cosi' la simulazione sopravvive a un ricaricamento/chiusura della pagina.
+// ============================================================
+const SIMULAZIONE_KEY = "mm_simulazione_v1";
+const DURATA_SIMULAZIONE_MS = 2 * 60 * 60 * 1000;
+const BLOCCHI_SIMULAZIONE = [
+  ["continuita", "punti_liberi", "lagrange"],
+  ["edo", "edo1"],
+  ["integrali"],
+];
+let simulazione = null;
+let timerSimulazioneId = null;
+
+function caricaSimulazione() {
+  try {
+    const raw = localStorage.getItem(SIMULAZIONE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) { return null; }
+}
+function salvaSimulazione() {
+  if (simulazione) localStorage.setItem(SIMULAZIONE_KEY, JSON.stringify(simulazione));
+  else localStorage.removeItem(SIMULAZIONE_KEY);
+}
+function formattaTempo(ms) {
+  const s = Math.max(0, Math.floor(ms / 1000));
+  const hh = String(Math.floor(s / 3600)).padStart(2, "0");
+  const mm = String(Math.floor((s % 3600) / 60)).padStart(2, "0");
+  const ss = String(s % 60).padStart(2, "0");
+  return `${hh}:${mm}:${ss}`;
+}
+function scegliEsercizioBlocco(opzioni) {
+  const candidati = opzioni.filter((chiave) => {
+    const diff = HA_ESAME[chiave] ? "esame" : "difficile";
+    return ((BANCO.esercizi[chiave] || {})[diff] || []).length > 0;
+  });
+  if (candidati.length === 0) return null;
+  const chiave = candidati[Math.floor(Math.random() * candidati.length)];
+  const difficolta = HA_ESAME[chiave] ? "esame" : "difficile";
+  const lista = (BANCO.esercizi[chiave] || {})[difficolta] || [];
+  const es = lista[Math.floor(Math.random() * lista.length)];
+  return { chiave, difficolta, id: es.id };
+}
+function avviaSimulazione() {
+  const scelti = [];
+  for (const opzioni of BLOCCHI_SIMULAZIONE) {
+    const scelta = scegliEsercizioBlocco(opzioni);
+    if (!scelta) { mostraErrore("Non riesco a preparare la simulazione: banco insufficiente."); return; }
+    scelti.push(scelta);
+  }
+  const ora = Date.now();
+  simulazione = {
+    inizio: ora, scadenza: ora + DURATA_SIMULAZIONE_MS,
+    esercizi: scelti, correnteIdx: 0,
+    risultati: [null, null, null], terminata: false, scaduta: false,
+  };
+  salvaSimulazione();
+  apriEsercizioSimulazione(0);
+  avviaTimerSimulazione();
+}
+function apriEsercizioSimulazione(idx) {
+  simulazione.correnteIdx = idx;
+  salvaSimulazione();
+  const { chiave, difficolta, id } = simulazione.esercizi[idx];
+  const es = trovaEsercizioPerId(id);
+  apriEsercizioSingolo(chiave, difficolta, es);
+  aggiornaBannerSimulazione();
+  aggiornaControlliModalitaSimulazione();
+}
+function avviaTimerSimulazione() {
+  fermaTimerSimulazione();
+  aggiornaBannerSimulazione();
+  timerSimulazioneId = setInterval(() => {
+    if (!simulazione) { fermaTimerSimulazione(); return; }
+    if (Date.now() >= simulazione.scadenza) {
+      simulazione.scaduta = true;
+      simulazione.terminata = true;
+      salvaSimulazione();
+      fermaTimerSimulazione();
+      mostraRiepilogoSimulazione();
+      return;
+    }
+    aggiornaBannerSimulazione();
+  }, 1000);
+}
+function fermaTimerSimulazione() {
+  if (timerSimulazioneId) { clearInterval(timerSimulazioneId); timerSimulazioneId = null; }
+}
+function aggiornaBannerSimulazione() {
+  const banner = document.getElementById("simulazione-banner");
+  if (!simulazione || simulazione.terminata) { banner.style.display = "none"; return; }
+  banner.style.display = "block";
+  const rimanente = simulazione.scadenza - Date.now();
+  const idx = simulazione.correnteIdx;
+  const nomeArg = NOMI[simulazione.esercizi[idx].chiave] || simulazione.esercizi[idx].chiave;
+  const urgente = rimanente < 10 * 60 * 1000;
+  banner.innerHTML =
+    '<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">' +
+      `<div><strong>📝 Simulazione compito</strong> — Esercizio ${idx + 1}/3 (${escapeHtml(nomeArg)})</div>` +
+      `<div style="font-family:var(--mono); font-size:16px; font-weight:700; color:${urgente ? "var(--red)" : "var(--accent2)"};">⏱ ${formattaTempo(rimanente)}</div>` +
+      '<button class="btn secondary" id="btn-termina-simulazione" style="font-size:12px;">Termina ora</button>' +
+    '</div>';
+  document.getElementById("btn-termina-simulazione").addEventListener("click", () => {
+    if (!confirm("Terminare la simulazione adesso? Non potrai riprenderla da questo punto.")) return;
+    simulazione.terminata = true;
+    salvaSimulazione();
+    fermaTimerSimulazione();
+    mostraRiepilogoSimulazione();
+  });
+}
+function aggiornaControlliModalitaSimulazione() {
+  const topicRow = document.getElementById("topic-buttons");
+  const diffRow = document.getElementById("difficolta-buttons");
+  const debole = document.getElementById("btn-debole");
+  const ripassa = document.getElementById("btn-ripassa-errori");
+  const attivo = !!(simulazione && !simulazione.terminata);
+  [topicRow, diffRow].forEach((el) => {
+    el.style.pointerEvents = attivo ? "none" : "";
+    el.style.opacity = attivo ? "0.4" : "";
+  });
+  debole.disabled = attivo;
+  ripassa.disabled = attivo;
+
+  const controlli = document.getElementById("simulazione-controlli");
+  if (!attivo) { controlli.style.display = "none"; controlli.innerHTML = ""; return; }
+  controlli.style.display = "block";
+  const idx = simulazione.correnteIdx;
+  const ultimo = idx === simulazione.esercizi.length - 1;
+  controlli.innerHTML = `<button class="btn" id="btn-avanti-simulazione" style="width:100%;">${
+    ultimo ? "Termina e vedi il riepilogo" : "Prossimo esercizio →"
+  }</button>`;
+  document.getElementById("btn-avanti-simulazione").addEventListener("click", () => {
+    if (ultimo) {
+      simulazione.terminata = true;
+      salvaSimulazione();
+      fermaTimerSimulazione();
+      mostraRiepilogoSimulazione();
+    } else {
+      apriEsercizioSimulazione(idx + 1);
+    }
+  });
+}
+function mostraRiepilogoSimulazione() {
+  aggiornaBannerSimulazione();
+  aggiornaControlliModalitaSimulazione();
+  const corrette = simulazione.risultati.filter((r) => r === true).length;
+  const risposte = simulazione.risultati.filter((r) => r !== null).length;
+  const tempoImpiegato = Math.min(Date.now(), simulazione.scadenza) - simulazione.inizio;
+  const righe = simulazione.esercizi.map((e, i) => {
+    const r = simulazione.risultati[i];
+    const stato = r === true ? "corretto" : r === false ? "sbagliato" : "non risposto";
+    return `${i + 1}. ${NOMI[e.chiave] || e.chiave} (${e.difficolta}) — ${stato}`;
+  }).join("\n");
+  document.getElementById("esito").innerHTML =
+    '<div class="card" style="background:var(--blue-bg);">' +
+      "<h3 style=\"margin-top:0;\">Riepilogo simulazione compito</h3>" +
+      `<p>${corrette}/3 esercizi corretti (${risposte}/3 risposti) in ${formattaTempo(tempoImpiegato)}` +
+      `${simulazione.scaduta ? " — tempo scaduto" : ""}.</p>` +
+      `<pre style="white-space:pre-wrap; font-family:var(--mono); font-size:13px;">${escapeHtml(righe)}</pre>` +
+      '<button class="btn" id="btn-chiudi-riepilogo" style="margin-top:10px;">Chiudi e torna agli esercizi</button>' +
+    "</div>";
+  document.getElementById("grafico-area").innerHTML = "";
+  document.getElementById("btn-chiudi-riepilogo").addEventListener("click", () => {
+    simulazione = null;
+    salvaSimulazione();
+    document.getElementById("simulazione-banner").style.display = "none";
+    document.getElementById("esito").innerHTML = "";
+    document.getElementById("risposta").value = "";
+    aggiornaControlliModalitaSimulazione();
+  });
+}
+function avviaOrRiprendiSimulazione() {
+  if (simulazione && !simulazione.terminata) {
+    apriEsercizioSimulazione(simulazione.correnteIdx);
+    avviaTimerSimulazione();
+    return;
+  }
+  if (!confirm("Avviare una simulazione compito: 3 esercizi, uno per blocco tipico dell'esame, con un " +
+               "timer di 2 ore che parte subito e non si ferma (anche chiudendo l'app). Procedere?")) return;
+  avviaSimulazione();
 }
 
 function mostraSoluzione() {
@@ -1160,6 +1425,14 @@ async function caricaBancoSeNecessario() {
     document.getElementById("btn-soluzione").addEventListener("click", mostraSoluzione);
     document.getElementById("btn-grafico").addEventListener("click", mostraGrafico);
     document.getElementById("btn-debole").addEventListener("click", () => nuovoEsercizio(argomentoPiuDebole()));
+    document.getElementById("btn-ripassa-errori").addEventListener("click", () => {
+      const id = esercizioCasualeSbagliato();
+      const [chiave, difficolta] = id ? id.split("/") : [null, null];
+      if (!id || !apriEsercizioSingolo(chiave, difficolta, trovaEsercizioPerId(id))) {
+        mostraErrore("Nessun errore da ripassare per ora: quando sbagli un esercizio, comparirà qui per essere ripetuto.");
+      }
+    });
+    document.getElementById("btn-simulazione").addEventListener("click", avviaOrRiprendiSimulazione);
     document.getElementById("btn-reset").addEventListener("click", () => {
       if (confirm("Azzerare tutti i progressi salvati in questo browser?")) {
         localStorage.removeItem(PROGRESS_KEY);
@@ -1170,6 +1443,22 @@ async function caricaBancoSeNecessario() {
     document.getElementById("lightbox").addEventListener("click", (e) => {
       if (e.target.id === "lightbox") chiudiLightbox();
     });
+
+    aggiornaConteggioErrori();
+    simulazione = caricaSimulazione();
+    if (simulazione) {
+      if (!simulazione.terminata && Date.now() >= simulazione.scadenza) {
+        simulazione.terminata = true;
+        simulazione.scaduta = true;
+        salvaSimulazione();
+      }
+      if (simulazione.terminata) {
+        mostraRiepilogoSimulazione();
+      } else {
+        apriEsercizioSimulazione(simulazione.correnteIdx);
+        avviaTimerSimulazione();
+      }
+    }
   } catch (e) {
     document.getElementById("loading-text").innerHTML = "<strong>Errore durante il caricamento del banco esercizi.</strong>";
     detail.textContent = String(e);
