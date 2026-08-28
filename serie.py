@@ -11,7 +11,7 @@ n = sp.symbols('n', positive=True, integer=True)
 _POOLS_DIFFICOLTA = {
     'facile': {
         'tipi': ['potenza_p', 'alternata'],
-        'p': [1, 2],
+        'p': [1, 2, 3],
         'r': [sp.Rational(1, 2), 2],
         'k': [0],
         'a': [1, 2],

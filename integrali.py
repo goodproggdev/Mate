@@ -9,7 +9,7 @@ x, y, r, theta = sp.symbols('x y r theta')
 
 
 _POOLS_INTEGRALI = {
-    'facile': {'tipi': ['cerchio_pieno'], 'R_pieno': [1, 2], 'R_corona': [1, 2, 3],
+    'facile': {'tipi': ['cerchio_pieno'], 'R_pieno': [1, 2, 3], 'R_corona': [1, 2, 3],
                'integ_pieno': [x**2 + y**2, sp.Integer(1)], 'integ_corona': [sp.Integer(1)]},
     'medio': {'tipi': ['cerchio_pieno', 'corona_circolare'], 'R_pieno': [1, 2], 'R_corona': [1, 2, 3],
               'integ_pieno': [x**2 + y**2, x * y, sp.sqrt(x**2 + y**2)],

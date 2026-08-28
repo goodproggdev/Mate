@@ -1,7 +1,7 @@
 {
   "name": "Metodi Matematici — Allenamento",
   "short_name": "Metodi Matematici",
-  "description": "Esercizi, teoria e formulario per l'esame di Metodi Matematici per l'Ingegneria, con generazione e verifica offline via SymPy.",
+  "description": "Esercizi, teoria e formulario per l'esame di Metodi Matematici per l'Ingegneria, con banco precalcolato e verifica offline.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

@@ -19,6 +19,7 @@ import taylor
 import multivariabile
 import edo
 import integrali
+import continuita_differenziabilita
 # 'grafico' (e matplotlib) NON si importano qui: matplotlib e' un package pesante che
 # nel browser conviene scaricare solo se e quando serve davvero un grafico (vedi
 # mostra_grafico_png), non ad ogni avvio dell'app. L'import e' quindi rimandato lì.
@@ -68,6 +69,15 @@ def _enunciato_latex(chiave, es):
                 dominio_tex = (r"D = \{(x,y): " + _tex(es["r_min"] ** 2)
                                 + r" \le x^2+y^2 \le " + _tex(es["r_max"] ** 2) + r"\}")
             return r"\iint_D " + _tex(es["integranda_xy"]) + r"\, dA, \quad " + dominio_tex
+        if chiave == "punti_liberi":
+            return r"f(x,y) = " + _tex(sp.expand(es["f"]))
+        if chiave == "edo1":
+            eq = es["equazione"]
+            return (_tex(eq.lhs) + " = " + _tex(eq.rhs)
+                    + r",\quad y(" + _tex(es["x0"]) + r") = " + _tex(es["y0"]))
+        if chiave == "continuita":
+            f_tex = _tex(es["f"])
+            return (r"f(x,y) = \begin{cases} " + f_tex + r" & (x,y)\ne(0,0) \\ 0 & (x,y)=(0,0) \end{cases}")
     except Exception:
         return None
     return None
@@ -190,12 +200,23 @@ def _spiega_lagrange_latex(es):
     for px, py, val in es["punti"]:
         passi.append(_passo("", "(x,y)=(" + _tex(px) + "," + _tex(py) + r")\ \Rightarrow\ f=" + _tex(val)))
 
+    passi.append(_passo("Passo 3 — classifichiamo ogni punto con l'Hessiano orlato (dal formulario): "
+                         "posto L=f-\\lambda g,",
+                         r"\overline{H} = \begin{pmatrix} 0 & g_x' & g_y' \\ g_x' & L_{xx}'' & L_{xy}'' \\ "
+                         r"g_y' & L_{yx}'' & L_{yy}'' \end{pmatrix},\quad "
+                         r"\overline{H}>0\Rightarrow\text{max rel.},\ \overline{H}<0\Rightarrow\text{min rel.}"))
+    for (px, py, val), lam_v, cl in zip(es["punti"], es["lambda_per_punto"], es["classificazioni_orlato"]):
+        passi.append(_passo("", "(x,y)=(" + _tex(px) + "," + _tex(py) + r"),\ \lambda=" + _tex(lam_v)
+                             + r":\quad \det\overline{H}=" + _tex(cl["det"]) + r"\ \Rightarrow\ "
+                             + r"\textbf{" + cl["tipo"] + "}"))
+
     if es["tipo_vincolo"] == "cerchio":
-        passi.append(_passo("Passo 3 — il vincolo è una circonferenza: chiuso e limitato (compatto). "
-                             "Per Weierstrass f ammette sia massimo sia minimo assoluto:",
+        passi.append(_passo("Passo 4 — il vincolo è una circonferenza: chiuso e limitato (compatto). "
+                             "Per Weierstrass f ammette sia massimo sia minimo assoluto (si confrontano "
+                             "TUTTI i valori di f nei punti stazionari, anche quelli relativi):",
                              r"\max f=" + _tex(es["valore_max"]) + r",\quad \min f=" + _tex(es["valore_min"])))
     else:
-        passi.append(_passo("Passo 3 — il vincolo è una retta: chiuso ma NON limitato. Essendo f una forma "
+        passi.append(_passo("Passo 4 — il vincolo è una retta: chiuso ma NON limitato. Essendo f una forma "
                              "quadratica coerciva, tende a +∞ lungo la retta: esiste solo il minimo assoluto:",
                              r"\min f=" + _tex(es["valore_min"]) + r",\quad \max f:\ \text{non esiste}"))
     return passi
@@ -267,45 +288,157 @@ def _spiega_integrali_latex(es):
     return passi
 
 
+def _spiega_punti_liberi_latex(es):
+    """Ricostruisce spiega_punto_critico() di multivariabile.py passo per passo, in LaTeX."""
+    x, y = multivariabile.x, multivariabile.y
+    f = es["f"]
+    grad = [sp.diff(f, v) for v in (x, y)]
+    hess = sp.hessian(f, (x, y))
+    passi = [_passo("Funzione:", "f(x,y) = " + _tex(sp.expand(f)))]
+    passi.append(_passo("Passo 1 — annulliamo il gradiente per trovare i punti stazionari:",
+                         _tex(grad[0]) + "=0,\\quad" + _tex(grad[1]) + "=0"))
+    passi.append(_passo("Passo 2 — matrice Hessiana:", "H(x,y) = " + _tex(hess)))
+    passi.append(_passo("Passo 3 — per ogni punto stazionario valutiamo H e ne studiamo il segno "
+                         "(det>0 e traccia>0 → minimo; det>0 e traccia<0 → massimo; det<0 → sella; "
+                         "det=0 → indeterminato):", None))
+    for c in es["classificazioni"]:
+        px, py = c["punto"]
+        H = hess.subs({x: px, y: py})
+        passi.append(_passo(f"Punto ({_tex(px)}, {_tex(py)}):",
+                             "H=" + _tex(H) + r",\ \det H=" + _tex(H.det())
+                             + r",\ \mathrm{tr}\,H=" + _tex(H.trace())
+                             + r"\ \Rightarrow\ \textbf{" + c["tipo"].upper() + "}"))
+    return passi
+
+
+def _spiega_edo1_latex(es):
+    """Ricostruisce spiega_edo_primo_ordine() di edo.py passo per passo, in LaTeX."""
+    eq = es["equazione"]
+    x0, y0 = es["x0"], es["y0"]
+    tipo = es["tipo"]
+    passi = [_passo("Equazione:", _tex(eq.lhs) + "=" + _tex(eq.rhs)
+                     + r",\quad y(" + _tex(x0) + ")=" + _tex(y0))]
+    if tipo.startswith("lineare"):
+        passi.append(_passo("Passo 1 — equazione lineare del primo ordine: si risolve con il "
+                             "fattore integrante μ(x) = e^{∫p(x)dx}.", None))
+    elif tipo.startswith("bernoulli"):
+        passi.append(_passo("Passo 1 — equazione di Bernoulli: sostituendo v = y^{1-n} si riconduce "
+                             "a un'equazione lineare in v.", None))
+    else:
+        passi.append(_passo("Passo 1 — equazione a variabili separabili: si separano le variabili e "
+                             "si integrano entrambi i membri.", None))
+    passi.append(_passo("Passo 2 — soluzione generale (costante arbitraria C1):",
+                         "y(x) = " + _tex(es["soluzione_generale"].rhs)))
+    passi.append(_passo("Passo 3 — imponendo la condizione iniziale si ottiene:",
+                         "y(x) = " + _tex(es["soluzione_attesa"].rhs)))
+    return passi
+
+
+def _spiega_continuita_latex(es):
+    """Ricostruisce spiega_continuita() di continuita_differenziabilita.py, in LaTeX."""
+    f_expr = es["f"]
+    passi = [_passo("Funzione (a tratti, singolare in (0,0)):",
+                     r"f(x,y) = " + _tex(f_expr) + r"\ \ (\ne(0,0)),\quad f(0,0)=0")]
+    passi.append(_passo("Passo 1 — sostituzione in coordinate polari x=r\\cosθ, y=r\\sinθ:",
+                         "f(r,\\theta) \\to " + _tex(es["lim_theta_fisso"]) + r"\ \ (r\to0^+)"))
+
+    if es["evidenza_non_continua"]:
+        ev = es["evidenza_non_continua"]
+        passi.append(_passo("Passo 2 — il limite dipende da θ (limite direzionale non unico):",
+                             r"\theta=" + _tex(ev["theta_a"]) + r":\ " + _tex(ev["val_a"])
+                             + r"\quad\ne\quad \theta=" + _tex(ev["theta_b"]) + r":\ " + _tex(ev["val_b"])))
+        passi.append(_passo("Conclusione:", r"\textbf{f NON è continua in (0,0)}"))
+        return passi
+
+    if es["cammino_controllo"]:
+        cc = es["cammino_controllo"]
+        passi.append(_passo("Passo 2 — il limite a θ fissato è 0, ma non basta: proviamo il cammino curvo",
+                             "y = " + _tex(cc["espressione"])))
+        passi.append(_passo("Lungo questo cammino:",
+                             r"f(x," + _tex(cc["espressione"]) + r") \to " + _tex(cc["limite_in_k"])
+                             + r"\ \ (x\to0,\ \text{dipende da } k)"))
+        passi.append(_passo("Conclusione:", r"\textbf{f NON è continua in (0,0)} "
+                             r"\text{ (il test lungo le rette era fuorviante)}"))
+        return passi
+
+    passi.append(_passo("Passo 2 — il limite è 0 indipendentemente da θ:",
+                         r"\textbf{f è continua in (0,0)}"))
+    passi.append(_passo("Passo 3 — derivate parziali in (0,0) per definizione:",
+                         r"f_x(0,0)=" + _tex(es["fx0"]) + r",\quad f_y(0,0)=" + _tex(es["fy0"])))
+    passi.append(_passo("Passo 4 — studiamo il resto [f-f_x x-f_y y]/r in coordinate polari:", None))
+
+    if es["differenziabile"]:
+        passi.append(_passo("Il limite per r→0+ è 0 indipendentemente da θ.",
+                             r"\textbf{f è differenziabile in (0,0)}"))
+        passi.append(_passo("Piano tangente in (0,0,0):", "z = " + _tex(es["piano_tangente"])))
+    else:
+        ev = es["evidenza_non_diff"]
+        passi.append(_passo("Il resto dipende da θ:",
+                             r"\theta=" + _tex(ev["theta_a"]) + r":\ " + _tex(ev["val_a"])
+                             + r"\quad\ne\quad \theta=" + _tex(ev["theta_b"]) + r":\ " + _tex(ev["val_b"])))
+        passi.append(_passo("Conclusione:", r"\textbf{f è continua ma NON differenziabile in (0,0)}"))
+    return passi
+
+
 SPIEGATORI_LATEX = {
     "serie": _spiega_serie_latex,
     "taylor": _spiega_taylor_latex,
     "lagrange": _spiega_lagrange_latex,
+    "punti_liberi": _spiega_punti_liberi_latex,
     "edo": _spiega_edo_latex,
+    "edo1": _spiega_edo1_latex,
     "integrali": _spiega_integrali_latex,
+    "continuita": _spiega_continuita_latex,
 }
 
 ARGOMENTI = [
     ("Serie numeriche", "serie"),
     ("Sviluppi di Taylor", "taylor"),
     ("Lagrange (multivariabile)", "lagrange"),
-    ("EDO / Cauchy", "edo"),
+    ("Punti stazionari liberi", "punti_liberi"),
+    ("EDO 2° ordine / Cauchy", "edo"),
+    ("EDO 1° ordine / Cauchy", "edo1"),
     ("Integrali doppi", "integrali"),
+    ("Continuità e differenziabilità", "continuita"),
 ]
 NOMI = {chiave: nome for nome, chiave in ARGOMENTI}
+
+# Argomenti per cui NON esiste (per ora) un bucket 'Esame' con problemi reali tratti
+# dai testi d'esame: Taylor non compare in nessun appello reale trovato nelle 6 PDF
+# analizzate (Ottobre 2025 - Maggio 2026).
+ARGOMENTI_SENZA_ESAME = {"taylor"}
 
 GENERATORI = {
     "serie": serie.genera_serie_numerica,
     "taylor": taylor.genera_taylor,
     "lagrange": multivariabile.genera_lagrange,
+    "punti_liberi": multivariabile.genera_punto_critico,
     "edo": edo.genera_edo_lineare_secondo_ordine,
+    "edo1": edo.genera_edo_primo_ordine,
     "integrali": integrali.genera_integrale_doppio_polare,
+    "continuita": continuita_differenziabilita.genera_continuita,
 }
 
 SPIEGATORI = {
     "serie": serie.spiega_convergenza,
     "taylor": taylor.spiega_taylor,
     "lagrange": multivariabile.spiega_lagrange,
+    "punti_liberi": multivariabile.spiega_punto_critico,
     "edo": edo.spiega_edo,
+    "edo1": edo.spiega_edo_primo_ordine,
     "integrali": integrali.spiega_integrale,
+    "continuita": continuita_differenziabilita.spiega_continuita,
 }
 
 SUGGERIMENTI = {
     "serie": "Scrivi: converge   oppure   diverge",
     "taylor": "Scrivi il polinomio in sintassi Python, es:  1 + x + x**2/2",
     "lagrange": "Un punto per riga, formato x,y (es: 1/2,1/2). Frazioni ok (usa '/').",
+    "punti_liberi": "Un punto per riga, formato x,y,tipo (es: 0,0,minimo). Tipi: minimo, massimo, sella, indeterminato.",
     "edo": "Scrivi y(x) in sintassi Python, es:  exp(-x)*(1+x)",
+    "edo1": "Scrivi y(x) in sintassi Python, es:  exp(-x)*(1+x)",
     "integrali": "Scrivi il valore (numerico o simbolico), es:  pi/2",
+    "continuita": "Scrivi: continua,differenziabile  oppure  continua,non differenziabile  oppure  non continua",
 }
 
 # Stato dell'esercizio corrente (un solo utente per pagina, come nella GUI desktop).

@@ -214,7 +214,7 @@
 <div class="wrap">
   <div class="hero">
     <h1>Allenamento per l'esame di Metodi Matematici per l'Ingegneria</h1>
-    <p class="subtitle">Esercizi generati e verificati con SymPy, direttamente nel browser — nessuna installazione, nessun dato salvato su server.</p>
+    <p class="subtitle">Un banco di esercizi già pronto (procedurali su 3 livelli + problemi reali da appelli d'esame), verificato con SymPy in anticipo — nessuna installazione, nessun dato salvato su server.</p>
   </div>
 
   <div id="install-banner">
@@ -231,7 +231,7 @@
     <a class="link-card" href="#" data-goto="esercizi">
       <div class="icon">✏️</div>
       <h2>Esercizi</h2>
-      <p>Genera varianti infinite dei 5 tipi di esercizio d'esame su 3 livelli di difficoltà, scrivi la risposta e ottieni una verifica immediata, la soluzione motivata passo-passo e il grafico del problema.</p>
+      <p>8 argomenti d'esame, ciascuno con 5 esercizi per livello (facile/medio/difficile) più un bottone "Esame" con problemi presi da veri appelli: scrivi la risposta e ottieni verifica immediata, soluzione motivata passo-passo e grafico.</p>
     </a>
     <a class="link-card" href="#" data-goto="teoria">
       <div class="icon">📘</div>
@@ -246,20 +246,22 @@
       <ul>
         <li>Serie numeriche e criteri di convergenza</li>
         <li>Sviluppi di Taylor / Mac Laurin</li>
-        <li>Punti critici e Hessiana</li>
         <li>Moltiplicatori di Lagrange</li>
-        <li>EDO lineari del secondo ordine (Cauchy)</li>
-        <li>Integrali doppi in coordinate polari</li>
+        <li>Punti stazionari liberi (Hessiana)</li>
+        <li>EDO del secondo ordine (Cauchy)</li>
+        <li>EDO del primo ordine (Cauchy)</li>
+        <li>Integrali doppi</li>
+        <li>Continuità e differenziabilità</li>
       </ul>
     </div>
   </div>
 
   <div class="card" style="font-size:13.5px; color:var(--text2);">
-    <strong>Come funziona:</strong> la sezione Esercizi carica Pyodide (Python compilato per il browser via WebAssembly)
-    e riusa esattamente gli stessi moduli SymPy scritti per la versione desktop del progetto: stessa logica di
-    generazione, stessa verifica simbolica delle risposte, stesse spiegazioni passo-passo. Il caricamento avviene
-    una sola volta per sessione, alla prima apertura della sezione Esercizi (non ad ogni cambio di pagina): da lì in
-    poi passare tra Home, Esercizi e Teoria è istantaneo. I progressi vengono salvati solo localmente, nel tuo browser.
+    <strong>Come funziona:</strong> ogni esercizio (testo, soluzione passo-passo e grafico) è stato generato e
+    verificato in anticipo con SymPy, non nel browser: la sezione Esercizi scarica un unico banco già pronto la
+    prima volta che la apri (da lì in poi resta in cache, anche offline) e la verifica della tua risposta avviene
+    localmente confrontando il valore numerico che scrivi con quello atteso. Nessun dato lascia il tuo dispositivo:
+    i progressi sono salvati solo nel tuo browser.
   </div>
 
 </div>
@@ -271,7 +273,7 @@
 <div id="view-esercizi" class="view">
   <div id="loading-overlay">
     <div class="spinner"></div>
-    <p id="loading-text"><strong>Caricamento del motore Python...</strong><br>Sto avviando SymPy e NumPy nel browser (Pyodide). La prima volta può richiedere qualche secondo; da qui in poi, per tutta la sessione, la sezione Esercizi resterà pronta all'istante.</p>
+    <p id="loading-text"><strong>Carico il banco esercizi...</strong><br>Tutti gli esercizi (testo, soluzione e grafico) sono già pronti in un unico file: la prima volta va scaricato, da qui in poi resta in cache e si apre all'istante anche offline.</p>
     <p class="small" id="loading-detail"></p>
   </div>
 
@@ -282,7 +284,9 @@
       <button class="diff-btn" data-diff="facile">Facile</button>
       <button class="diff-btn" data-diff="medio">Medio</button>
       <button class="diff-btn" data-diff="difficile">Difficile</button>
+      <button class="diff-btn" data-diff="esame" id="btn-diff-esame">Esame</button>
     </div>
+    <div id="esame-nota" style="display:none; font-size:12.5px; color:var(--text3); font-style:italic; margin:-8px 0 12px;"></div>
 
     <div class="eserc-layout">
       <div>
@@ -523,7 +527,7 @@
     <span class="box-label">Errore frequente</span>
     Calcolare un solo Hessiano "generico" e riapplicarlo a tutti i punti critici trovati: H va ricalcolato in ogni punto, perché f_xx, f_yy, f_xy dipendono da x e y.
   </div>
-  <p><em>Nella sezione Esercizi, il modulo di multivariabile permette di esercitarsi anche su questo caso con soluzione motivata (i punti critici liberi non sono uno dei 5 argomenti scelti a menu, ma la stessa logica sostiene l'argomento "Lagrange").</em></p>
+  <p><em>Questo è esattamente l'argomento "Punti stazionari liberi" della sezione Esercizi, incluso il bottone "Esame" con problemi presi da veri appelli.</em></p>
 
   <!-- ============================== 5 ============================== -->
   <h2 id="s5">5. Ottimizzazione vincolata — Moltiplicatori di Lagrange</h2>
@@ -629,7 +633,7 @@
     <span class="box-label">Errore frequente</span>
     Per un termine noto polinomiale, tentare y_p con lo stesso numero di termini del polinomio dato invece del polinomio completo dello stesso grado (es. per 3x² serve Ax²+Bx+C, non solo Ax²).
   </div>
-  <p><em>L'argomento "EDO / Cauchy" della sezione Esercizi controlla automaticamente radici, ansatz e risonanza per ogni esercizio generato.</em></p>
+  <p><em>Gli argomenti "EDO 2° ordine / Cauchy" e "EDO 1° ordine / Cauchy" della sezione Esercizi mostrano radici, ansatz (o fattore integrante) e risonanza per ogni esercizio, incluso il bottone "Esame" con problemi reali.</em></p>
 
   <!-- ============================== 7 ============================== -->
   <h2 id="s7">7. Integrali doppi — riconoscere dominio e strategia</h2>
@@ -704,7 +708,7 @@
   <h2 id="s9">9. Come esercitarti</h2>
   <p>Questo documento aiuta a riconoscere il caso e ricordare il procedimento. Per la pratica vera e propria, usa insieme:</p>
   <ul>
-    <li>La sezione <a href="#" data-goto="esercizi">Esercizi</a> di questo sito: genera esercizi casuali per ciascun argomento su 3 livelli di difficoltà, verifica le tue risposte con SymPy e mostra la soluzione motivata passo-passo.</li>
+    <li>La sezione <a href="#" data-goto="esercizi">Esercizi</a> di questo sito: 5 esercizi per ciascuno dei 3 livelli di difficoltà per ogni argomento, più un bottone "Esame" con problemi presi da veri appelli; verifica la tua risposta e mostra la soluzione motivata passo-passo.</li>
     <li>Guida_Metodi_Matematici.docx e guida_integrata.html: soluzioni complete, passaggio per passaggio, a 7 compiti reali di gennaio 2026.</li>
     <li>prerequisiti_esame_metodi_matematici.html: checklist dei prerequisiti (derivate, sistemi, integrali elementari) organizzata per esercizio.</li>
   </ul>
@@ -722,16 +726,16 @@
 
 <footer>Progetto di studio personale per l'esame di Metodi Matematici — eseguito interamente nel browser, nessun dato lascia il tuo dispositivo.</footer>
 
-<script src="https://cdn.jsdelivr.net/pyodide/v314.0.4/full/pyodide.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mathjs@12.4.3/lib/browser/math.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/katex@0.18.1/dist/katex.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/katex@0.18.1/dist/contrib/auto-render.min.js"></script>
 <script>
 // ============================================================
 // Routing SPA: Home / Esercizi / Teoria sono div nella stessa
 // pagina. Si passa da una all'altra con semplice show/hide via
-// JS (nessun cambio di pagina, nessuna hash-route): Pyodide, una
-// volta avviato aprendo Esercizi, resta vivo per tutta la sessione
-// anche quando si torna in Home o si va in Teoria.
+// JS (nessun cambio di pagina, nessuna hash-route): il banco
+// esercizi.json, una volta scaricato aprendo Esercizi, resta in
+// memoria per tutta la sessione anche tornando in Home o Teoria.
 // ============================================================
 function showView(name) {
   document.querySelectorAll(".view").forEach((v) => v.classList.remove("active"));
@@ -741,7 +745,7 @@ function showView(name) {
     a.classList.toggle("active", a.dataset.goto === name);
   });
   window.scrollTo(0, 0);
-  if (name === "esercizi") avviaPyodideSeNecessario();
+  if (name === "esercizi") caricaBancoSeNecessario();
 }
 document.addEventListener("click", (e) => {
   const a = e.target.closest("a[data-goto]");
@@ -751,27 +755,22 @@ document.addEventListener("click", (e) => {
 // ============================================================
 // ESERCIZI — stato condiviso
 // ============================================================
-const ARGOMENTI = [
-  ["Serie numeriche", "serie"],
-  ["Sviluppi di Taylor", "taylor"],
-  ["Lagrange (multivariabile)", "lagrange"],
-  ["EDO / Cauchy", "edo"],
-  ["Integrali doppi", "integrali"],
-];
-const NOMI = Object.fromEntries(ARGOMENTI.map(([n, k]) => [k, n]));
-const PY_FILES = ["serie.py", "taylor.py", "multivariabile.py", "edo.py", "integrali.py", "grafico.py", "bridge.py"];
+// ARGOMENTI/NOMI vengono popolati da esercizi.json al caricamento (BANCO.argomenti),
+// non piu' hard-coded qui: il banco statico e' l'unica fonte di verita'.
+let ARGOMENTI = [];
+let NOMI = {};
+let HA_ESAME = {};
 const PROGRESS_KEY = "mm_progress_v1";
 const DIFFICOLTA_KEY = "mm_difficolta_v1";
-const DIFFICOLTA_VALIDE = ["facile", "medio", "difficile"];
+const DIFFICOLTA_VALIDE = ["facile", "medio", "difficile", "esame"];
 
-let pyodide = null;
-let bridge = null;
+let BANCO = null;
+let esercizioCorrente = null;
 let argomentoCorrente = null;
 let difficoltaCorrente = localStorage.getItem(DIFFICOLTA_KEY) || "medio";
 if (!DIFFICOLTA_VALIDE.includes(difficoltaCorrente)) difficoltaCorrente = "medio";
-let matplotlibCaricato = false;
-let pyodideAvviato = false;
-let pyodideAvviando = false;
+let bancoCaricato = false;
+let bancoCaricando = false;
 
 function loadProgress() {
   try { return JSON.parse(localStorage.getItem(PROGRESS_KEY)) || {}; }
@@ -819,10 +818,29 @@ function argomentoPiuDebole() {
   return ARGOMENTI[ARGOMENTI.length - 1][1];
 }
 
+function aggiornaDisponibilitaEsame() {
+  const btn = document.getElementById("btn-diff-esame");
+  const nota = document.getElementById("esame-nota");
+  const disponibile = argomentoCorrente && HA_ESAME[argomentoCorrente];
+  btn.style.display = disponibile ? "" : "none";
+  if (!disponibile && difficoltaCorrente === "esame") {
+    difficoltaCorrente = "medio";
+    localStorage.setItem(DIFFICOLTA_KEY, difficoltaCorrente);
+  }
+  document.querySelectorAll(".diff-btn").forEach((x) => x.classList.toggle("active", x.dataset.diff === difficoltaCorrente));
+  if (argomentoCorrente && !disponibile && NOMI[argomentoCorrente] !== undefined) {
+    nota.style.display = argomentoCorrente === "taylor" ? "block" : "none";
+    nota.textContent = "Taylor non compare in nessun appello d'esame reale trovato: niente bottone \"Esame\" per questo argomento.";
+  } else {
+    nota.style.display = "none";
+  }
+}
+
 function buildDifficultyButtons() {
   document.querySelectorAll(".diff-btn").forEach((b) => {
     b.classList.toggle("active", b.dataset.diff === difficoltaCorrente);
     b.addEventListener("click", () => {
+      if (b.dataset.diff === "esame" && argomentoCorrente && !HA_ESAME[argomentoCorrente]) return;
       difficoltaCorrente = b.dataset.diff;
       localStorage.setItem(DIFFICOLTA_KEY, difficoltaCorrente);
       document.querySelectorAll(".diff-btn").forEach((x) => x.classList.toggle("active", x === b));
@@ -870,18 +888,30 @@ function renderKatexInto(el, latex, displayMode) {
 function nuovoEsercizio(chiave) {
   argomentoCorrente = chiave;
   setActiveButton(chiave);
-  const r = JSON.parse(bridge.nuovo_esercizio(chiave, difficoltaCorrente));
-  document.getElementById("testo-esercizio").textContent = r.testo;
+  aggiornaDisponibilitaEsame();
+
+  const lista = (BANCO.esercizi[chiave] || {})[difficoltaCorrente] || [];
+  if (lista.length === 0) {
+    // capitato solo se si passa a 'esame' su un argomento senza banco esame: torna a medio
+    difficoltaCorrente = "medio";
+    aggiornaDisponibilitaEsame();
+  }
+  const listaFinale = (BANCO.esercizi[chiave] || {})[difficoltaCorrente] || [];
+  const idx = Math.floor(Math.random() * listaFinale.length);
+  esercizioCorrente = listaFinale[idx];
+
+  document.getElementById("testo-esercizio").textContent = esercizioCorrente.testo
+    + (esercizioCorrente.fonte ? `  [${esercizioCorrente.fonte}]` : "");
 
   const mathBox = document.getElementById("testo-math");
   const mathContent = document.getElementById("testo-math-content");
-  if (r.testo_latex && renderKatexInto(mathContent, r.testo_latex, true)) {
+  if (esercizioCorrente.testo_latex && renderKatexInto(mathContent, esercizioCorrente.testo_latex, true)) {
     mathBox.style.display = "block";
   } else {
     mathBox.style.display = "none";
   }
 
-  document.getElementById("hint").textContent = r.suggerimento || "";
+  document.getElementById("hint").textContent = esercizioCorrente.suggerimento || "";
   document.getElementById("risposta").value = "";
   document.getElementById("risposta").disabled = false;
   document.getElementById("esito").innerHTML = "";
@@ -909,43 +939,177 @@ function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 }
 
+// ============================================================
+// Verifica risposte lato client con mathjs: nessun esercizio ha piu' bisogno
+// di eseguire Python nel browser. Per gli esercizi la cui risposta e' una
+// FUNZIONE (taylor, edo, edo1) confrontiamo l'espressione scritta dall'utente
+// con quella attesa per uguaglianza numerica su alcuni punti campione
+// (precalcolati insieme all'esercizio): due funzioni "ragionevoli" che
+// coincidono su abbastanza punti sono, con probabilita' enorme, la stessa
+// funzione — la stessa idea usata per verificare un'identita' polinomiale.
+// ============================================================
+const TOLLERANZA_REL = 1e-4;
+function vicino(a, b) {
+  if (!isFinite(a) || !isFinite(b)) return false;
+  return Math.abs(a - b) <= TOLLERANZA_REL * (1 + Math.abs(b));
+}
+function normalizzaEspressione(s) {
+  return String(s).trim().replace(/\*\*/g, "^");
+}
+function valoreNumerico(v) {
+  if (v && typeof v === "object" && "re" in v) {
+    if (Math.abs(v.im) > 1e-6 * (1 + Math.abs(v.re))) return NaN;
+    return v.re;
+  }
+  return typeof v === "number" ? v : NaN;
+}
+
+function verificaFunzioneSuCampioni(risposta, campioni) {
+  let compiled;
+  try { compiled = math.compile(normalizzaEspressione(risposta)); }
+  catch (e) { return { errore: "Espressione non valida: " + e.message }; }
+  for (const [xv, yv] of campioni) {
+    let val;
+    try { val = valoreNumerico(compiled.evaluate({ x: xv })); }
+    catch (e) { return { errore: `Non riesco a valutare la tua espressione in x=${xv}: ${e.message}` }; }
+    if (!vicino(val, yv)) return { corretto: false };
+  }
+  return { corretto: true };
+}
+function verificaScelta(risposta, atteso) {
+  const r = risposta.trim().toLowerCase();
+  return { corretto: r.startsWith(atteso.slice(0, 5)) };
+}
+function verificaNumero(risposta, atteso) {
+  let val;
+  try { val = valoreNumerico(math.evaluate(normalizzaEspressione(risposta))); }
+  catch (e) { return { errore: "Espressione non valida: " + e.message }; }
+  return { corretto: vicino(val, atteso) };
+}
+function parseRigaPunto(riga, conTipo) {
+  const parti = riga.split(",");
+  if (parti.length < (conTipo ? 3 : 2)) return null;
+  try {
+    const xv = valoreNumerico(math.evaluate(normalizzaEspressione(parti[0])));
+    const yv = valoreNumerico(math.evaluate(normalizzaEspressione(parti[1])));
+    if (!isFinite(xv) || !isFinite(yv)) return null;
+    const tipo = conTipo ? parti[2].trim().toLowerCase() : null;
+    return [xv, yv, tipo];
+  } catch (e) { return null; }
+}
+function verificaPunti(risposta, attesi, conTipo) {
+  const righe = risposta.split("\n").map((r) => r.trim()).filter(Boolean);
+  const forniti = [];
+  for (const riga of righe) {
+    const p = parseRigaPunto(riga, conTipo);
+    if (!p) return { errore: `Riga non valida: "${riga}". Usa il formato ${conTipo ? "x,y,tipo" : "x,y"}` };
+    forniti.push(p);
+  }
+  if (forniti.length !== attesi.length) return { corretto: false };
+  const usati = new Array(attesi.length).fill(false);
+  for (const [xv, yv, tipo] of forniti) {
+    let trovato = false;
+    for (let i = 0; i < attesi.length; i++) {
+      if (usati[i]) continue;
+      const [px, py, ptipo] = attesi[i];
+      const tipoOk = !conTipo || tipo === String(ptipo).toLowerCase();
+      if (vicino(xv, px) && vicino(yv, py) && tipoOk) { usati[i] = true; trovato = true; break; }
+    }
+    if (!trovato) return { corretto: false };
+  }
+  return { corretto: usati.every(Boolean) };
+}
+function verificaContinuita(risposta, atteso) {
+  const r = risposta.trim().toLowerCase();
+  const nonContinua = /non\s+continua/.test(r);
+  const continua = !nonContinua && /continua/.test(r);
+  if (!continua && !nonContinua) {
+    return { errore: "Scrivi 'continua' o 'non continua' (ed eventualmente 'differenziabile'/'non differenziabile')." };
+  }
+  let ok = continua === atteso.continua;
+  if (continua && atteso.differenziabile !== null) {
+    const nonDiff = /non\s+differenziabile/.test(r);
+    const diff = !nonDiff && /differenziabile/.test(r);
+    ok = ok && diff === atteso.differenziabile;
+  }
+  return { corretto: ok };
+}
+
+function corpoRisultato(spec) {
+  switch (spec.tipo) {
+    case "scelta":
+      return { testo: `Risposta attesa: ${spec.atteso}` };
+    case "funzione_su_campioni":
+      return { testo: "Confronto numerico su alcuni punti campione. Guarda \"Mostra soluzione\" per l'espressione esatta e i passaggi." };
+    case "numero":
+      return { testo: `Valore atteso: ${spec.atteso_display}` };
+    case "punti_valore": {
+      const punti = spec.punti_attesi.map((p) => `(${p[0]}, ${p[1]})`).join("  ");
+      const max = spec.valore_max === null ? "non esiste (vincolo illimitato)" : spec.valore_max;
+      return { testo: `Punti attesi (x,y): ${punti}\nMassimo assoluto: ${max}   Minimo assoluto: ${spec.valore_min}` };
+    }
+    case "punti_classificati": {
+      const punti = spec.attesi.map((p) => `(${p[0]}, ${p[1]}) → ${p[2]}`).join("\n");
+      return { testo: `Punti attesi:\n${punti}` };
+    }
+    case "continuita": {
+      let s = spec.continua ? "continua" : "non continua";
+      if (spec.continua && spec.differenziabile !== null) s += spec.differenziabile ? ", differenziabile" : ", non differenziabile";
+      return { testo: `Risposta attesa: ${s}` };
+    }
+    default:
+      return { testo: "" };
+  }
+}
+
 function verificaRisposta() {
-  if (!argomentoCorrente) return;
-  const risposta = document.getElementById("risposta").value;
-  const r = JSON.parse(bridge.verifica(risposta));
-  if (r.errore) { mostraErrore(r.errore); return; }
-  mostraEsito(r.corretto, r.corpo, r.corpo_latex);
-  registraProgresso(argomentoCorrente, r.corretto);
+  if (!argomentoCorrente || !esercizioCorrente) return;
+  const testoRisposta = document.getElementById("risposta").value;
+  if (!testoRisposta.trim()) { mostraErrore("Scrivi una risposta prima di verificare."); return; }
+
+  const spec = esercizioCorrente.risposta;
+  let esito;
+  switch (spec.tipo) {
+    case "scelta": esito = verificaScelta(testoRisposta, spec.atteso); break;
+    case "funzione_su_campioni": esito = verificaFunzioneSuCampioni(testoRisposta, spec.campioni); break;
+    case "numero": esito = verificaNumero(testoRisposta, spec.atteso_numero); break;
+    case "punti_valore": esito = verificaPunti(testoRisposta, spec.punti_attesi, false); break;
+    case "punti_classificati": esito = verificaPunti(testoRisposta, spec.attesi, true); break;
+    case "continuita": esito = verificaContinuita(testoRisposta, spec); break;
+    default: esito = { errore: "Tipo di verifica sconosciuto." };
+  }
+  if (esito.errore) { mostraErrore(esito.errore); return; }
+  const corpo = corpoRisultato(spec);
+  mostraEsito(esito.corretto, corpo.testo, corpo.latex);
+  registraProgresso(argomentoCorrente, esito.corretto);
 }
 
 function mostraSoluzione() {
-  if (!argomentoCorrente) return;
-  const r = JSON.parse(bridge.mostra_soluzione());
-  if (r.errore) { mostraErrore(r.errore); return; }
+  if (!argomentoCorrente || !esercizioCorrente) return;
+  const passi = esercizioCorrente.passi;
   const esito = document.getElementById("esito");
-
-  if (Array.isArray(r.passi)) {
-    esito.innerHTML = '<div class="soluzione-passi" id="soluzione-passi"></div>';
-    const cont = document.getElementById("soluzione-passi");
-    r.passi.forEach((passo) => {
-      const box = document.createElement("div");
-      box.className = "passo-box";
-      if (passo.testo) {
-        const p = document.createElement("p");
-        p.className = "passo-testo";
-        p.textContent = passo.testo;
-        box.appendChild(p);
-      }
-      if (passo.latex) {
-        const m = document.createElement("div");
-        m.className = "passo-math";
-        if (renderKatexInto(m, passo.latex, true)) box.appendChild(m);
-      }
-      if (box.childNodes.length) cont.appendChild(box);
-    });
-  } else {
-    esito.innerHTML = `<pre>${escapeHtml(r.corpo)}</pre>`;
+  if (!Array.isArray(passi) || passi.length === 0) {
+    esito.innerHTML = "<pre>Soluzione non disponibile per questo esercizio.</pre>";
+    return;
   }
+  esito.innerHTML = '<div class="soluzione-passi" id="soluzione-passi"></div>';
+  const cont = document.getElementById("soluzione-passi");
+  passi.forEach((passo) => {
+    const box = document.createElement("div");
+    box.className = "passo-box";
+    if (passo.testo) {
+      const p = document.createElement("p");
+      p.className = "passo-testo";
+      p.textContent = passo.testo;
+      box.appendChild(p);
+    }
+    if (passo.latex) {
+      const m = document.createElement("div");
+      m.className = "passo-math";
+      if (renderKatexInto(m, passo.latex, true)) box.appendChild(m);
+    }
+    if (box.childNodes.length) cont.appendChild(box);
+  });
 }
 
 function apriLightbox(src) {
@@ -956,62 +1120,36 @@ function chiudiLightbox() {
   document.getElementById("lightbox").classList.remove("open");
 }
 
-async function assicuraMatplotlib() {
-  if (matplotlibCaricato) return;
+function mostraGrafico() {
+  if (!argomentoCorrente || !esercizioCorrente) return;
   const area = document.getElementById("grafico-area");
-  area.innerHTML = '<span class="mini-spinner"></span>Carico la libreria dei grafici (solo la prima volta)...';
-  await pyodide.loadPackage("matplotlib");
-  matplotlibCaricato = true;
-}
-
-async function mostraGrafico() {
-  if (!argomentoCorrente) return;
-  const area = document.getElementById("grafico-area");
-  area.innerHTML = '<span class="mini-spinner"></span>Preparo il grafico...';
-  try {
-    await assicuraMatplotlib();
-  } catch (e) {
+  if (!esercizioCorrente.grafico_png) {
     area.innerHTML = "";
-    mostraErrore("Non sono riuscito a caricare la libreria dei grafici: " + e);
+    mostraErrore("Nessun grafico disponibile per questo esercizio.");
     return;
   }
-  area.innerHTML = '<span class="mini-spinner"></span>Genero il grafico...';
-  await new Promise((res) => setTimeout(res, 30));
-  const r = JSON.parse(bridge.mostra_grafico_png());
-  if (r.errore) {
-    area.innerHTML = "";
-    mostraErrore(r.errore);
-    return;
-  }
-  const src = `data:image/png;base64,${r.png_base64}`;
+  const src = `data:image/png;base64,${esercizioCorrente.grafico_png}`;
   area.innerHTML = `<img src="${src}" alt="Grafico dell'esercizio"><div class="tap-hint">Tocca l'immagine per ingrandirla</div>`;
   area.querySelector("img").addEventListener("click", () => apriLightbox(src));
 }
 
-async function avviaPyodideSeNecessario() {
-  if (pyodideAvviato || pyodideAvviando) return;
-  pyodideAvviando = true;
+async function caricaBancoSeNecessario() {
+  if (bancoCaricato || bancoCaricando) return;
+  bancoCaricando = true;
   const overlay = document.getElementById("loading-overlay");
   const detail = document.getElementById("loading-detail");
   try {
-    detail.textContent = "Avvio del runtime Pyodide...";
-    pyodide = await loadPyodide();
+    detail.textContent = "Scarico esercizi.json...";
+    const resp = await fetch("esercizi.json");
+    if (!resp.ok) throw new Error("HTTP " + resp.status);
+    BANCO = await resp.json();
 
-    detail.textContent = "Carico i package numpy e sympy...";
-    await pyodide.loadPackage(["numpy", "sympy"]);
-
-    detail.textContent = "Carico i moduli del progetto...";
-    pyodide.FS.mkdirTree("/app");
-    for (const nome of PY_FILES) {
-      const testo = await (await fetch(nome)).text();
-      pyodide.FS.writeFile("/app/" + nome, testo);
-    }
-    pyodide.runPython("import sys\nif '/app' not in sys.path:\n    sys.path.insert(0, '/app')\n");
-    pyodide.runPython("import bridge");
-    bridge = pyodide.pyimport("bridge");
+    ARGOMENTI = BANCO.argomenti.map((a) => [a.nome, a.chiave]);
+    NOMI = Object.fromEntries(ARGOMENTI.map(([n, k]) => [k, n]));
+    HA_ESAME = Object.fromEntries(BANCO.argomenti.map((a) => [a.chiave, !!a.ha_esame]));
 
     overlay.style.display = "none";
-    pyodideAvviato = true;
+    bancoCaricato = true;
     buildTopicButtons();
     buildDifficultyButtons();
     renderProgressTable();
@@ -1033,11 +1171,11 @@ async function avviaPyodideSeNecessario() {
       if (e.target.id === "lightbox") chiudiLightbox();
     });
   } catch (e) {
-    document.getElementById("loading-text").innerHTML = "<strong>Errore durante il caricamento.</strong>";
+    document.getElementById("loading-text").innerHTML = "<strong>Errore durante il caricamento del banco esercizi.</strong>";
     detail.textContent = String(e);
     console.error(e);
   } finally {
-    pyodideAvviando = false;
+    bancoCaricando = false;
   }
 }
 
@@ -1107,7 +1245,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Teoria e' contenuto statico: la formattiamo in LaTeX una sola volta, a prescindere
-  // da quale vista sia attiva all'avvio (e' un lavoro leggero, non richiede Pyodide).
+  // da quale vista sia attiva all'avvio (e' un lavoro leggero, non richiede il banco).
   if (typeof renderMathInElement === "function") {
     renderMathInElement(document.getElementById("view-teoria"), {
       delimiters: [

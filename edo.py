@@ -142,6 +142,150 @@ def spiega_edo(esercizio):
     return "\n".join(righe)
 
 
+def _costruisci_edo_primo_ordine(tipo, a, b, x0, y0):
+    """tipo in {'lineare','lineare_var','bernoulli_xy2','bernoulli_var',
+    'separabile_xy','separabile_1py2','separabile_x2y2'}. Restituisce (eq, testo_eq)."""
+    if tipo == 'lineare':
+        forzante = b if b is not None else sp.exp(2 * x)
+        eq = sp.Eq(Y_(x).diff(x) + a * Y_(x), forzante)
+        testo_eq = f"y' + {a}y = {forzante}"
+    elif tipo in ('lineare_var', 'lineare_var2'):
+        eq = sp.Eq(Y_(x).diff(x) + sp.Rational(a) * Y_(x) / x, x**b)
+        testo_eq = f"y' + ({a}/x)y = x^{b}"
+    elif tipo == 'separabile_xy':
+        eq = sp.Eq(Y_(x).diff(x), a * x * Y_(x))
+        testo_eq = f"y' = {a}xy"
+    elif tipo == 'separabile_1py2':
+        eq = sp.Eq(Y_(x).diff(x), a * (1 + Y_(x)**2) * x)
+        testo_eq = f"y' = {a}x(1+y^2)"
+    elif tipo == 'separabile_x2y2':
+        eq = sp.Eq(Y_(x).diff(x), a * x**2 * Y_(x)**2)
+        testo_eq = f"y' = {a}x^2y^2"
+    elif tipo == 'bernoulli_xy2':
+        eq = sp.Eq(Y_(x).diff(x) + Y_(x), a * x * Y_(x)**2)
+        testo_eq = f"y' + y = {a}xy^2"
+    elif tipo == 'bernoulli_var':
+        eq = sp.Eq(Y_(x).diff(x) + sp.Rational(a) * Y_(x) / x, Y_(x)**2)
+        testo_eq = f"y' + ({a}/x)y = y^2"
+    else:
+        raise ValueError(f"tipo sconosciuto: {tipo}")
+    return eq, testo_eq
+
+
+def Y_(v):
+    return sp.Function('y')(v)
+
+
+# Banco curato (deterministico) di problemi di Cauchy del primo ordine: lineari a
+# coefficienti costanti o variabili (fattore integrante), Bernoulli, a variabili
+# separabili. Ogni tupla e' (tipo, a, b, x0, y0); tutte verificate con sp.dsolve.
+_POOLS_EDO1 = {
+    'facile': [
+        ('lineare', 2, 4, 0, 1),
+        ('lineare', 1, 3, 0, 0),
+        ('separabile_xy', 1, None, 0, 1),
+        ('separabile_xy', 2, None, 0, 1),
+        ('lineare', -1, 4, 0, 1),
+    ],
+    'medio': [
+        ('lineare_var', 1, 2, 1, 1),
+        ('bernoulli_xy2', 1, None, 0, 1),
+        ('separabile_1py2', 1, None, 0, 0),
+        ('lineare', -1, None, 0, 0),
+        ('bernoulli_var', -1, None, 1, 1),
+    ],
+    'difficile': [
+        ('lineare_var2', -2, 3, 1, 2),
+        ('separabile_x2y2', 1, None, 0, 1),
+        ('lineare_var', -1, 4, 1, 1),
+        ('bernoulli_xy2', 2, None, 0, 1),
+        ('separabile_1py2', 1, None, 0, 1),
+    ],
+}
+
+_NOMI_TIPO_EDO1 = {
+    'lineare': 'lineare del primo ordine (fattore integrante)',
+    'lineare_var': 'lineare del primo ordine a coefficienti variabili (fattore integrante)',
+    'lineare_var2': 'lineare del primo ordine a coefficienti variabili (fattore integrante)',
+    'bernoulli_xy2': 'di Bernoulli',
+    'bernoulli_var': 'di Bernoulli',
+    'separabile_xy': 'a variabili separabili',
+    'separabile_1py2': 'a variabili separabili',
+    'separabile_x2y2': 'a variabili separabili',
+}
+
+
+def genera_edo_primo_ordine(difficolta='medio', indice=0):
+    pool = _POOLS_EDO1.get(difficolta, _POOLS_EDO1['medio'])
+    tipo, a, b, x0, y0 = pool[indice % len(pool)]
+    eq, testo_eq = _costruisci_edo_primo_ordine(tipo, a, b, x0, y0)
+
+    testo = (f"Risolvere il problema di Cauchy (equazione {_NOMI_TIPO_EDO1[tipo]}):  "
+             f"{testo_eq},  con y({x0}) = {y0}.")
+
+    Yx = Y_(x)
+    soluzione_generale = sp.dsolve(eq, Yx)
+    soluzione = sp.dsolve(eq, Yx, ics={Yx.func(x0): y0})
+
+    return {
+        'testo': testo, 'tipo': tipo, 'a': a, 'b': b, 'x0': x0, 'y0': y0,
+        'difficolta': difficolta, 'indice': indice, 'equazione': eq,
+        'soluzione_generale': soluzione_generale, 'soluzione_attesa': soluzione,
+    }
+
+
+def verifica_edo_primo_ordine(esercizio, risposta_str):
+    try:
+        y_utente = sp.sympify(risposta_str)
+    except Exception as e:
+        return {'corretto': False, 'errore': f'Espressione non valida: {e}'}
+
+    eq = esercizio['equazione']
+    # sostituzione diretta di y_utente al posto di y(x) e y'(x) in entrambi i membri:
+    yx = sp.Function('y')(x)
+    espressione = (eq.lhs - eq.rhs).subs(yx.diff(x), sp.diff(y_utente, x)).subs(yx, y_utente)
+    residuo = sp.simplify(espressione)
+    eq_ok = (residuo == 0)
+    ic_ok = sp.simplify(y_utente.subs(x, esercizio['x0']) - esercizio['y0']) == 0
+
+    ok = bool(eq_ok) and bool(ic_ok)
+    return {
+        'corretto': ok, 'soddisfa_equazione': eq_ok, 'condizione_iniziale': ic_ok,
+        'soluzione_attesa': esercizio['soluzione_attesa'],
+    }
+
+
+def spiega_edo_primo_ordine(esercizio):
+    tipo = esercizio['tipo']
+    x0, y0 = esercizio['x0'], esercizio['y0']
+    eq = esercizio['equazione']
+    righe = [f"Equazione {_NOMI_TIPO_EDO1[tipo]}:  {eq},   y({x0}) = {y0}.", ""]
+
+    if tipo.startswith('lineare'):
+        righe.append("Passo 1 — e' un'equazione lineare del primo ordine y' + p(x)y = q(x): si "
+                     "risolve con il fattore integrante mu(x) = e^(integrale di p(x) dx).")
+        righe.append(f"Passo 2 — soluzione generale (a meno della costante arbitraria C1):")
+        righe.append(f"  y(x) = {esercizio['soluzione_generale'].rhs}")
+        righe.append("Passo 3 — imponendo la condizione iniziale si determina C1 e si ottiene:")
+        righe.append(f"  y(x) = {esercizio['soluzione_attesa'].rhs}")
+    elif tipo.startswith('bernoulli'):
+        righe.append("Passo 1 — e' un'equazione di Bernoulli y' + p(x)y = q(x)y^n: si divide per "
+                     "y^n e si sostituisce v = y^(1-n), riconducendola a un'equazione lineare in v.")
+        righe.append("Passo 2 — risolvendo l'equazione lineare in v e tornando a y si ottiene "
+                     "(a meno della costante arbitraria):")
+        righe.append(f"  y(x) = {esercizio['soluzione_generale'].rhs}")
+        righe.append("Passo 3 — imponendo la condizione iniziale si determina la costante:")
+        righe.append(f"  y(x) = {esercizio['soluzione_attesa'].rhs}")
+    else:  # separabile
+        righe.append("Passo 1 — e' un'equazione a variabili separabili y' = g(x)h(y): si separano "
+                     "le variabili e si integrano entrambi i membri, dy/h(y) = g(x) dx.")
+        righe.append("Passo 2 — integrando si ottiene (a meno della costante arbitraria):")
+        righe.append(f"  y(x) = {esercizio['soluzione_generale'].rhs}")
+        righe.append("Passo 3 — imponendo la condizione iniziale si determina la costante:")
+        righe.append(f"  y(x) = {esercizio['soluzione_attesa'].rhs}")
+    return "\n".join(righe)
+
+
 def genera_edo_variabili_separabili():
     """EDO del primo ordine integrabile per quadratura (variabili separabili)."""
     k = random.choice([1, 2, 3])

@@ -23,6 +23,7 @@ import serie as serie_mod
 import taylor as taylor_mod
 import multivariabile as mv_mod
 import edo as edo_mod
+import continuita_differenziabilita as cd_mod
 
 
 def _didascalia(fig, testo):
@@ -249,6 +250,77 @@ def grafico_edo(esercizio):
     return fig
 
 
+def grafico_edo_primo_ordine(esercizio):
+    """Soluzione y(x) del problema di Cauchy del primo ordine, su un intervallo
+    scelto in base a x0 (per le equazioni a coefficienti variabili, che hanno spesso
+    una singolarita' in x=0, l'intervallo evita quel punto)."""
+    x = edo_mod.x
+    y_expr = esercizio['soluzione_attesa'].rhs
+    x0, y0 = esercizio['x0'], esercizio['y0']
+    y_num = sp.lambdify(x, y_expr, 'numpy')
+
+    if esercizio['tipo'] in ('lineare_var', 'lineare_var2', 'bernoulli_var'):
+        xmin, xmax = x0, x0 + 4
+    else:
+        xmin, xmax = x0 - 2.5, x0 + 2.5
+
+    xs = np.linspace(xmin, xmax, 400)
+    ys = _valuta(y_num, xs)
+
+    fig, ax = plt.subplots(figsize=(6, 4.4))
+    ax.plot(xs, ys, linewidth=2, color='#2e5c8a')
+    ax.plot(x0, float(y0), 'ro', markersize=7, label=f"y({x0}) = {y0}")
+    ax.set_ylim(_ylim_range(ys))
+    ax.set_xlabel('x')
+    ax.set_ylabel('y(x)')
+    ax.set_title("Soluzione del problema di Cauchy (primo ordine)")
+    ax.legend()
+    _didascalia(fig, "La curva e' la soluzione y(x) trovata; il punto rosso e' la condizione\n"
+                     "iniziale imposta dal problema di Cauchy, da cui la curva deve partire.")
+    return fig
+
+
+def grafico_continuita(esercizio):
+    """Superficie z=f(x,y) in un piccolo intorno dell'origine (dove f e' definita
+    a tratti), per vedere 'a occhio' se la superficie e' una cupola/conca liscia
+    (continua e differenziabile), se ha uno spigolo/cresta (continua ma non
+    differenziabile) o se addirittura si spacca in modo vistoso (non continua)."""
+    x, y = cd_mod.x, cd_mod.y
+    f_expr = esercizio['f']
+    f_num = sp.lambdify((x, y), f_expr, 'numpy')
+
+    lin = np.linspace(-1, 1, 121)  # dispari: include lo 0 esatto, gestito a parte sotto
+    X, Y = np.meshgrid(lin, lin)
+    with np.errstate(all='ignore'):
+        Z = np.asarray(f_num(X, Y), dtype=float)
+    Z[~np.isfinite(Z)] = 0.0
+    Z[(np.abs(X) < 1e-9) & (np.abs(Y) < 1e-9)] = 0.0  # f(0,0)=0 per definizione
+
+    fig = plt.figure(figsize=(11, 5.5))
+    ax3d = fig.add_subplot(1, 2, 1, projection='3d')
+    ax3d.plot_surface(X, Y, Z, cmap='coolwarm', alpha=0.85, linewidth=0, antialiased=True)
+    ax3d.scatter([0], [0], [0], color='black', s=40)
+    ax3d.set_xlabel('x')
+    ax3d.set_ylabel('y')
+    ax3d.set_zlabel('f(x,y)')
+    stato = 'CONTINUA' if esercizio['continua'] else 'NON CONTINUA'
+    if esercizio['continua'] and esercizio.get('differenziabile') is not None:
+        stato += ', ' + ('DIFFERENZIABILE' if esercizio['differenziabile'] else 'NON DIFFERENZIABILE')
+    ax3d.set_title(f"Superficie z=f(x,y) vicino a (0,0)  —  {stato}", fontsize=9.5)
+
+    ax2d = fig.add_subplot(1, 2, 2)
+    cs = ax2d.contourf(X, Y, Z, levels=25, cmap='coolwarm')
+    fig.colorbar(cs, ax=ax2d, shrink=0.8)
+    ax2d.plot(0, 0, 'ko', markersize=7)
+    ax2d.set_title("Vista dall'alto: curve di livello", fontsize=9.5)
+    ax2d.set_aspect('equal', 'box')
+
+    _didascalia(fig, "A sinistra: la superficie vicino all'origine (il pallino nero e' f(0,0)=0).\n"
+                     "Un andamento a punta/cresta indica assenza di piano tangente (non\n"
+                     "differenziabile); una vistosa discontinuita' visiva indica f non continua.")
+    return fig
+
+
 def grafico_integrale(esercizio):
     """Dominio D di integrazione (cerchio pieno o corona circolare), in coordinate cartesiane."""
     fig, ax = plt.subplots(figsize=(5, 5.4))
@@ -276,11 +348,14 @@ def grafico_integrale(esercizio):
     return fig
 
 
-# Dispatcher usato da CLI e GUI: solo gli argomenti collegati al menu principale.
+# Dispatcher usato da CLI e GUI e dallo script di precompute del banco statico.
 GRAFICI = {
     'serie': grafico_serie,
     'taylor': grafico_taylor,
     'lagrange': grafico_lagrange,
+    'punti_liberi': grafico_punto_critico,
     'edo': grafico_edo,
+    'edo1': grafico_edo_primo_ordine,
     'integrali': grafico_integrale,
+    'continuita': grafico_continuita,
 }
