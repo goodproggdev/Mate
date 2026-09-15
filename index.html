@@ -21,7 +21,7 @@
 
 /* ===================== HOME ===================== */
 .hero { text-align: center; padding: 40px 0 10px; }
-.cards { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 30px 0; }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 18px; margin: 30px 0; }
 @media (max-width: 700px) { .cards { grid-template-columns: 1fr; } }
 .link-card {
   background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
@@ -203,7 +203,8 @@
   <nav>
     <a href="#" data-goto="home" class="active">Home</a>
     <a href="#" data-goto="esercizi">Esercizi</a>
-    <a href="#" data-goto="teoria">Teoria &amp; Formulario</a>
+    <a href="#" data-goto="teoria">Teoria</a>
+    <a href="#" data-goto="formulario">Formulario</a>
   </nav>
 </div>
 
@@ -235,8 +236,13 @@
     </a>
     <a class="link-card" href="#" data-goto="teoria">
       <div class="icon">📘</div>
-      <h2>Teoria &amp; Formulario</h2>
+      <h2>Teoria</h2>
       <p>Come riconoscere la casistica e quale processo risolutivo applicare, con richiami al formulario ufficiale ed esempi per ricordare i passaggi chiave.</p>
+    </a>
+    <a class="link-card" href="#" data-goto="formulario">
+      <div class="icon">📐</div>
+      <h2>Formulario</h2>
+      <p>Il formulario ufficiale così com'è, in un'unica pagina consultabile anche offline: sviluppi di Mac Laurin, Hessiano libero e orlato, piano tangente, EDO del primo ordine e metodo di somiglianza per il secondo ordine.</p>
     </a>
   </div>
 
@@ -730,6 +736,243 @@
     <li>GUIDA 25-26.pdf — struttura e programma ufficiale dell'esame (Prof.ssa Gabriella Campo, rev. 15/09/2025).</li>
     <li>Guida_Metodi_Matematici.docx, guida_integrata.html, prerequisiti_esame_metodi_matematici.html — analisi di 7 compiti reali di gennaio 2026.</li>
   </ul>
+
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- VISTA: FORMULARIO                                             -->
+<!-- ============================================================ -->
+<div id="view-formulario" class="view">
+<div class="wrap">
+
+  <div class="cover">
+    <h1>Formulario</h1>
+    <div class="sub">Metodi Matematici per l'Ingegneria</div>
+    <div class="tag">Il formulario ufficiale, così com'è — consultabile anche offline</div>
+  </div>
+
+  <div class="info-box">
+    Questa pagina riporta fedelmente il formulario fornito a esame, senza spiegazioni aggiuntive: per capire
+    quando e come si usa ciascuna formula, vedi la sezione <a href="#" data-goto="teoria">Teoria</a>, che
+    rimanda qui con dei riquadri "Dal Formulario ufficiale".
+  </div>
+
+  <div class="card">
+    <div class="sidebar-title" style="margin-bottom:8px;">Indice</div>
+    <div class="toc">
+      <a href="#f1">1. Serie numeriche</a>
+      <a href="#f2">2. Sviluppi di Mac Laurin</a>
+      <a href="#f3">3. Hessiano e punti stazionari liberi</a>
+      <a href="#f4">4. Piano tangente</a>
+      <a href="#f5">5. Hessiano orlato (vincolato)</a>
+      <a href="#f6">6. EDO del primo ordine lineari</a>
+      <a href="#f7">7. EDO del secondo ordine — metodo di somiglianza</a>
+    </div>
+  </div>
+
+  <!-- ============================== 1 ============================== -->
+  <h2 id="f1">1. Serie numeriche</h2>
+  <div class="table-scroll">
+  <table>
+    <tr><th>Serie</th><th>Carattere</th><th>Nome</th></tr>
+    <tr><td>$$\sum \frac1n$$</td><td>divergente</td><td>serie armonica</td></tr>
+    <tr><td>$$\sum \frac{1}{n^p}$$</td>
+        <td>$p\le1$ divergente<br>$p>1$ convergente</td>
+        <td>serie armonica generalizzata</td></tr>
+    <tr><td>$$\sum_{n=0}^{+\infty} q^n$$</td>
+        <td>$q\le-1$ irregolare<br>$-1<q<1$ convergente<br>$q\ge1$ divergente</td>
+        <td>serie geometrica di ragione $q$</td></tr>
+    <tr><td>$$\sum_{n=0}^{+\infty} aq^n$$</td>
+        <td>$q\le-1$ irregolare<br>$-1<q<1$ convergente<br>$q\ge1$ divergente</td>
+        <td>serie geometrica di punto iniziale $a$ e ragione $q$</td></tr>
+    <tr><td>$$\sum \frac{1}{n(n+1)}=1$$</td><td>convergente</td><td>serie di Mengoli</td></tr>
+  </table>
+  </div>
+
+  <!-- ============================== 2 ============================== -->
+  <h2 id="f2">2. Sviluppi in serie di Mac Laurin di alcune funzioni elementari</h2>
+  <div class="table-scroll">
+  <table>
+    <tr><th>Sviluppo</th><th>Funzione</th></tr>
+    <tr><td>$$(1+x)^\alpha = 1+\alpha x+\frac{\alpha(\alpha-1)}{2}x^2+\cdots+\binom{\alpha}{n}x^n+o(x^n)$$</td>
+        <td>potenza con $\alpha\in\mathbb{R}$</td></tr>
+    <tr><td>$$\sqrt{1+x} = 1+\frac12x-\frac18x^2+\cdots+(-1)^{n+1}\frac{(2n+1)!!}{(2n+2)!!}x^{n+1}+o(x^{n+1})$$</td>
+        <td>radice quadrata</td></tr>
+    <tr><td>$$a^x = 1+x\ln a+\frac{x^2}{2}\ln^2a+\frac{x^3}{3!}\ln^3a+\cdots+\frac{x^n}{n!}\ln^na+o(x^n)$$</td>
+        <td>esponenziale con base $a$</td></tr>
+    <tr><td>$$e^x = 1+x+\frac{x^2}{2}+\frac{x^3}{3!}+\cdots+\frac{x^n}{n!}+o(x^n)$$</td>
+        <td>esponenziale con base $e$</td></tr>
+    <tr><td>$$\ln(1+x) = x-\frac{x^2}{2}+\frac{x^3}{3}-\cdots(-1)^{n+1}\frac{x^n}{n}+o(x^n)$$</td>
+        <td>logaritmo in base $e$</td></tr>
+    <tr><td>$$\sin x = x-\frac{x^3}{3!}+\frac{x^5}{5!}-\cdots(-1)^n\frac{x^{2n+1}}{(2n+1)!}+o(x^{2n+2})$$</td>
+        <td>seno</td></tr>
+    <tr><td>$$\cos x = 1-\frac{x^2}{2}+\frac{x^4}{4!}-\cdots+(-1)^n\frac{x^{2n}}{(2n)!}+o(x^{2n+1})$$</td>
+        <td>coseno</td></tr>
+    <tr><td>$$\tan x = x+\frac13x^3+\frac{2}{15}x^5+\frac{17}{315}x^7+\frac{62}{2835}x^9+o(x^{10})$$</td>
+        <td>tangente</td></tr>
+    <tr><td>$$\cot x = \frac1x-\frac{x}{3}-\frac{x^3}{45}-\frac{2}{945}x^5+o(x^6)$$</td>
+        <td>cotangente</td></tr>
+    <tr><td>$$\sec x = 1+\frac{x^2}{2}+\frac{5}{24}x^4+\frac{61}{720}x^6+o(x^7)$$</td>
+        <td>secante</td></tr>
+    <tr><td>$$\csc x = \frac1x+\frac{x}{6}+\frac{7}{360}x^3+\frac{31}{15120}x^5+o(x^6)$$</td>
+        <td>cosecante</td></tr>
+    <tr><td>$$\arcsin x = x+\frac{x^3}{6}+\frac{3}{40}x^5+\cdots+\frac{(2n)!}{4^n(n!)^2(2n+1)}x^{2n+1}+o(x^{2n+2})$$</td>
+        <td>arcoseno</td></tr>
+    <tr><td>$$\arccos x = \frac{\pi}{2}-x-\frac{x^3}{6}-\frac{3}{40}x^5-\cdots-\frac{(2n)!}{4^n(n!)^2(2n+1)}x^{2n+1}+o(x^{2n+2})$$</td>
+        <td>arcocoseno</td></tr>
+    <tr><td>$$\arctan x = x-\frac{x^3}{3}+\frac{x^5}{5}-\cdots+(-1)^n\frac{x^{2n+1}}{2n+1}+o(x^{2n+2})$$</td>
+        <td>arcotangente</td></tr>
+    <tr><td>$$\text{arccotg}\,x = \frac{\pi}{2}-x+\frac{x^3}{3}-\frac{x^5}{5}+\cdots-(-1)^n\frac{x^{2n+1}}{2n+1}+o(x^{2n+2})$$</td>
+        <td>arcocotangente</td></tr>
+  </table>
+  </div>
+
+  <!-- ============================== 3 ============================== -->
+  <h2 id="f3">3. Hessiano e punti stazionari (liberi)</h2>
+  <div class="warning-box">
+    <span class="box-label">Teorema</span>
+    Sia $P_0(x_0;y_0)$ un punto stazionario di $f(x,y)$, continua e con derivate parziali seconde continue. Se:
+    <ul style="margin:8px 0 0;">
+      <li>$H(x_0,y_0)>0$ e $f''_{xx}(x_0,y_0)<0$, $P_0$ è punto di massimo relativo;</li>
+      <li>$H(x_0,y_0)>0$ e $f''_{xx}(x_0,y_0)>0$, $P_0$ è punto di minimo relativo;</li>
+      <li>$H(x_0,y_0)<0$, $P_0$ è punto di sella;</li>
+      <li>$H(x_0,y_0)=0$, nulla si può dire riguardo a $P_0$.</li>
+    </ul>
+  </div>
+
+  <!-- ============================== 4 ============================== -->
+  <h2 id="f4">4. Piano tangente</h2>
+  <div class="formula-box">
+    <div class="tex-line">$$z = f(x_0,y_0)+\frac{\partial f}{\partial x}(x_0,y_0)(x-x_0)+\frac{\partial f}{\partial y}(x_0,y_0)(y-y_0)$$</div>
+  </div>
+
+  <!-- ============================== 5 ============================== -->
+  <h2 id="f5">5. Hessiano orlato (ottimizzazione vincolata)</h2>
+  <div class="formula-box">
+    <div class="tex-line">$$\overline{H} = \begin{pmatrix} 0 & g_x' & g_y' \\ g_x' & L_{xx}'' & L_{xy}'' \\ g_y' & L_{yx}'' & L_{yy}'' \end{pmatrix}$$</div>
+  </div>
+  <div class="warning-box">
+    <span class="box-label">Si dimostra che se</span>
+    <ul style="margin:8px 0 0;">
+      <li>$\overline{H}(x_0;y_0;\lambda_0)>0$, la funzione $f$ ammette un massimo vincolato in $P_0$;</li>
+      <li>$\overline{H}(x_0;y_0;\lambda_0)<0$, la funzione $f$ ammette un minimo vincolato in $P_0$;</li>
+      <li>$\overline{H}(x_0;y_0;\lambda_0)=0$, nulla si può dire riguardo a $P_0$.</li>
+    </ul>
+  </div>
+
+  <!-- ============================== 6 ============================== -->
+  <h2 id="f6">6. Equazioni differenziali del primo ordine lineari</h2>
+  <p>Un'equazione differenziale del primo ordine lineare è della forma (grado di $y$ uguale a 1, $a(x)$ e $b(x)$
+  funzioni continue):</p>
+  <div class="formula-box">
+    <div class="tex-line">$$y' = a(x)\cdot y+b(x)$$</div>
+  </div>
+  <p>Se $b(x)=0$, l'equazione è <strong>lineare omogenea</strong> e diventa a variabili separabili. Se
+  $b(x)\ne0$, l'equazione è <strong>completa</strong> e, posto</p>
+  <div class="formula-box">
+    <div class="tex-line">$$A(x)=\int a(x)\,dx,$$</div>
+  </div>
+  <p>l'integrale generale è:</p>
+  <div class="formula-box">
+    <div class="tex-line">$$y = e^{A(x)}\left[\int b(x)e^{-A(x)}\,dx+c\right]$$</div>
+  </div>
+
+  <!-- ============================== 7 ============================== -->
+  <h2 id="f7">7. Equazioni differenziali del secondo ordine — metodo di somiglianza</h2>
+  <p>Per la ricerca di una soluzione particolare $\bar y(x)$ delle equazioni differenziali lineari del
+  second'ordine non omogenee</p>
+  <div class="formula-box">
+    <div class="tex-line">$$ay''+by'+cy=f(x)\qquad(*)$$</div>
+    <span class="box-caption">con $a,b,c$ costanti, $a\ne0$.</span>
+  </div>
+
+  <div class="table-scroll">
+  <table>
+    <tr><th>Forma di $f(x)$</th><th>Forma in cui si cerca $\bar y(x)$</th><th>Eventuali eccezioni e osservazioni</th></tr>
+    <tr>
+      <td><strong>Caso 1</strong><br>polinomio di grado $n$</td>
+      <td>polinomio di grado $n$</td>
+      <td>Se nella (*) $c=0$, cercare un polinomio di grado $n+1$; se $c=b=0$, cercare un polinomio di grado $n+2$.</td>
+    </tr>
+    <tr>
+      <td><strong>Caso 2</strong><br>esponenziale $Ae^{\lambda x}$</td>
+      <td>esponenziale $ce^{\lambda x}$<br>(lo stesso $\lambda$, $c$ da determinarsi)</td>
+      <td>Se non c'è soluzione di questo tipo (ciò accade perché $a\lambda^2+b\lambda+c=0$, ossia perché
+      $e^{\lambda x}$ è soluzione dell'eq. diff. omogenea), cercare $\bar y(x)=cxe^{\lambda x}$; se nemmeno
+      questo tipo di soluzione esiste, cercare $\bar y(x)=cx^2e^{\lambda x}$.</td>
+    </tr>
+    <tr>
+      <td><strong>Caso 3</strong><br>$A\cos\omega x+B\sin\omega x$</td>
+      <td>$c_1\cos\omega x+c_2\sin\omega x$<br>(lo stesso $\omega$, $c_1,c_2$ da determinarsi)</td>
+      <td>Notare che anche se $f$ ha uno solo dei due addendi (seno o coseno), in generale la soluzione li ha
+      entrambi. Se $b=0$ può accadere che $c_1\cos\omega x+c_2\sin\omega x$ sia soluzione dell'omogenea: in
+      tal caso, cercare soluzione $x(c_1\cos\omega x+c_2\sin\omega x)$.</td>
+    </tr>
+    <tr>
+      <td><strong>Caso 4</strong><br>$e^{\lambda x}(A\cos\omega x+B\sin\omega x)$</td>
+      <td>$e^{\lambda x}(c_1\cos\omega x+c_2\sin\omega x)$<br>(gli stessi $\omega,\lambda$ e $c_1,c_2$ da determinarsi)</td>
+      <td>Se $z=\lambda+i\omega$ è soluzione di $az^2+bz+c=0$, sostituire $e^{\lambda x}$ con $xe^{\lambda x}$.
+      Notare che anche se $f$ ha uno solo dei due addendi (seno o coseno), in generale la soluzione li ha
+      entrambi.</td>
+    </tr>
+    <tr>
+      <td><strong>Caso 5</strong><br>$e^{\lambda x}p(x)$, dove $p(x)$ è un polinomio di grado $n$</td>
+      <td>$e^{\lambda x}q(x)$, con lo stesso $\lambda$, $q(x)$ polinomio di grado $n$, da determinarsi</td>
+      <td>Se $\lambda$ è soluzione dell'eq. caratteristica $a\lambda^2+b\lambda+c=0$, cercare una soluzione
+      $y(x)=e^{\lambda x}\cdot(\text{polinomio di grado }n+1)$.</td>
+    </tr>
+  </table>
+  </div>
+
+  <h3>Esempi</h3>
+  <div class="example-box">
+    <span class="box-label">Caso 1</span>
+    <div class="tex-line">$$y''+2y=x^3+2 \quad\Rightarrow\quad \bar y(x)=\alpha x^3+\beta x^2+\gamma x+\delta$$</div>
+    <div class="tex-line">$$y''-3y'=2x+1 \quad\Rightarrow\quad \bar y(x)=\alpha x^2+\beta x+\gamma$$</div>
+    <span class="box-caption">(nel secondo esempio $c=0$: il polinomio si cerca di grado $n+1=2$ anziché 1)</span>
+  </div>
+  <div class="example-box">
+    <span class="box-label">Caso 2</span>
+    <div class="tex-line">$$y''+2y'+3y=2e^{-3x} \quad\Rightarrow\quad \bar y(x)=ce^{-3x}$$</div>
+    <div class="tex-line">$$y''+2y'-3y=3e^{x} \quad\Rightarrow\quad \bar y(x)=cxe^{x}$$</div>
+    <span class="box-caption">Spiegazione 2° es.: $\lambda=1$ è soluzione dell'eq. caratteristica
+    $\lambda^2+2\lambda-3=0$, ossia $e^x$ è soluzione dell'eq. diff. omogenea $y''+2y'-3y=0$; perciò occorre
+    moltiplicare per $x$.</span>
+  </div>
+  <div class="example-box">
+    <span class="box-label">Caso 3</span>
+    <div class="tex-line">$$y''+2y'-y=3\sin2x \quad\Rightarrow\quad \bar y(x)=c_1\cos2x+c_2\sin2x$$</div>
+  </div>
+  <div class="example-box">
+    <span class="box-label">Caso 4</span>
+    <div class="tex-line">$$y''+2y=3e^{-x}\sin2x \quad\Rightarrow\quad \bar y(x)=e^{-x}(c_1\cos2x+c_2\sin2x)$$</div>
+    <div class="tex-line">$$y''-4y'+5y=3e^{2x}\cos x \quad\Rightarrow\quad \bar y(x)=xe^{2x}(c_1\cos x+c_2\sin x)$$</div>
+    <span class="box-caption">Spiegazione 2° es.: $z=2+i$ è soluzione dell'eq. caratteristica
+    $z^2-4z+5=0$, ossia $e^{2x}\cos x,e^{2x}\sin x$ sono soluzioni dell'eq. omogenea $y''-4y'+5y=0$, perciò si
+    introduce il fattore $x$. (Nel Caso 4 può essere più comodo effettuare i calcoli utilizzando i numeri
+    complessi.)</span>
+  </div>
+  <div class="example-box">
+    <span class="box-label">Caso 5</span>
+    <div class="tex-line">$$y''+2y'-y=e^{3x}(x+2) \quad\Rightarrow\quad \bar y(x)=e^{3x}(ax+b)$$</div>
+    <div class="tex-line">$$y''-y=e^{x}(x+2) \quad\Rightarrow\quad \bar y(x)=e^{x}(ax^2+bx+c)$$</div>
+    <span class="box-caption">Spiegazione 2° es.: $\lambda=1$ è soluzione dell'eq. caratteristica
+    $\lambda^2-1=0$, ossia $e^x$ è soluzione dell'equazione omogenea $y''-y=0$; perciò il polinomio che
+    compare in $\bar y$ si alza di grado.</span>
+  </div>
+
+  <div class="info-box">
+    <span class="box-label">Osservazione — quando il termine noto è somma di due funzioni dei tipi precedenti</span>
+    Se il termine noto è del tipo $f(x)=f_1(x)+f_2(x)$, con $f_1,f_2$ dei tipi descritti in precedenza, è
+    sufficiente cercare (separatamente) una soluzione particolare $y_1$ dell'equazione $Ly=f_1$ e una soluzione
+    particolare $y_2$ dell'equazione $Ly=f_2$; a questo punto (per la linearità dell'equazione differenziale),
+    la funzione $y_1+y_2$ sarà una soluzione particolare di $Ly=f_1+f_2$.
+    <div class="tex-line" style="margin-top:10px;">$$y''+2y=3e^{-x}+x^2+1$$</div>
+    <p style="margin:6px 0 0; font-size:13px;">Si cerca una soluzione $y_1=c_1e^{-x}$ dell'equazione
+    $y''+2y=3e^{-x}$; si cerca una soluzione $y_2=ax^2+bx+c$ dell'equazione $y''+2y=x^2+1$; la funzione
+    $y_1+y_2$ sarà allora una soluzione particolare dell'equazione di partenza.</p>
+  </div>
 
 </div>
 </div>
@@ -1533,15 +1776,17 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Teoria e' contenuto statico: la formattiamo in LaTeX una sola volta, a prescindere
-  // da quale vista sia attiva all'avvio (e' un lavoro leggero, non richiede il banco).
+  // Teoria e Formulario sono contenuto statico: li formattiamo in LaTeX una sola volta,
+  // a prescindere da quale vista sia attiva all'avvio (e' un lavoro leggero, non richiede il banco).
   if (typeof renderMathInElement === "function") {
-    renderMathInElement(document.getElementById("view-teoria"), {
-      delimiters: [
-        { left: "$$", right: "$$", display: true },
-        { left: "$", right: "$", display: false },
-      ],
-      throwOnError: false,
+    ["view-teoria", "view-formulario"].forEach((id) => {
+      renderMathInElement(document.getElementById(id), {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false },
+        ],
+        throwOnError: false,
+      });
     });
   }
 
