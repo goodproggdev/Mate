@@ -727,3 +727,636 @@ def _continuita_dicembre():
 ESAME["continuita"].append(_continuita_aprile())
 ESAME["continuita"].append(_continuita_maggio())
 ESAME["continuita"].append(_continuita_dicembre())
+
+# -*- coding: utf-8 -*-
+"""
+Addendum: problemi reali tratti da MMpI_temi_esame_EDO_luglio_2025.pdf (una raccolta di
+esercizi d'esame di EDO, con soluzioni manoscritte usate come controllo incrociato) e da
+Luglio 2026.pdf (6 appelli completi: 18,20,21,22,23,25 luglio 2026, 3 esercizi ciascuno).
+Diversi problemi di EDO compaiono IDENTICI in entrambi i PDF (lo stesso problema riusato
+in piu' sessioni d'esame): sono stati inclusi una sola volta.
+"""
+
+# ---------------------------------------------------------------------------
+# EDO 2 ORDINE -- nuovi problemi con Cauchy (A, B, G)
+# ---------------------------------------------------------------------------
+
+ESAME["edo"].append(_edo2_generico(
+    "20 luglio 2026",
+    "[luglio 2025 / 20 luglio 2026, Esercizio 2] Risolvere il seguente problema di Cauchy: "
+    "y'' - 2y' + y = x cos x, con y(0)=0, y'(0)=1.",
+    -2, 1, r"x\cos x", x*sp.cos(x), 0, 1,
+    ansatz_passi=[
+        _passo("Radice: r=1 doppia (molteplicita' 2, reale).", None),
+        _passo("Termine x*cos(x) (polinomio di 1 grado per trigonometrica, w=1): la radice r=1 e' "
+               "reale, non della forma +-i*w=+-i -> NO risonanza -> ansatz",
+               r"y_p = (Ax+B)\cos x + (Cx+D)\sin x"),
+    ]))
+
+ESAME["edo"].append(_edo2_generico(
+    "18 luglio 2026",
+    "[luglio 2025 / 18 luglio 2026, Esercizio 2] Dopo averla classificata, risolvere il "
+    "seguente problema di Cauchy: y'' + 9y = xe^(3x) + cos(3x), con y(0)=0, y'(0)=0.",
+    0, 9, r"xe^{3x}+\cos(3x)", x*sp.exp(3*x)+sp.cos(3*x), 0, 0,
+    ansatz_passi=[
+        _passo("Radici: r=+-3i (complesse coniugate, parte reale nulla -- equazione omogenea "
+               "associata di un oscillatore armonico).", None),
+        _passo("Termine x*e^(3x) (Caso 5, polinomio grado 1 per esponenziale, lambda=3): lambda=3 NON e' tra "
+               "le radici +-3i (che sono immaginarie pure) -> NO risonanza -> ansatz",
+               r"y_{p1} = (Ax+B)e^{3x}"),
+        _passo("Termine cos(3x) (Caso 3, w=3): le radici sono ESATTAMENTE +-3i, cioe' coincidono con "
+               "+-iw -> RISONANZA -> si moltiplica per x -> ansatz",
+               r"y_{p2} = x(A\cos 3x + B\sin 3x)"),
+    ]))
+
+ESAME["edo"].append(_edo2_generico(
+    "25 luglio 2026",
+    "[luglio 2025 / 25 luglio 2026, Esercizio 2] Determinare l'unica soluzione dell'equazione "
+    "differenziale y'' - 2y' + 5y = 3e^x sin(x), sapendo che y(0)=1 e y'(0)=4.",
+    -2, 5, r"3e^{x}\sin x", 3*sp.exp(x)*sp.sin(x), 1, 4,
+    ansatz_passi=[
+        _passo("Radici: r=1+-2i (complesse coniugate).", None),
+        _passo("Termine 3e^x*sin(x) (Caso 4, alpha=1,beta=1): alpha+i*beta=1+i NON coincide con 1+-2i "
+               "(la parte immaginaria e' diversa, beta=1!=2) -> NO risonanza -> ansatz",
+               r"y_p = e^{x}(A\cos x+B\sin x)"),
+    ]))
+
+# ---------------------------------------------------------------------------
+# EDO 2 ORDINE -- nuovi problemi SENZA condizioni di Cauchy (solo soluzione
+# generale, come richiesto nel testo d'esame originale): la verifica automatica
+# qui sotto chiede solo la soluzione particolare y_p(x) (cioe' l'omogenea con le
+# costanti arbitrarie C1=C2=0), l'unica parte univocamente determinata.
+# ---------------------------------------------------------------------------
+
+def _edo2_solo_particolare(fonte, testo, a, b, forzante_tex, forzante, ansatz_passi=None):
+    Y = sp.Function('y')
+    eq = sp.Eq(Y(x).diff(x, 2) + a*Y(x).diff(x) + b*Y(x), forzante)
+    sol_gen = sp.dsolve(eq, Y(x))
+    C1, C2 = sp.symbols('C1 C2')
+    y_p = sp.simplify(sol_gen.rhs.subs({C1: 0, C2: 0}))
+    residuo = sp.simplify(y_p.diff(x, 2) + a*y_p.diff(x) + b*y_p - forzante)
+    assert residuo == 0, f"y_p non verifica l'equazione: residuo={residuo}"
+
+    r = sp.symbols('r')
+    radici = sp.solve(sp.Eq(r**2 + a*r + b, 0), r)
+
+    def _termine(coeff, simbolo):
+        if coeff == 0:
+            return ""
+        segno = "+" if coeff > 0 else "-"
+        c = abs(coeff)
+        cifra = "" if c == 1 else str(c)
+        return f"{segno}{cifra}{simbolo}"
+
+    testo_latex = "y''" + _termine(a, "y'") + _termine(b, "y") + "=" + forzante_tex
+    passi = [_passo("Equazione (il testo d'esame chiede solo la soluzione generale, non un "
+                     "problema di Cauchy):", testo_latex)]
+    passi.append(_passo("Passo 1 -- equazione caratteristica:",
+                         f"r^2+{a}r+{b}=0 \\Rightarrow " + _tex(radici)))
+    if ansatz_passi:
+        passi.append(_passo("Passo 2 -- forma della soluzione particolare (metodo di somiglianza, "
+                             "dal formulario): per ogni termine del termine noto, verifichiamo se "
+                             "coincide con una radice dell'equazione caratteristica (risonanza):",
+                             None))
+        passi.extend(ansatz_passi)
+    passi.append(_passo("Soluzione generale (omogenea con costanti arbitrarie C1,C2, sommata alla "
+                         "particolare):", "y(x)=" + _tex(sol_gen.rhs)))
+    passi.append(_passo("La parte omogenea C1(...)+C2(...) e' gia' di per se' soluzione dell'equazione "
+                         "omogenea associata (=0) per QUALSIASI valore di C1,C2: la sola parte "
+                         "univocamente determinata dal termine noto e' la soluzione particolare, "
+                         "ottenuta ponendo C1=C2=0 nella formula sopra:",
+                         "y_p(x)=" + _tex(y_p)))
+
+    es_fake = {"soluzione_attesa": sp.Eq(Y(x), y_p), "y0": y_p.subs(x, 0)}
+    try:
+        fig = _grafico.grafico_edo(es_fake)
+        png = _png(fig)
+    except Exception:
+        png = None
+
+    punti_x = [0.0, 0.3, 0.6, 1.0, 1.5, 2.0]
+    campioni = []
+    for xv in punti_x:
+        try:
+            val = complex(y_p.subs(x, xv).evalf())
+            if abs(val.imag) < 1e-8:
+                campioni.append([xv, float(val.real)])
+        except Exception:
+            pass
+    risposta = {"tipo": "funzione_su_campioni", "campioni": campioni}
+    return _voce(fonte, testo, testo_latex,
+                 "Scrivi SOLO la soluzione particolare y_p(x) (poni C1=C2=0), in sintassi Python, "
+                 "es: exp(-x)*(1+x)",
+                 passi, risposta, png)
+
+
+ESAME["edo"].append(_edo2_solo_particolare(
+    "luglio 2025",
+    "[luglio 2025, Esercizio 2] Risolvere la seguente equazione differenziale: "
+    "y'' - y' - 2y = e^(-x) + x^2 + cos(x).",
+    -1, -2, r"e^{-x}+x^2+\cos x", sp.exp(-x)+x**2+sp.cos(x),
+    ansatz_passi=[
+        _passo("Radici: r=-1 e r=2 (reali distinte).", None),
+        _passo("Termine e^(-x) (Caso 2, lambda=-1): lambda=-1 E' una delle radici (molteplicita' 1) -> "
+               "RISONANZA -> si moltiplica per x -> ansatz", r"y_{p1} = Ax\,e^{-x}"),
+        _passo("Termine x^2 (Caso 1, polinomio grado 2): 0 non e' radice -> NO risonanza -> ansatz",
+               r"y_{p2} = Ax^2+Bx+C"),
+        _passo("Termine cos(x) (Caso 3, w=1): le radici sono reali (-1 e 2), non della forma +-i "
+               "-> NO risonanza -> ansatz", r"y_{p3} = A\cos x+B\sin x"),
+    ]))
+
+ESAME["edo"].append(_edo2_solo_particolare(
+    "luglio 2025",
+    "[luglio 2025, Esercizio 3] Risolvere la seguente equazione differenziale: "
+    "y'' - 4y' + 13y = 5cos(3x).",
+    -4, 13, r"5\cos(3x)", 5*sp.cos(3*x),
+    ansatz_passi=[
+        _passo("Radici: r=2+-3i (complesse coniugate).", None),
+        _passo("Termine 5cos(3x) (Caso 3, w=3): 0+-3i NON coincide con 2+-3i (parte reale diversa, "
+               "2!=0) -> NO risonanza -> ansatz", r"y_p = A\cos 3x+B\sin 3x"),
+    ]))
+
+ESAME["edo"].append(_edo2_solo_particolare(
+    "21 luglio 2026",
+    "[luglio 2025 / 21 luglio 2026, Esercizio 2] Dopo averla classificata, risolvere la "
+    "seguente equazione differenziale: y'' - 4y' + 4y = (2x-3)e^(2x).",
+    -4, 4, r"(2x-3)e^{2x}", (2*x-3)*sp.exp(2*x),
+    ansatz_passi=[
+        _passo("Radice: r=2 doppia (molteplicita' 2).", None),
+        _passo("Termine (2x-3)e^(2x) (Caso 5, e^(lambda x)*p(x) con lambda=2, p grado 1): lambda=2 E' radice con "
+               "molteplicita' 2 -> RISONANZA doppia -> si moltiplica per x^2 -> ansatz",
+               r"y_p = x^2(Ax+B)e^{2x}"),
+    ]))
+
+# ---------------------------------------------------------------------------
+# EDO 1 ORDINE -- nuovi problemi (C, H)
+# ---------------------------------------------------------------------------
+
+ESAME["edo1"].append(_edo1_generico(
+    "22 luglio 2026",
+    "[luglio 2025 / 22 luglio 2026, Esercizio 2] Trovare l'unica soluzione dell'equazione "
+    "differenziale y' = -y/x + xy^2log(x), sapendo che y(1)=1/2.",
+    sp.Eq(Y_(x).diff(x) + Y_(x)/x - x*Y_(x)**2*sp.log(x), 0), 1, sp.Rational(1, 2),
+    [1.2, 1.5, 2.0, 0.8, 0.6, 0.4],
+    r"y' = -\tfrac{y}{x} + xy^2\log x", "di Bernoulli (non lineare, esponente n=2)",
+    "si linearizza dividendo per y^2 e ponendo t=y^(-1) (t'=-y'y^(-2)): si ottiene "
+    "un'equazione lineare in t, risolta con il fattore integrante."))
+
+
+def _edo1_bernoulli_cubica():
+    """y' - y/(2x) - x*y^(1/3) = 0, y(1)=1 -- Bernoulli con n=1/3: sympy.dsolve non riesce a
+    imporre le condizioni iniziali automaticamente su questa forma (branch +-), quindi la
+    sostituzione t=y^(2/3) e la costante C si risolvono qui a mano (verificate sotto per
+    sostituzione diretta nell'equazione originale, invece di fidarsi del solver). Si usa un
+    simbolo locale POSITIVO (xp) solo per la verifica simbolica: senza l'ipotesi x>0, sympy
+    non riesce a semplificare le radici frazionarie e il residuo non si annulla per pigrizia
+    algebrica, non perche' la soluzione sia sbagliata (verificato anche numericamente sotto)."""
+    xp = sp.symbols('xp', positive=True)
+    t_espr_p = sp.Rational(2, 5)*xp**2 + sp.Rational(3, 5)*xp**sp.Rational(1, 3)
+    y_sol_p = t_espr_p**sp.Rational(3, 2)
+    residuo = sp.simplify(y_sol_p.diff(xp) - y_sol_p/(2*xp) - xp*y_sol_p**sp.Rational(1, 3))
+    assert residuo == 0, f"residuo non nullo: {residuo}"
+    assert y_sol_p.subs(xp, 1) == 1
+    for xv in [sp.Rational(1, 2), sp.Integer(2), sp.Integer(5)]:
+        num_res = complex((y_sol_p.diff(xp) - y_sol_p/(2*xp) - xp*y_sol_p**sp.Rational(1, 3))
+                           .subs(xp, xv).evalf())
+        assert abs(num_res) < 1e-9, f"residuo numerico non nullo in x={xv}: {num_res}"
+
+    t_espr = t_espr_p.subs(xp, x)
+    y_sol = y_sol_p.subs(xp, x)
+    y_gen_C = sp.symbols('C1')
+    t_gen = sp.Rational(2, 5)*x**2 + y_gen_C*x**sp.Rational(1, 3)
+    y_gen = t_gen**sp.Rational(3, 2)
+
+    testo = ("[23 luglio 2026, Esercizio 2] Dato il seguente problema di Cauchy: "
+             "y' - y/(2x) - x*y^(1/3) = 0, y(1)=1: a) trovare la soluzione generale "
+             "dell'equazione differenziale; b) trovare la soluzione del problema di Cauchy.")
+    testo_latex = r"y' - \tfrac{y}{2x} - x\,y^{1/3} = 0,\quad y(1)=1"
+    passi = [_passo("Equazione:", testo_latex)]
+    passi.append(_passo("Passo 1 -- e' un'equazione di Bernoulli con esponente n=1/3: dividiamo "
+                         "ambo i membri per y^(1/3) e poniamo t=y^(1-n)=y^(2/3):",
+                         r"y'y^{-1/3} - \tfrac{1}{2x}y^{2/3} = x,\qquad t=y^{2/3},\ \ "
+                         r"t' = \tfrac23 y^{-1/3}y'"))
+    passi.append(_passo("Sostituendo (y'y^(-1/3) = (3/2)t'), l'equazione diventa lineare in t:",
+                         r"\tfrac32 t' - \tfrac{t}{2x} = x \ \iff\ t' - \tfrac{t}{3x} = \tfrac23 x"))
+    passi.append(_passo("Passo 2 -- fattore integrante mu(x)=e^(-int dx/(3x))=x^(-1/3):",
+                         r"(t\,x^{-1/3})' = \tfrac23 x\cdot x^{-1/3} = \tfrac23 x^{2/3}"))
+    passi.append(_passo("Integrando e moltiplicando per x^(1/3):",
+                         r"t\,x^{-1/3} = \tfrac25 x^{5/3} + C \ \Rightarrow\ "
+                         r"t(x) = \tfrac25 x^2 + C\,x^{1/3}"))
+    passi.append(_passo("Passo 3 -- ripristinando y=t^(3/2), la soluzione generale e':",
+                         "y(x) = " + _tex(y_gen)))
+    passi.append(_passo("Passo 4 -- imponendo y(1)=1: t(1)=1^(2/3)=1, quindi 2/5+C=1 -> C=3/5:",
+                         "C=" + _tex(sp.Rational(3, 5))))
+    passi.append(_passo("Soluzione del problema di Cauchy:", "y(x) = " + _tex(y_sol)))
+
+    Y = sp.Function('y')
+    es_fake = {"soluzione_attesa": sp.Eq(Y(x), y_sol), "x0": 1, "y0": 1, "tipo": "bernoulli_var"}
+    try:
+        fig = _grafico.grafico_edo_primo_ordine(es_fake)
+        png = _png(fig)
+    except Exception:
+        png = None
+
+    campioni = []
+    for xv in [1.0, 1.3, 1.6, 2.0, 2.5, 3.0]:
+        try:
+            val = complex(y_sol.subs(x, xv).evalf())
+            if abs(val.imag) < 1e-8:
+                campioni.append([xv, float(val.real)])
+        except Exception:
+            pass
+    risposta = {"tipo": "funzione_su_campioni", "campioni": campioni}
+    return _voce("23 luglio 2026", testo, testo_latex,
+                 "Scrivi y(x) in sintassi Python, es: ((2*x**2+3*x**(1/3))/5)**(3/2)",
+                 passi, risposta, png)
+
+
+ESAME["edo1"].append(_edo1_bernoulli_cubica())
+
+# ---------------------------------------------------------------------------
+# INTEGRALI DOPPI -- nuovi problemi (Q, R, S)
+# ---------------------------------------------------------------------------
+
+import numpy as _np
+
+
+def _fig_18lug_Q():
+    fig, ax = plt.subplots(figsize=(5.5, 5.5))
+    xx = _np.linspace(0, 1.3, 200)
+    ax.plot(xx, 2*_np.sqrt(xx), color='#2e5c8a', label="y = 2 sqrt(x)")
+    ax.plot(xx, 2*xx**3, color='#c0392b', label="y = 2x^3")
+    xf = _np.linspace(0, 1, 200)
+    ax.fill_between(xf, 2*xf**3, 2*_np.sqrt(xf), alpha=0.35, color='#8a6d1a')
+    ax.set_xlim(-0.2, 1.4); ax.set_ylim(-0.2, 2.2)
+    ax.axhline(0, color='gray', linewidth=0.4); ax.axvline(0, color='gray', linewidth=0.4)
+    ax.legend(fontsize=8); ax.set_aspect('equal', 'box')
+    ax.set_title("Dominio D (18 luglio 2026)", fontsize=9.5)
+    fig.tight_layout()
+    return fig
+
+
+ESAME["integrali"].append(_integrale_generico(
+    "18 luglio 2026",
+    "[18 luglio 2026, Esercizio 3] Dato il seguente integrale doppio di f(x,y)=x+y sul "
+    "dominio D = {(x,y) in R^2: y <= 2 sqrt(x), y >= 2x^3}, disegnare e descrivere il dominio e "
+    "calcolarne il valore.",
+    r"y\le2\sqrt{x},\ \ y\ge2x^3", "x+y", sp.Rational(39, 35), _fig_18lug_Q,
+    passi_extra=[_passo("Intersezione delle due curve: 2sqrt(x)=2x^3 <=> sqrt(x)=x^3, risolvendo per x>0 si "
+                         "trova x=1 (e x=0); per 0<x<1 la parabola cubica y=2x^3 sta sotto la "
+                         "radice y=2sqrt(x) (es. in x=0.5: 2x^3=0.25 < 2sqrt(x)=1.41).", None),
+                 _passo("Integrando prima su y (tra le due curve), poi su x tra 0 e 1:",
+                        r"\int_0^1\int_{2x^3}^{2\sqrt{x}}(x+y)\,dy\,dx")]))
+
+
+def _fig_21lug_R():
+    fig, ax = plt.subplots(figsize=(5.5, 5.5))
+    O, A, B = (0, 0), (1, 0), (1, 2)
+    tri = plt.Polygon([O, A, B], closed=True, alpha=0.35, color='#8a6d1a')
+    ax.add_patch(tri)
+    for (px, py), lbl in [(O, 'O(0,0)'), (A, 'A(1,0)'), (B, 'B(1,2)')]:
+        ax.plot(px, py, 'ko', markersize=6)
+        ax.annotate(lbl, (px, py), textcoords="offset points", xytext=(6, 6), fontsize=8)
+    ax.set_xlim(-0.5, 2); ax.set_ylim(-0.5, 2.5)
+    ax.set_aspect('equal', 'box')
+    ax.axhline(0, color='gray', linewidth=0.4); ax.axvline(0, color='gray', linewidth=0.4)
+    ax.set_title("Dominio D: triangolo (21 luglio 2026)", fontsize=9.5)
+    fig.tight_layout()
+    return fig
+
+
+ESAME["integrali"].append(_integrale_generico(
+    "21 luglio 2026",
+    "[21 luglio 2026, Esercizio 3] Calcolare il seguente integrale doppio di f(x,y)=x^2e^(xy) "
+    "sul dominio D = triangolo di vertici O(0,0), A(1,0), B(1,2). E' obbligatorio disegnare e "
+    "colorare il dominio.",
+    r"\text{triangolo di vertici } O(0,0),\,A(1,0),\,B(1,2)", "x^2e^{xy}",
+    sp.Rational(-3, 4) + sp.exp(2)/4, _fig_21lug_R,
+    passi_extra=[_passo("Il lato OB e' la retta y=2x: per x in [0,1], y varia tra 0 (lato OA) e "
+                         "2x (lato OB).", None),
+                 _passo("Integrando prima su y, poi su x -- l'integrale interno si risolve subito "
+                         "perche' x^2e^(xy) e' (a meno di 1/x) la derivata rispetto a y di x*e^(xy):",
+                         r"\int_0^1\int_0^{2x} x^2e^{xy}\,dy\,dx = "
+                         r"\int_0^1\left[xe^{xy}\right]_0^{2x}dx = \int_0^1\left(xe^{2x^2}-x\right)dx")]))
+
+
+def _fig_22lug_S():
+    fig, ax = plt.subplots(figsize=(5.5, 5.5))
+    verts = [(0, 1), (1, 2), (2, 1), (2, 0)]
+    quad = plt.Polygon(verts, closed=True, alpha=0.35, color='#8a6d1a')
+    ax.add_patch(quad)
+    for (px, py) in verts:
+        ax.plot(px, py, 'ko', markersize=6)
+        ax.annotate(f"({px},{py})", (px, py), textcoords="offset points", xytext=(6, 6), fontsize=8)
+    ax.set_xlim(-0.5, 3); ax.set_ylim(-0.5, 2.7)
+    ax.set_aspect('equal', 'box')
+    ax.axhline(0, color='gray', linewidth=0.4); ax.axvline(0, color='gray', linewidth=0.4)
+    ax.set_title("Dominio D: quadrilatero (22 luglio 2026)", fontsize=9.5)
+    fig.tight_layout()
+    return fig
+
+
+ESAME["integrali"].append(_integrale_generico(
+    "22 luglio 2026",
+    "[22 luglio 2026, Esercizio 3] Calcolare il seguente integrale doppio: doppio integrale su D di y dx dy, dove "
+    "D e' il quadrilatero di vertici (0,1), (1,2), (2,1), (2,0).",
+    r"\text{quadrilatero di vertici } (0,1),(1,2),(2,1),(2,0)", "y", sp.Integer(2), _fig_22lug_S,
+    passi_extra=[_passo("I 4 lati: da (0,1) a (1,2) la retta y=x+1; da (1,2) a (2,1) la retta "
+                         "y=-x+3; da (2,1) a (2,0) il segmento verticale x=2; da (2,0) a (0,1) la "
+                         "retta y=1-x/2 (che fa da bordo INFERIORE per tutto x in [0,2]).", None),
+                 _passo("Si integra separatamente per x in [0,1] (tetto y=x+1) e x in [1,2] (tetto "
+                        "y=-x+3), con lo stesso bordo inferiore y=1-x/2:",
+                        r"\int_0^1\!\!\int_{1-x/2}^{x+1}\!y\,dy\,dx + "
+                        r"\int_1^2\!\!\int_{1-x/2}^{-x+3}\!y\,dy\,dx")]))
+
+# ---------------------------------------------------------------------------
+# SERIE -- nuovi problemi (M, N, O)
+# ---------------------------------------------------------------------------
+
+
+def _serie_fattoriale_ratio():
+    n_ = sp.symbols('n', positive=True, integer=True)
+    a_n = sp.factorial(n_)**2 / (n_**3 * sp.factorial(2*n_))
+    a_n1 = a_n.subs(n_, n_+1)
+    ratio = sp.simplify(a_n1/a_n)
+    lim = sp.limit(ratio, n_, sp.oo)
+    testo = ("[20 luglio 2026, Esercizio 3] Studiare il carattere della serie "
+             "sommatoria (n>=1) (n!)^2/(n^3(2n)!).")
+    testo_latex = r"\sum_{n\ge1}\frac{(n!)^2}{n^3(2n)!}"
+    passi = [
+        _passo("Serie:", testo_latex),
+        _passo("Passo 1 -- termini tutti positivi e con fattoriali: usiamo il criterio del "
+               "rapporto. Rapporto a_(n+1)/a_n:",
+               r"\frac{a_{n+1}}{a_n} = " + _tex(ratio)),
+        _passo("Passo 2 -- limite per n->infinito:", r"\lim_{n\to\infty}\frac{a_{n+1}}{a_n} = " + _tex(lim)),
+        _passo(f"Passo 3 -- essendo il limite {_tex(lim)} < 1, per il criterio del rapporto la "
+               "serie CONVERGE.", None),
+    ]
+    risposta = {"tipo": "scelta", "atteso": "converge"}
+    return _voce("20 luglio 2026", testo, testo_latex,
+                 "Scrivi 'converge' o 'diverge'.", passi, risposta, None)
+
+
+ESAME["serie"].append(_serie_fattoriale_ratio())
+
+
+def _serie_geometrica_parametrica_2026():
+    testo = ("[23 luglio 2026, Esercizio 3] Data la serie geometrica "
+             "sommatoria (n>=1) [8/(6x-x^2-8)]^n, determinare per quali valori di x la serie "
+             "converge. (Per la verifica automatica qui sotto: indica se per x=-1 la serie "
+             "CONVERGE o DIVERGE -- la discussione completa per ogni x e' nei passaggi della "
+             "soluzione.)")
+    testo_latex = r"\sum_{n\ge1}\left(\frac{8}{6x-x^2-8}\right)^n"
+    xs = sp.symbols('x')
+    q = 8/(6*xs - xs**2 - 8)
+    fatt = sp.factor(6*xs - xs**2 - 8)
+    passi = [
+        _passo("Serie:", testo_latex),
+        _passo("Passo 1 -- e' geometrica di ragione q(x)=8/(6x-x^2-8); fattorizzando il "
+               "denominatore:", r"6x-x^2-8 = " + _tex(fatt) + r"\ \Rightarrow\ q(x)=\frac{8}{"
+               + _tex(fatt) + "}"),
+        _passo("Passo 2 -- dominio: q(x) non e' definita per x=2 e x=4 (denominatore nullo).", None),
+        _passo("Passo 3 -- una serie geometrica converge se e solo se |q(x)|<1; risolvendo "
+               "q(x)^2<1 (equivalente a |q|<1, evitando di discutere il segno del denominatore "
+               "caso per caso):",
+               r"q(x)^2<1 \iff \frac{64}{(x-2)^2(x-4)^2}<1"),
+        _passo("Risolvendo la disequazione si ottiene:", r"x<0 \ \text{ oppure } \ x>6"),
+        _passo("Conclusione -- la serie converge per x in (-infinito,0) unito (6,+infinito) (intervalli che escludono "
+               "automaticamente anche x=2 e x=4, dove non e' comunque definita).", None),
+    ]
+    passi.append(_passo("Verifica per x=-1 (nell'intervallo di convergenza x<0): "
+                         "q(-1)=8/(-6-1-8)=8/-15, |q|<1 -> CONVERGE.", None))
+    risposta = {"tipo": "scelta", "atteso": "converge"}
+    return _voce("23 luglio 2026", testo, testo_latex,
+                 "Scrivi 'converge' o 'diverge' (riferito al caso x=-1).", passi, risposta, None)
+
+
+ESAME["serie"].append(_serie_geometrica_parametrica_2026())
+
+
+def _serie_esponenziale_fattoriale():
+    n_ = sp.symbols('n', positive=True, integer=True)
+    a_n = 2**(n_+1) / (sp.factorial(n_-1) * n_**n_)
+    a_n1 = a_n.subs(n_, n_+1)
+    ratio = sp.simplify(a_n1/a_n)
+    lim = sp.limit(ratio, n_, sp.oo)
+    testo = "[25 luglio 2026, Esercizio 3] Studiare il carattere della serie sommatoria (n>=2) 2^(n+1)/((n-1)!*n^n)."
+    testo_latex = r"\sum_{n\ge2}\frac{2^{n+1}}{(n-1)!\,n^n}"
+    passi = [
+        _passo("Serie:", testo_latex),
+        _passo("Passo 1 -- termini positivi con fattoriali e potenze n-esime: criterio del "
+               "rapporto. Rapporto a_(n+1)/a_n:",
+               r"\frac{a_{n+1}}{a_n} = " + _tex(ratio)),
+        _passo("Passo 2 -- limite per n->infinito (n^n al denominatore cresce piu' velocemente di "
+               "qualunque esponenziale o fattoriale al numeratore):",
+               r"\lim_{n\to\infty}\frac{a_{n+1}}{a_n} = " + _tex(lim)),
+        _passo(f"Passo 3 -- essendo il limite {_tex(lim)} < 1, per il criterio del rapporto la "
+               "serie CONVERGE.", None),
+    ]
+    risposta = {"tipo": "scelta", "atteso": "converge"}
+    return _voce("25 luglio 2026", testo, testo_latex,
+                 "Scrivi 'converge' o 'diverge'.", passi, risposta, None)
+
+
+ESAME["serie"].append(_serie_esponenziale_fattoriale())
+
+# ---------------------------------------------------------------------------
+# LAGRANGE -- nuovo problema (P)
+# ---------------------------------------------------------------------------
+
+
+def _lagrange_orlato_parabola():
+    f = (x-3)**2*y + (y-6)**2 - 9
+    g = (x-3)**2 + y - 7
+    px, py, lv = sp.Integer(3), sp.Integer(7), sp.Integer(2)
+    val = f.subs({x: px, y: py})
+    cl = _mv._classifica_hessiana_orlata(f, g, px, py, lv)
+
+    testo = ("[21 luglio 2026, Esercizio 1] Utilizzando il metodo dell'Hessiano orlato, "
+             "determinare e classificare i punti critici della funzione f(x,y)=(x-3)^2y+(y-6)^2-9 "
+             "soggetta al vincolo g(x,y)=(x-3)^2+y-7. Descrivere e rappresentare il vincolo.")
+    testo_latex = r"f(x,y)=(x-3)^2y+(y-6)^2-9,\quad g(x,y)=(x-3)^2+y-7=0"
+    fx, fy = sp.diff(f, x), sp.diff(f, y)
+    gx, gy = sp.diff(g, x), sp.diff(g, y)
+    passi = [
+        _passo("Il vincolo g(x,y)=0 riscritto esplicitando y:",
+               r"(x-3)^2+y-7=0 \iff y = 7-(x-3)^2"),
+        _passo("E' una PARABOLA con la concavita' rivolta verso il basso, vertice in (3,7) -- non e' "
+               "un insieme compatto (si estende indefinitamente verso il basso), quindi il "
+               "teorema di Weierstrass non garantisce automaticamente l'esistenza di massimo e "
+               "minimo assoluti su di essa.", None),
+        _passo("Sistema di Lagrange: gradiente(f)=lambda*gradiente(g), g=0.",
+               f"{_tex(fx)}=\\lambda\\cdot{_tex(gx)},\\quad {_tex(fy)}=\\lambda\\cdot{_tex(gy)},"
+               f"\\quad {_tex(g)}=0"),
+        _passo("Dalla prima equazione, 2(x-3)y=2lambda(x-3): se x!=3 si semplifica per (x-3) ottenendo "
+               "y=lambda, che sostituito nella seconda equazione porta a una contraddizione col "
+               "vincolo (7-12 non torna): l'UNICA soluzione e' x=3. Sostituendo x=3 nel "
+               "vincolo si trova y=7, e dalla seconda equazione lambda=2:",
+               f"(x,y)=({_tex(px)},{_tex(py)}),\\ \\lambda={_tex(lv)}\\ \\Rightarrow\\ f={_tex(val)}"),
+        _passo("Classifichiamo con l'Hessiano orlato (dal formulario): posto L=f-lambda*g,",
+               r"\overline{H}=\begin{pmatrix}0&g_x'&g_y'\\g_x'&L_{xx}''&L_{xy}''\\"
+               r"g_y'&L_{yx}''&L_{yy}''\end{pmatrix},\ \ \overline{H}>0\Rightarrow\text{max rel.},"
+               r"\ \overline{H}<0\Rightarrow\text{min rel.}"),
+        _passo(f"Nel punto (3,7):", f"\\det\\overline{{H}}={_tex(cl['det'])}\\ \\Rightarrow\\ "
+               f"\\textbf{{{cl['tipo']}}}"),
+    ]
+
+    fig, ax = plt.subplots(figsize=(5.5, 5.5))
+    xx = np.linspace(-2, 8, 200)
+    ax.plot(xx, 7-(xx-3)**2, color='#c0392b', linewidth=2, label="vincolo: y=7-(x-3)^2")
+    ax.plot(float(px), float(py), 'ko', markersize=7)
+    ax.annotate(f"f={val}  ({cl['tipo']})", (float(px), float(py)),
+                textcoords="offset points", xytext=(7, 7), fontsize=8)
+    ax.axhline(0, color='gray', linewidth=0.5)
+    ax.axvline(0, color='gray', linewidth=0.5)
+    ax.legend(loc='lower center', fontsize=8)
+    ax.set_title("Vincolo (parabola) e punto stazionario")
+    fig.tight_layout()
+    png = _png(fig)
+
+    risposta = {"tipo": "punti_valore",
+                "punti_attesi": [[float(px), float(py), float(val)]],
+                "valore_max": None, "valore_min": float(val)}
+    return _voce("21 luglio 2026", testo, testo_latex,
+                 "Un punto per riga, formato x,y (es: 3,7).", passi, risposta, png)
+
+
+ESAME["lagrange"].append(_lagrange_orlato_parabola())
+
+# ---------------------------------------------------------------------------
+# PUNTI STAZIONARI LIBERI -- nuovo problema (T)
+# ---------------------------------------------------------------------------
+
+ESAME["punti_liberi"].append(_punti_liberi_generico(
+    "23 luglio 2026",
+    "[23 luglio 2026, Esercizio 1] Data la funzione f(x,y) = (x-y)/(1+x^2+y^2), determinare il "
+    "dominio, studiare il segno e studiare la natura dei punti stazionari.",
+    (x-y)/(1+x**2+y**2),
+    nota_extra=("Dominio: il denominatore 1+x^2+y^2 e' sempre >=1>0, quindi f e' definita su TUTTO "
+                "R^2 (nessuna restrizione). Segno: poiche' il denominatore e' sempre positivo, il "
+                "segno di f coincide con quello del numeratore: f>0 per x>y, f<0 per x<y, f=0 "
+                "sulla retta x=y (bisettrice del I e III quadrante).")))
+
+# ---------------------------------------------------------------------------
+# CONTINUITA' E DIFFERENZIABILITA' -- nuovi problemi (I, J, K, L)
+# ---------------------------------------------------------------------------
+
+
+def _continuita_non_differenziabile(fonte, testo, testo_latex, f_expr, fx0, fy0, nota_non_diff):
+    """Schema comune per le funzioni definite a tratti in cui f risulta CONTINUA ma NON
+    differenziabile in (0,0): la verifica per sostituzione polare mostra che f(r,theta)->0
+    uniformemente (continuita'), ma il resto [f - fx*x - fy*y]/r NON tende a 0 uniformemente
+    (dipende da theta), quindi f non ammette piano tangente in (0,0)."""
+    passi = [_passo("Funzione:", testo_latex)]
+    passi.append(_passo("Passo 1 -- passando in coordinate polari (x=r cos(theta), y=r sin(theta)) e "
+                         "sviluppando per r->0, si verifica che f(r,theta)->0 uniformemente rispetto a "
+                         "theta (bound indipendente da theta): f e' CONTINUA in (0,0).", None))
+    passi.append(_passo("Passo 2 -- derivate parziali in (0,0) per definizione (limite del "
+                         "rapporto incrementale lungo gli assi):",
+                         f"f_x(0,0)={_tex(fx0)},\\quad f_y(0,0)={_tex(fy0)}"))
+    passi.append(_passo("Passo 3 -- test di differenziabilita': calcoliamo "
+                         r"\frac{f(x,y)-f_x(0,0)x-f_y(0,0)y}{r} in coordinate polari, per r->0:",
+                         None))
+    passi.append(_passo(nota_non_diff, None))
+    passi.append(_passo("Il resto, diviso per r, NON tende a 0 uniformemente (dipende da theta e non "
+                         "si annulla per alcuni valori di theta): f e' quindi CONTINUA ma NON "
+                         "DIFFERENZIABILE in (0,0) -- nessun piano tangente in quel punto.", None))
+
+    es_fake = {"f": f_expr, "continua": True, "differenziabile": False}
+    try:
+        fig = _grafico.grafico_continuita(es_fake)
+        png = _png(fig)
+    except Exception:
+        png = None
+    risposta = {"tipo": "continuita", "continua": True, "differenziabile": False}
+    return _voce(fonte, testo, testo_latex,
+                 "Scrivi: continua, non differenziabile", passi, risposta, png)
+
+
+ESAME["continuita"].append(_continuita_non_differenziabile(
+    "18 luglio 2026",
+    "[18 luglio 2026, Esercizio 1] Data la funzione f(x,y) = arctan(x^3-y^3)/(x^2+y^2) per "
+    "(x,y)!=(0,0), f(0,0)=0, studiarne continuita' e differenziabilita'. Sono ammessi solo il "
+    "metodo del passaggio in coordinate polari o la verifica con il fascio di rette.",
+    r"f(x,y) = \begin{cases}\dfrac{\arctan(x^3-y^3)}{x^2+y^2} & (x,y)\ne(0,0) \\ "
+    r"0 & (x,y)=(0,0)\end{cases}",
+    sp.atan(x**3-y**3)/(x**2+y**2), sp.Integer(1), sp.Integer(-1),
+    "Usando arctan(t) circa t per t piccolo, si trova f(r,theta) circa r(cos^3(theta)-sin^3(theta))+O(r^3): il resto "
+    "[f-x+y]/r si riconduce, al primo ordine, a (cos(theta)-sin(theta))(cos(theta)sin(theta)), che vale ad esempio "
+    "circa -0.058 per theta=pi/3 (quindi diverso da 0)."))
+
+ESAME["continuita"].append(_continuita_non_differenziabile(
+    "22 luglio 2026",
+    "[22 luglio 2026, Esercizio 1] Studiare continuita' e differenziabilita' della seguente "
+    "funzione f(x,y) = (x-y)(x^2-y^2)^2(x+y+4)^2/(x^2+y^2)^2 per (x,y)!=(0,0), f(0,0)=0. E' ammesso "
+    "solo il metodo del passaggio in coordinate polari o la verifica con il fascio di rette.",
+    r"f(x,y) = \begin{cases}\dfrac{(x-y)(x^2-y^2)^2(x+y+4)^2}{(x^2+y^2)^2} & (x,y)\ne(0,0) \\ "
+    r"0 & (x,y)=(0,0)\end{cases}",
+    (x-y)*(x**2-y**2)**2*(x+y+4)**2/(x**2+y**2)**2, sp.Integer(16), sp.Integer(-16),
+    "Riscrivendo (x^2-y^2)^2=(x-y)^2(x+y)^2, il numeratore e' (x-y)^3(x+y)^2(x+y+4)^2: vicino "
+    "all'origine (x+y+4)^2 circa 16 (fattore quasi costante), quindi f circa 16r(cos(theta)-sin(theta))^3(cos(theta)+sin(theta))^2. "
+    "Il resto [f-16x+16y]/r, calcolato con piu' precisione, vale ad esempio 6-6*sqrt(3) circa -4.39 per "
+    "theta=pi/6 (quindi diverso da 0)."))
+
+ESAME["continuita"].append(_continuita_non_differenziabile(
+    "25 luglio 2026",
+    "[25 luglio 2026, Esercizio 1] Data la funzione f(x,y) = y(1-cos(xy))/log(1+x^4+y^4) per "
+    "(x,y)!=(0,0), f(0,0)=0, studiarne continuita' e differenziabilita'. Sono ammessi solo il "
+    "metodo del passaggio in coordinate polari o la verifica tramite fascio di rette.",
+    r"f(x,y) = \begin{cases}\dfrac{y(1-\cos(xy))}{\log(1+x^4+y^4)} & (x,y)\ne(0,0) \\ "
+    r"0 & (x,y)=(0,0)\end{cases}",
+    y*(1-sp.cos(x*y))/sp.log(1+x**4+y**4), sp.Integer(0), sp.Integer(0),
+    "Usando 1-cos(t) circa t^2/2 e log(1+s) circa s per t,s piccoli, si trova f(x,y) circa x^2y^3/(2(x^4+y^4)), cioe' "
+    "in polari f(r,theta) circa r*[sin^3(theta)cos^2(theta)/(2(sin^4(theta)+cos^4(theta)))] (il denominatore sin^4(theta)+cos^4(theta) non si "
+    "annulla mai, essendo sempre >=1/2). Poiche' fx(0,0)=fy(0,0)=0, il resto f/r tende proprio a "
+    "questa quantita', che vale ad esempio sqrt(2)/8 circa 0.177 per theta=pi/4 (quindi diverso da 0)."))
+
+
+def _continuita_dominio_piano_tangente():
+    f_expr = sp.sqrt(4/(x**2+y**2) - 1)
+    px, py = sp.Integer(1), sp.Integer(1)
+    fx = sp.diff(f_expr, x); fy = sp.diff(f_expr, y)
+    f1 = f_expr.subs({x: px, y: py})
+    fx1 = sp.simplify(fx.subs({x: px, y: py}))
+    fy1 = sp.simplify(fy.subs({x: px, y: py}))
+    piano = sp.simplify(f1 + fx1*(x-px) + fy1*(y-py))
+
+    testo = ("[20 luglio 2026, Esercizio 1] Data la funzione f(x,y) = sqrt(4/(x^2+y^2) - 1), "
+             "disegnare e colorare il dominio. E' possibile calcolare il piano tangente al suo "
+             "grafico nel punto (1,1)? In caso affermativo, determinarne l'equazione.")
+    testo_latex = r"f(x,y) = \sqrt{\dfrac{4}{x^2+y^2}-1}"
+    passi = [_passo("Funzione:", testo_latex)]
+    passi.append(_passo("Passo 1 -- dominio: serve che l'argomento della radice sia >=0 e che il "
+                         "denominatore non si annulli:",
+                         r"\frac{4}{x^2+y^2}\ge1 \ \text{ e }\ x^2+y^2\ne0 \iff 0<x^2+y^2\le4"))
+    passi.append(_passo("Il dominio e' il disco chiuso di raggio 2 centrato nell'origine, PRIVATO "
+                         "dell'origine stessa (dove il denominatore si annulla): una corona "
+                         "circolare degenere.", None))
+    passi.append(_passo("Passo 2 -- il punto (1,1) ha x^2+y^2=2, che soddisfa 0<2<=4 STRETTAMENTE "
+                         "(non e' sul bordo x^2+y^2=4): e' un punto INTERNO al dominio, dove f e' "
+                         "derivabile con continuita' (l'argomento della radice vale 4/2-1=1>0, "
+                         "quindi niente radice di 0 che darebbe problemi di derivabilita'). Il "
+                         "piano tangente ESISTE.", None))
+    passi.append(_passo("Passo 3 -- derivate parziali in (1,1):",
+                         f"f(1,1)={_tex(f1)},\\ f_x(1,1)={_tex(fx1)},\\ f_y(1,1)={_tex(fy1)}"))
+    passi.append(_passo("Piano tangente in (1,1,f(1,1)):", "z = " + _tex(piano)))
+
+    fig, ax = plt.subplots(figsize=(5.5, 5.5))
+    theta = np.linspace(0, 2*np.pi, 200)
+    ax.fill(2*np.cos(theta), 2*np.sin(theta), alpha=0.35, color='#8a6d1a', label="dominio: 0<x^2+y^2<=4")
+    ax.plot(0, 0, 'wo', markersize=8, markeredgecolor='black', label="origine ESCLUSA")
+    ax.plot(1, 1, 'ko', markersize=7, label="punto (1,1)")
+    ax.set_xlim(-2.6, 2.6); ax.set_ylim(-2.6, 2.6)
+    ax.set_aspect('equal', 'box')
+    ax.axhline(0, color='gray', linewidth=0.4); ax.axvline(0, color='gray', linewidth=0.4)
+    ax.legend(fontsize=8, loc='upper right')
+    ax.set_title("Dominio di f (20 luglio 2026)", fontsize=9.5)
+    fig.tight_layout()
+    png = _png(fig)
+
+    risposta = {"tipo": "continuita", "continua": True, "differenziabile": True}
+    return _voce("20 luglio 2026", testo, testo_latex,
+                 "Scrivi: continua,differenziabile", passi, risposta, png)
+
+
+ESAME["continuita"].append(_continuita_dominio_piano_tangente())

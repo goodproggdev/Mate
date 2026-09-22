@@ -515,11 +515,23 @@ def _spiega_edo1_latex(es):
 
 
 def _spiega_continuita_latex(es):
-    """Ricostruisce spiega_continuita() di continuita_differenziabilita.py, in LaTeX."""
+    """Ricostruisce spiega_continuita() di continuita_differenziabilita.py, in LaTeX -- con
+    la sostituzione polare esplicita PRIMA di passare al limite (non solo il risultato finale),
+    per non 'saltare' il passaggio algebrico intermedio."""
     f_expr = es["f"]
     passi = [_passo("Funzione (a tratti, singolare in (0,0)):",
                      r"f(x,y) = " + _tex(f_expr) + r"\ \ (\ne(0,0)),\quad f(0,0)=0")]
-    passi.append(_passo("Passo 1 — sostituzione in coordinate polari x=r\\cosθ, y=r\\sinθ:",
+
+    p_raw = None
+    try:
+        p_raw = continuita_differenziabilita._polar(f_expr)
+    except Exception:
+        p_raw = None
+
+    passi.append(_passo("Passo 1 — sostituiamo x=r\\cosθ, y=r\\sinθ (coordinate polari) e "
+                         "semplifichiamo:",
+                         (r"f(r,\theta) = " + _tex(p_raw)) if p_raw is not None else None))
+    passi.append(_passo("Passo 1b — passiamo al limite per r→0+ (a θ fissato):",
                          "f(r,\\theta) \\to " + _tex(es["lim_theta_fisso"]) + r"\ \ (r\to0^+)"))
 
     if es["evidenza_non_continua"]:
@@ -543,9 +555,24 @@ def _spiega_continuita_latex(es):
 
     passi.append(_passo("Passo 2 — il limite è 0 indipendentemente da θ:",
                          r"\textbf{f è continua in (0,0)}"))
-    passi.append(_passo("Passo 3 — derivate parziali in (0,0) per definizione:",
-                         r"f_x(0,0)=" + _tex(es["fx0"]) + r",\quad f_y(0,0)=" + _tex(es["fy0"])))
-    passi.append(_passo("Passo 4 — studiamo il resto [f-f_x x-f_y y]/r in coordinate polari:", None))
+    passi.append(_passo("Passo 3 — derivate parziali in (0,0) per definizione (limite del "
+                         "rapporto incrementale lungo gli assi):",
+                         r"f_x(0,0)=\lim_{x\to0}\frac{f(x,0)}{x}=" + _tex(es["fx0"])
+                         + r",\quad f_y(0,0)=\lim_{y\to0}\frac{f(0,y)}{y}=" + _tex(es["fy0"])))
+
+    resto_raw = None
+    try:
+        _cdx, _cdy, _cdr = (continuita_differenziabilita.x, continuita_differenziabilita.y,
+                             continuita_differenziabilita.r)
+        resto = sp.simplify(f_expr - es["fx0"] * _cdx - es["fy0"] * _cdy)
+        resto_raw = sp.simplify(continuita_differenziabilita._polar(resto) / _cdr)
+    except Exception:
+        resto_raw = None
+
+    passi.append(_passo("Passo 4 — costruiamo il resto f(x,y) - f_x(0,0)x - f_y(0,0)y e lo dividiamo "
+                         "per r, in coordinate polari (se tende a 0 per ogni θ, f è differenziabile):",
+                         (r"\frac{f-f_x(0,0)x-f_y(0,0)y}{r} = " + _tex(resto_raw))
+                         if resto_raw is not None else None))
 
     if es["differenziabile"]:
         passi.append(_passo("Il limite per r→0+ è 0 indipendentemente da θ.",
