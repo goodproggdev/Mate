@@ -363,7 +363,9 @@ def _spiega_integrali_latex(es):
     passi.append(_passo("f in coordinate polari, con Jacobiano incluso:",
                          r"f(r,\theta)\cdot r = " + _tex(es["integranda_jacobiano"])))
     passi.append(_passo(f"Passo 2 — estremi di integrazione: r ∈ [{es['r_min']}, {es['r_max']}], "
-                         "θ nell'angolo giro [0, 2π].", None))
+                         "θ nell'angolo giro [0, 2π].",
+                         r"r\in[" + _tex(es['r_min']) + "," + _tex(es['r_max'])
+                         + r"],\quad \theta\in[0,2\pi]"))
 
     try:
         primitiva_r = sp.simplify(sp.integrate(es["integranda_jacobiano"], r))

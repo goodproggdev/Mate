@@ -12,7 +12,7 @@
  * scaricare un runtime Python + numpy/sympy/matplotlib nel browser (erano decine di MB
  * e qualche secondo di avvio); il banco statico e' piu' piccolo e si apre all'istante.
  */
-const CACHE_APP = "mm-app-v8";
+const CACHE_APP = "mm-app-v9";
 const CACHE_RUNTIME = "mm-runtime-v2";
 
 const APP_ASSETS = [

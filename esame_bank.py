@@ -143,9 +143,10 @@ def _serie_parametrica():
         _passo("Serie:", testo_latex),
         _passo("Passo 1 — è una serie geometrica di ragione q(x) = (1-x+x²)/(x+1), definita per "
                "x≠-1 (il numeratore x²-x+1 ha discriminante negativo, quindi è sempre positivo).",
-               None),
+               r"\Delta = (-1)^2-4(1)(1) = -3 < 0 \ \Rightarrow\ x^2-x+1>0\ \ \forall x\in\mathbb{R}"),
         _passo("Passo 2 — una serie geometrica converge se e solo se |q|<1, e diverge se |q|≥1 "
-               "(anche nel caso limite q=±1, dove il termine generale non tende a 0).", None),
+               "(anche nel caso limite q=±1, dove il termine generale non tende a 0).",
+               r"|q|<1 \Rightarrow \text{converge},\qquad |q|\ge1 \Rightarrow \text{diverge}"),
         _passo("Passo 3 — per x>-1 si ha q>0 (stesso segno del numeratore): risolviamo q≥1:",
                r"\frac{x^2-x+1}{x+1}\ge1 \iff x^2-2x\ge0 \iff x\le0 \text{ oppure } x\ge2"),
         _passo("Passo 4 — per x<-1 si ha q<0 (denominatore negativo): risolviamo q≤-1; l'algebra si "
@@ -154,8 +155,8 @@ def _serie_parametrica():
         _passo("Conclusione — la serie converge SOLO per 0<x<2 (dove |q|<1); diverge per ogni altro "
                "x reale (con x≠-1, dove non è definita):",
                r"\textbf{diverge per } x\in(-\infty,0]\cup[2,+\infty),\ x\ne-1"),
-        _passo(f"Verifica per x=1 (nell'intervallo di convergenza 0<x<2): q(1)={_tex(q_at_1)}, "
-               "|q|<1 → CONVERGE.", None),
+        _passo("Verifica per x=1 (nell'intervallo di convergenza 0<x<2):",
+               "q(1) = " + _tex(q_at_1) + r",\quad |q(1)|<1\ \Rightarrow\ \textbf{CONVERGE}"),
     ]
     risposta = {"tipo": "scelta", "atteso": "converge"}
     return _voce("29 ottobre 2025", testo, testo_latex,
@@ -188,7 +189,8 @@ def _lagrange_1():
     passi = [
         _passo("Il vincolo g(x,y)=0 riscritto completando il quadrato:",
                r"x^2+2x+y^2=0 \iff (x+1)^2+y^2=1"),
-        _passo("È una circonferenza di centro (-1,0) e raggio 1: chiusa e limitata (compatta).", None),
+        _passo("È una circonferenza di centro (-1,0) e raggio 1: chiusa e limitata (compatta).",
+               r"\text{centro}=(-1,0),\quad \text{raggio}=1"),
         _passo("Sistema di Lagrange: gradiente(f) = lambda*gradiente(g), g=0.",
                r"1+4x=\lambda(2x+2),\quad -2y=\lambda(2y),\quad (x+1)^2+y^2=1"),
         _passo("Risolvendo il sistema si trovano 4 punti stazionari, con il relativo moltiplicatore "
@@ -237,7 +239,7 @@ ESAME["lagrange"].append(_lagrange_1())
 # ---------------------------------------------------------------------------
 # PUNTI STAZIONARI LIBERI (4 problemi)
 # ---------------------------------------------------------------------------
-def _punti_liberi_generico(fonte, testo, f_expr, nota_extra=None):
+def _punti_liberi_generico(fonte, testo, f_expr, nota_extra=None, nota_extra_latex=None):
     grad = [sp.diff(f_expr, v) for v in (x, y)]
     pts_grezzi = sp.solve(grad, [x, y], dict=True)
     classificazioni = _mv._classifica_punti_critici(f_expr, pts_grezzi)
@@ -256,7 +258,7 @@ def _punti_liberi_generico(fonte, testo, f_expr, nota_extra=None):
                              + r",\ \mathrm{tr}\,H=" + _tex(H.trace())
                              + r"\ \Rightarrow\ \textbf{" + c["tipo"].upper() + "}"))
     if nota_extra:
-        passi.append(_passo(nota_extra, None))
+        passi.append(_passo(nota_extra, nota_extra_latex))
 
     es_fake = {"f": f_expr, "classificazioni": classificazioni}
     try:
@@ -300,7 +302,9 @@ ESAME["punti_liberi"].append(_punti_liberi_generico(
                 "f(x,2x^2)=(2x^2-3x^2)(2x^2-x^2)=-x^4<0: la funzione è NEGATIVA vicino all'origine "
                 "lungo questo cammino. Quindi (0,0) NON è un minimo locale, nonostante lo sembri "
                 "lungo ogni retta: è un punto stazionario che l'Hessiano da solo non basta a "
-                "classificare, e il test lungo le rette è fuorviante (classico controesempio).")))
+                "classificare, e il test lungo le rette è fuorviante (classico controesempio)."),
+    nota_extra_latex=(r"f(x,mx)=x^2(mx-3x)(mx-x)\sim x^2\ge0\ \ (\text{lungo ogni retta}),"
+                       r"\qquad f(x,2x^2)=(2x^2-3x^2)(2x^2-x^2)=-x^4<0")))
 # ---------------------------------------------------------------------------
 # EDO 2° ORDINE / CAUCHY (6 problemi)
 # ---------------------------------------------------------------------------
@@ -365,7 +369,7 @@ ESAME["edo"].append(_edo2_generico(
     "termini forzanti coincidono con le due radici dell'equazione caratteristica)",
     -1, -2, r"-3e^{2x}-2e^{-x}", -3*sp.exp(2*x)-2*sp.exp(-x), 0, 3,
     ansatz_passi=[
-        _passo("Radici: r=2 e r=-1 (Caso 2 del formulario, esponenziale A·e^(λx)).", None),
+        _passo("Radici: r=2 e r=-1 (Caso 2 del formulario, esponenziale A·e^(λx)).", r"r=2,\ r=-1"),
         _passo("Termine -3e^(2x): λ=2 È radice → RISONANZA → ansatz",
                r"y_{p1} = c_1\,x\,e^{2x}"),
         _passo("Termine -2e^(-x): λ=-1 È radice → RISONANZA → ansatz",
@@ -378,7 +382,7 @@ ESAME["edo"].append(_edo2_generico(
     "y'' + 2y' + y = 3x^2 + e^(-x)sin(x), con y(0)=17, y'(0)=-10.",
     2, 1, r"3x^2+e^{-x}\sin x", 3*x**2+sp.exp(-x)*sp.sin(x), 17, -10,
     ansatz_passi=[
-        _passo("Radice: r=-1 doppia (radice reale, non complessa).", None),
+        _passo("Radice: r=-1 doppia (radice reale, non complessa).", r"r=-1\ (\text{doppia})"),
         _passo("Termine 3x² (Caso 1, polinomio grado 2): 0 non è radice → NO risonanza → ansatz",
                r"y_{p1} = Ax^2+Bx+C"),
         _passo("Termine e^(-x)sin(x) (Caso 4, e^(αx)(A cosβx+B sinβx) con α=-1,β=1): α+iβ=-1+i "
@@ -392,7 +396,7 @@ ESAME["edo"].append(_edo2_generico(
     "y'' - 2y' + 5y = e^x·cos(x), con y(0)=1, y'(0)=1.",
     -2, 5, r"e^{x}\cos x", sp.exp(x)*sp.cos(x), 1, 1,
     ansatz_passi=[
-        _passo("Radici: r=1±2i (complesse coniugate).", None),
+        _passo("Radici: r=1±2i (complesse coniugate).", r"r=1\pm2i"),
         _passo("Termine e^x·cos(x) (Caso 4, α=1,β=1): α+iβ=1+i NON coincide con 1±2i "
                "→ NO risonanza → ansatz",
                r"y_p = e^{x}(A\cos x+B\sin x)"),
@@ -405,7 +409,7 @@ ESAME["edo"].append(_edo2_generico(
     "alla frequenza del termine forzante)",
     -4, 4, r"(x+3)e^{2x}", (x+3)*sp.exp(2*x), 1, -1,
     ansatz_passi=[
-        _passo("Radice: r=2 doppia (molteplicità 2).", None),
+        _passo("Radice: r=2 doppia (molteplicità 2).", r"r=2\ (\text{doppia})"),
         _passo("Termine (x+3)e^(2x) (Caso 5, e^(λx)·p(x) con λ=2, p grado 1): λ=2 È radice con "
                "molteplicità 2 → RISONANZA doppia → si moltiplica per x² → ansatz",
                r"y_p = x^2(Ax+B)e^{2x}"),
@@ -417,7 +421,7 @@ ESAME["edo"].append(_edo2_generico(
     "y'' + y = 5e^(2x)cos(x), con y(0)=1, y'(0)=1.",
     0, 1, r"5e^{2x}\cos x", 5*sp.exp(2*x)*sp.cos(x), 1, 1,
     ansatz_passi=[
-        _passo("Radici: r=±i (complesse coniugate, parte reale nulla).", None),
+        _passo("Radici: r=±i (complesse coniugate, parte reale nulla).", r"r=\pm i"),
         _passo("Termine 5e^(2x)cos(x) (Caso 4, α=2,β=1): α+iβ=2+i NON coincide con ±i "
                "→ NO risonanza → ansatz",
                r"y_p = e^{2x}(A\cos x+B\sin x)"),
@@ -426,14 +430,15 @@ ESAME["edo"].append(_edo2_generico(
 # EDO 1° ORDINE / CAUCHY (2 problemi)
 # ---------------------------------------------------------------------------
 
-def _edo1_generico(fonte, testo, eq, x0, y0, punti_x, testo_eq_latex, tipo_metodo, note_metodo):
+def _edo1_generico(fonte, testo, eq, x0, y0, punti_x, testo_eq_latex, tipo_metodo, note_metodo,
+                    note_metodo_latex=None):
     Y = sp.Function('y')
     sol_gen = sp.dsolve(eq, Y(x))
     sol = sp.dsolve(eq, Y(x), ics={Y(x0): y0})
 
     testo_latex = testo_eq_latex + r",\quad y(" + _tex(x0) + ")=" + _tex(y0)
     passi = [_passo("Equazione:", testo_latex)]
-    passi.append(_passo(f"Passo 1 — equazione {tipo_metodo}: {note_metodo}", None))
+    passi.append(_passo(f"Passo 1 — equazione {tipo_metodo}: {note_metodo}", note_metodo_latex))
     passi.append(_passo("Passo 2 — soluzione generale (costante arbitraria C1):",
                          "y(x) = " + _tex(sol_gen.rhs)))
     passi.append(_passo("Passo 3 — imponendo la condizione iniziale:",
@@ -467,7 +472,8 @@ ESAME["edo1"].append(_edo1_generico(
     "y' + y/x = log(x)/x, con y(1)=2.",
     sp.Eq(Y_(x).diff(x) + Y_(x)/x, sp.log(x)/x), 1, 2, [1.1, 1.4, 1.8, 2.3, 3.0, 4.0],
     r"y' + \tfrac{y}{x} = \tfrac{\log x}{x}", "lineare del primo ordine a coefficienti variabili",
-    "si risolve con il fattore integrante μ(x) = e^{∫(1/x)dx} = x."))
+    "si risolve con il fattore integrante μ(x) = e^{∫(1/x)dx} = x.",
+    note_metodo_latex=r"\mu(x)=e^{\int \frac{1}{x}\,dx}=e^{\ln x}=x"))
 
 ESAME["edo1"].append(_edo1_generico(
     "18 ottobre 2025",
@@ -476,7 +482,8 @@ ESAME["edo1"].append(_edo1_generico(
     sp.Eq(Y_(x).diff(x) + sp.log(x)*Y_(x), sp.log(x)), 2, 2, [2.1, 2.3, 2.5, 1.7, 1.4, 1.1],
     r"y' + (\log x)\,y = \log x", "lineare del primo ordine a coefficienti variabili",
     "si risolve con il fattore integrante μ(x) = e^{∫\\log x\\,dx} = e^{x\\log x - x} "
-    "(l'integrale di log x si fa per parti)."))
+    "(l'integrale di log x si fa per parti).",
+    note_metodo_latex=r"\int \ln x\,dx = x\ln x-x \ \Rightarrow\ \mu(x)=e^{x\ln x-x}"))
 # ---------------------------------------------------------------------------
 # INTEGRALI DOPPI (4 problemi, tutti su domini cartesiani -- non polari: negli
 # esami reali il dominio e' quasi sempre descritto da rette/parabole/coniche in
@@ -522,7 +529,8 @@ ESAME["integrali"].append(_integrale_generico(
     "(l'integrale doppio di 1 su D).",
     r"x \le \tfrac{y}{2}+\tfrac12,\ \ x \ge y^2-1", "1", sp.Rational(125, 48), _fig_20ott,
     passi_extra=[_passo("Intersezione retta-parabola: risolvendo y/2+1/2 = y²-1 si trovano y=-1 e y=3/2.",
-                         None),
+                         r"y^2-1=\tfrac{y}{2}+\tfrac12 \iff 2y^2-y-3=0 \iff y=\tfrac{1\pm5}{4}"
+                         r"\ \Rightarrow\ y=-1,\ y=\tfrac32"),
                  _passo("Integrando rispetto a x tra la parabola e la retta, poi rispetto a y:",
                         r"\int_{-1}^{3/2}\left[\left(\tfrac{y}{2}+\tfrac12\right)-(y^2-1)\right]dy")]))
 
@@ -623,7 +631,8 @@ def _continuita_aprile():
     passi.append(_passo("Passo 2 — f E' continua in (0,0). Calcoliamo le derivate parziali per "
                          "definizione:", r"f_x(0,0)=3,\quad f_y(0,0)=0"))
     passi.append(_passo("Il resto [f - 3x]/r → 0 (essendo sin(t)/t - 1 = O(t²), quindi il resto è "
-                         "O(r^4)): f E' anche differenziabile in (0,0).", None))
+                         "O(r^4)): f E' anche differenziabile in (0,0).",
+                         r"\frac{f-3x}{r} = \frac{(\sin(r^2)-r^2)\cos\theta}{r^2} \to 0\ \ (r\to0^+)"))
     passi.append(_passo("Passo 3 — nel punto (1,0), lontano dall'origine, f è manifestamente liscia "
                          "(il denominatore x²+y² non si annulla): calcoliamo il piano tangente con "
                          "le derivate parziali ordinarie.", None))
@@ -656,9 +665,12 @@ def _continuita_maggio():
     passi = [_passo("Funzione:", testo_latex)]
     passi.append(_passo("Passo 1 — poiché |sin(t)| ≤ |t|, si ha |sin(x²y²)| ≤ x²y², quindi:",
                          r"\left|\frac{\sin(x^2y^2)}{x^4+y^2}\right| \le \frac{x^2y^2}{x^4+y^2}"))
-    passi.append(_passo("Passo 2 — in coordinate polari, x²y²/(x⁴+y²) → 0 per r→0 indipendentemente "
-                         "da θ (si verifica anche lungo il cammino 'pericoloso' y=kx²: il limite "
-                         "resta 0 per ogni k). Quindi f E' continua in (0,0).", None))
+    passi.append(_passo("Passo 2 — per la disuguaglianza AM-GM, x⁴+y² ≥ 2x²|y|, quindi possiamo "
+                         "maggiorare senza passare dalle coordinate polari (verifica anche lungo il "
+                         "cammino 'pericoloso' y=kx²: il limite resta 0 per ogni k). Quindi f E' "
+                         "continua in (0,0).",
+                         r"\frac{x^2y^2}{x^4+y^2} \le \frac{x^2y^2}{2x^2|y|} = \frac{|y|}{2} \to 0"
+                         r"\ \ \big((x,y)\to(0,0)\big)"))
     passi.append(_passo("Passo 3 — derivate parziali in (0,0):", r"f_x(0,0)=0,\quad f_y(0,0)=0"))
     passi.append(_passo("Passo 4 — il resto f(x,y)/r → 0 anch'esso (stessa maggiorazione, un ordine "
                          "di r più stringente): f E' anche differenziabile in (0,0).",
@@ -691,19 +703,23 @@ def _continuita_dicembre():
     passi.append(_passo("Passo b) — annulliamo il gradiente per trovare i punti stazionari:",
                          _tex(fx) + "=0,\\quad" + _tex(fy) + "=0"))
     passi.append(_passo("Il sistema (y²=0, 2y(x-2)=0) impone y=0 per QUALSIASI x: i punti stazionari "
-                         "non sono isolati, ma formano l'intera retta y=0 (caso degenere).", None))
+                         "non sono isolati, ma formano l'intera retta y=0 (caso degenere).",
+                         r"y^2=0 \iff y=0\ \ \forall x\in\mathbb{R}"))
     passi.append(_passo("Matrice Hessiana generale, e ristretta alla retta y=0:",
                          "H(x,y) = " + _tex(hess) + r",\quad H(x,0) = " + _tex(hess.subs(y, 0))))
     passi.append(_passo("Lungo y=0 si ha sempre det H = 0: il test dell'Hessiano NON decide da solo. "
                          "Studiando il segno direttamente, f(x0,y)-f(x0,0)=y^2(x0-2): per x0>2 è un "
                          "minimo (debole) locale, per x0<2 un massimo (debole) locale, per x0=2 f è "
                          "identicamente nulla su entrambe le rette che si incrociano lì (nessun "
-                         "estremo stretto in alcun caso).", None))
+                         "estremo stretto in alcun caso).",
+                         r"f(x_0,y)-f(x_0,0)=y^2(x_0-2)\ \begin{cases}\ge0 & x_0>2\ (\text{minimo})\\"
+                         r"\le0 & x_0<2\ (\text{massimo})\\=0 & x_0=2\end{cases}"))
     passi.append(_passo("Passo c) — continuità e differenziabilità: f è un POLINOMIO (somma e "
                          "prodotto di funzioni continue e derivabili con continuità), quindi è "
                          "automaticamente continua e differenziabile (di classe C^∞) in TUTTO R², "
                          "incluso (0,0) — a differenza degli esercizi precedenti (funzioni definite a "
-                         "tratti vicino all'origine), qui non serve nessuna analisi di limite.", None))
+                         "tratti vicino all'origine), qui non serve nessuna analisi di limite.",
+                         r"f(x,y)=y^2(x-2) \in \mathcal{C}^\infty(\mathbb{R}^2)"))
     f_m1m2 = f_expr.subs({x: -1, y: -2})
     fx_m1m2 = fx.subs({x: -1, y: -2}); fy_m1m2 = fy.subs({x: -1, y: -2})
     piano = sp.expand(f_m1m2 + fx_m1m2*(x+1) + fy_m1m2*(y+2))
@@ -747,7 +763,7 @@ ESAME["edo"].append(_edo2_generico(
     "y'' - 2y' + y = x cos x, con y(0)=0, y'(0)=1.",
     -2, 1, r"x\cos x", x*sp.cos(x), 0, 1,
     ansatz_passi=[
-        _passo("Radice: r=1 doppia (molteplicita' 2, reale).", None),
+        _passo("Radice: r=1 doppia (molteplicita' 2, reale).", r"r=1\ (\text{doppia})"),
         _passo("Termine x*cos(x) (polinomio di 1 grado per trigonometrica, w=1): la radice r=1 e' "
                "reale, non della forma +-i*w=+-i -> NO risonanza -> ansatz",
                r"y_p = (Ax+B)\cos x + (Cx+D)\sin x"),
@@ -760,7 +776,7 @@ ESAME["edo"].append(_edo2_generico(
     0, 9, r"xe^{3x}+\cos(3x)", x*sp.exp(3*x)+sp.cos(3*x), 0, 0,
     ansatz_passi=[
         _passo("Radici: r=+-3i (complesse coniugate, parte reale nulla -- equazione omogenea "
-               "associata di un oscillatore armonico).", None),
+               "associata di un oscillatore armonico).", r"r=\pm3i"),
         _passo("Termine x*e^(3x) (Caso 5, polinomio grado 1 per esponenziale, lambda=3): lambda=3 NON e' tra "
                "le radici +-3i (che sono immaginarie pure) -> NO risonanza -> ansatz",
                r"y_{p1} = (Ax+B)e^{3x}"),
@@ -775,7 +791,7 @@ ESAME["edo"].append(_edo2_generico(
     "differenziale y'' - 2y' + 5y = 3e^x sin(x), sapendo che y(0)=1 e y'(0)=4.",
     -2, 5, r"3e^{x}\sin x", 3*sp.exp(x)*sp.sin(x), 1, 4,
     ansatz_passi=[
-        _passo("Radici: r=1+-2i (complesse coniugate).", None),
+        _passo("Radici: r=1+-2i (complesse coniugate).", r"r=1\pm2i"),
         _passo("Termine 3e^x*sin(x) (Caso 4, alpha=1,beta=1): alpha+i*beta=1+i NON coincide con 1+-2i "
                "(la parte immaginaria e' diversa, beta=1!=2) -> NO risonanza -> ansatz",
                r"y_p = e^{x}(A\cos x+B\sin x)"),
@@ -856,7 +872,7 @@ ESAME["edo"].append(_edo2_solo_particolare(
     "y'' - y' - 2y = e^(-x) + x^2 + cos(x).",
     -1, -2, r"e^{-x}+x^2+\cos x", sp.exp(-x)+x**2+sp.cos(x),
     ansatz_passi=[
-        _passo("Radici: r=-1 e r=2 (reali distinte).", None),
+        _passo("Radici: r=-1 e r=2 (reali distinte).", r"r=-1,\ r=2"),
         _passo("Termine e^(-x) (Caso 2, lambda=-1): lambda=-1 E' una delle radici (molteplicita' 1) -> "
                "RISONANZA -> si moltiplica per x -> ansatz", r"y_{p1} = Ax\,e^{-x}"),
         _passo("Termine x^2 (Caso 1, polinomio grado 2): 0 non e' radice -> NO risonanza -> ansatz",
@@ -871,7 +887,7 @@ ESAME["edo"].append(_edo2_solo_particolare(
     "y'' - 4y' + 13y = 5cos(3x).",
     -4, 13, r"5\cos(3x)", 5*sp.cos(3*x),
     ansatz_passi=[
-        _passo("Radici: r=2+-3i (complesse coniugate).", None),
+        _passo("Radici: r=2+-3i (complesse coniugate).", r"r=2\pm3i"),
         _passo("Termine 5cos(3x) (Caso 3, w=3): 0+-3i NON coincide con 2+-3i (parte reale diversa, "
                "2!=0) -> NO risonanza -> ansatz", r"y_p = A\cos 3x+B\sin 3x"),
     ]))
@@ -882,7 +898,7 @@ ESAME["edo"].append(_edo2_solo_particolare(
     "seguente equazione differenziale: y'' - 4y' + 4y = (2x-3)e^(2x).",
     -4, 4, r"(2x-3)e^{2x}", (2*x-3)*sp.exp(2*x),
     ansatz_passi=[
-        _passo("Radice: r=2 doppia (molteplicita' 2).", None),
+        _passo("Radice: r=2 doppia (molteplicita' 2).", r"r=2\ (\text{doppia})"),
         _passo("Termine (2x-3)e^(2x) (Caso 5, e^(lambda x)*p(x) con lambda=2, p grado 1): lambda=2 E' radice con "
                "molteplicita' 2 -> RISONANZA doppia -> si moltiplica per x^2 -> ansatz",
                r"y_p = x^2(Ax+B)e^{2x}"),
@@ -900,7 +916,9 @@ ESAME["edo1"].append(_edo1_generico(
     [1.2, 1.5, 2.0, 0.8, 0.6, 0.4],
     r"y' = -\tfrac{y}{x} + xy^2\log x", "di Bernoulli (non lineare, esponente n=2)",
     "si linearizza dividendo per y^2 e ponendo t=y^(-1) (t'=-y'y^(-2)): si ottiene "
-    "un'equazione lineare in t, risolta con il fattore integrante."))
+    "un'equazione lineare in t, risolta con il fattore integrante.",
+    note_metodo_latex=(r"y'+\tfrac1x y = x\ln x\cdot y^2,\quad t=y^{-1}\ \Rightarrow\ "
+                        r"t'-\tfrac{t}{x}=-x\ln x")))
 
 
 def _edo1_bernoulli_cubica():
@@ -1004,7 +1022,9 @@ ESAME["integrali"].append(_integrale_generico(
     r"y\le2\sqrt{x},\ \ y\ge2x^3", "x+y", sp.Rational(39, 35), _fig_18lug_Q,
     passi_extra=[_passo("Intersezione delle due curve: 2sqrt(x)=2x^3 <=> sqrt(x)=x^3, risolvendo per x>0 si "
                          "trova x=1 (e x=0); per 0<x<1 la parabola cubica y=2x^3 sta sotto la "
-                         "radice y=2sqrt(x) (es. in x=0.5: 2x^3=0.25 < 2sqrt(x)=1.41).", None),
+                         "radice y=2sqrt(x) (es. in x=0.5: 2x^3=0.25 < 2sqrt(x)=1.41).",
+                         r"x^{1/2}=x^3 \iff x^{1/2-3}=1\ (x>0) \iff x^{-5/2}=1 \iff x=1\ "
+                         r"(\text{e } x=0)"),
                  _passo("Integrando prima su y (tra le due curve), poi su x tra 0 e 1:",
                         r"\int_0^1\int_{2x^3}^{2\sqrt{x}}(x+y)\,dy\,dx")]))
 
@@ -1033,7 +1053,7 @@ ESAME["integrali"].append(_integrale_generico(
     r"\text{triangolo di vertici } O(0,0),\,A(1,0),\,B(1,2)", "x^2e^{xy}",
     sp.Rational(-3, 4) + sp.exp(2)/4, _fig_21lug_R,
     passi_extra=[_passo("Il lato OB e' la retta y=2x: per x in [0,1], y varia tra 0 (lato OA) e "
-                         "2x (lato OB).", None),
+                         "2x (lato OB).", r"O(0,0),\ B(1,2) \ \Rightarrow\ y=\tfrac{2-0}{1-0}x=2x"),
                  _passo("Integrando prima su y, poi su x -- l'integrale interno si risolve subito "
                          "perche' x^2e^(xy) e' (a meno di 1/x) la derivata rispetto a y di x*e^(xy):",
                          r"\int_0^1\int_0^{2x} x^2e^{xy}\,dy\,dx = "
@@ -1063,7 +1083,8 @@ ESAME["integrali"].append(_integrale_generico(
     r"\text{quadrilatero di vertici } (0,1),(1,2),(2,1),(2,0)", "y", sp.Integer(2), _fig_22lug_S,
     passi_extra=[_passo("I 4 lati: da (0,1) a (1,2) la retta y=x+1; da (1,2) a (2,1) la retta "
                          "y=-x+3; da (2,1) a (2,0) il segmento verticale x=2; da (2,0) a (0,1) la "
-                         "retta y=1-x/2 (che fa da bordo INFERIORE per tutto x in [0,2]).", None),
+                         "retta y=1-x/2 (che fa da bordo INFERIORE per tutto x in [0,2]).",
+                         r"y=x+1,\quad y=-x+3,\quad x=2,\quad y=1-\tfrac{x}{2}"),
                  _passo("Si integra separatamente per x in [0,1] (tetto y=x+1) e x in [1,2] (tetto "
                         "y=-x+3), con lo stesso bordo inferiore y=1-x/2:",
                         r"\int_0^1\!\!\int_{1-x/2}^{x+1}\!y\,dy\,dx + "
@@ -1090,7 +1111,7 @@ def _serie_fattoriale_ratio():
                r"\frac{a_{n+1}}{a_n} = " + _tex(ratio)),
         _passo("Passo 2 -- limite per n->infinito:", r"\lim_{n\to\infty}\frac{a_{n+1}}{a_n} = " + _tex(lim)),
         _passo(f"Passo 3 -- essendo il limite {_tex(lim)} < 1, per il criterio del rapporto la "
-               "serie CONVERGE.", None),
+               "serie CONVERGE.", "L=" + _tex(lim) + r"<1\ \Rightarrow\ \textbf{CONVERGE}"),
     ]
     risposta = {"tipo": "scelta", "atteso": "converge"}
     return _voce("20 luglio 2026", testo, testo_latex,
@@ -1115,17 +1136,20 @@ def _serie_geometrica_parametrica_2026():
         _passo("Passo 1 -- e' geometrica di ragione q(x)=8/(6x-x^2-8); fattorizzando il "
                "denominatore:", r"6x-x^2-8 = " + _tex(fatt) + r"\ \Rightarrow\ q(x)=\frac{8}{"
                + _tex(fatt) + "}"),
-        _passo("Passo 2 -- dominio: q(x) non e' definita per x=2 e x=4 (denominatore nullo).", None),
+        _passo("Passo 2 -- dominio: q(x) non e' definita per x=2 e x=4 (denominatore nullo).",
+               r"6x-x^2-8=" + _tex(fatt) + r"=0 \iff x=2\ \text{ o }\ x=4"),
         _passo("Passo 3 -- una serie geometrica converge se e solo se |q(x)|<1; risolvendo "
                "q(x)^2<1 (equivalente a |q|<1, evitando di discutere il segno del denominatore "
                "caso per caso):",
                r"q(x)^2<1 \iff \frac{64}{(x-2)^2(x-4)^2}<1"),
         _passo("Risolvendo la disequazione si ottiene:", r"x<0 \ \text{ oppure } \ x>6"),
         _passo("Conclusione -- la serie converge per x in (-infinito,0) unito (6,+infinito) (intervalli che escludono "
-               "automaticamente anche x=2 e x=4, dove non e' comunque definita).", None),
+               "automaticamente anche x=2 e x=4, dove non e' comunque definita).",
+               r"x\in(-\infty,0)\cup(6,+\infty)"),
     ]
-    passi.append(_passo("Verifica per x=-1 (nell'intervallo di convergenza x<0): "
-                         "q(-1)=8/(-6-1-8)=8/-15, |q|<1 -> CONVERGE.", None))
+    q_at_m1 = sp.nsimplify(q.subs(xs, -1))
+    passi.append(_passo("Verifica per x=-1 (nell'intervallo di convergenza x<0):",
+                         "q(-1) = " + _tex(q_at_m1) + r",\quad |q(-1)|<1\ \Rightarrow\ \textbf{CONVERGE}"))
     risposta = {"tipo": "scelta", "atteso": "converge"}
     return _voce("23 luglio 2026", testo, testo_latex,
                  "Scrivi 'converge' o 'diverge' (riferito al caso x=-1).", passi, risposta, None)
@@ -1151,7 +1175,7 @@ def _serie_esponenziale_fattoriale():
                "qualunque esponenziale o fattoriale al numeratore):",
                r"\lim_{n\to\infty}\frac{a_{n+1}}{a_n} = " + _tex(lim)),
         _passo(f"Passo 3 -- essendo il limite {_tex(lim)} < 1, per il criterio del rapporto la "
-               "serie CONVERGE.", None),
+               "serie CONVERGE.", "L=" + _tex(lim) + r"<1\ \Rightarrow\ \textbf{CONVERGE}"),
     ]
     risposta = {"tipo": "scelta", "atteso": "converge"}
     return _voce("25 luglio 2026", testo, testo_latex,
@@ -1184,7 +1208,8 @@ def _lagrange_orlato_parabola():
         _passo("E' una PARABOLA con la concavita' rivolta verso il basso, vertice in (3,7) -- non e' "
                "un insieme compatto (si estende indefinitamente verso il basso), quindi il "
                "teorema di Weierstrass non garantisce automaticamente l'esistenza di massimo e "
-               "minimo assoluti su di essa.", None),
+               "minimo assoluti su di essa.",
+               r"y=7-(x-3)^2\ \Rightarrow\ \text{vertice}=(3,7),\ \ y\to-\infty\ (x\to\pm\infty)"),
         _passo("Sistema di Lagrange: gradiente(f)=lambda*gradiente(g), g=0.",
                f"{_tex(fx)}=\\lambda\\cdot{_tex(gx)},\\quad {_tex(fy)}=\\lambda\\cdot{_tex(gy)},"
                f"\\quad {_tex(g)}=0"),
@@ -1235,14 +1260,18 @@ ESAME["punti_liberi"].append(_punti_liberi_generico(
     nota_extra=("Dominio: il denominatore 1+x^2+y^2 e' sempre >=1>0, quindi f e' definita su TUTTO "
                 "R^2 (nessuna restrizione). Segno: poiche' il denominatore e' sempre positivo, il "
                 "segno di f coincide con quello del numeratore: f>0 per x>y, f<0 per x<y, f=0 "
-                "sulla retta x=y (bisettrice del I e III quadrante).")))
+                "sulla retta x=y (bisettrice del I e III quadrante)."),
+    nota_extra_latex=(r"1+x^2+y^2\ge1>0\ \ \forall(x,y)\in\mathbb{R}^2,\qquad "
+                       r"f>0\iff x>y,\quad f<0\iff x<y,\quad f=0\iff x=y")))
 
 # ---------------------------------------------------------------------------
 # CONTINUITA' E DIFFERENZIABILITA' -- nuovi problemi (I, J, K, L)
 # ---------------------------------------------------------------------------
 
 
-def _continuita_non_differenziabile(fonte, testo, testo_latex, f_expr, fx0, fy0, nota_non_diff):
+def _continuita_non_differenziabile(fonte, testo, testo_latex, f_expr, fx0, fy0, nota_non_diff,
+                                     bound_continuita_latex, nota_non_diff_latex,
+                                     theta_a, val_a, theta_b, val_b):
     """Schema comune per le funzioni definite a tratti in cui f risulta CONTINUA ma NON
     differenziabile in (0,0): la verifica per sostituzione polare mostra che f(r,theta)->0
     uniformemente (continuita'), ma il resto [f - fx*x - fy*y]/r NON tende a 0 uniformemente
@@ -1250,17 +1279,20 @@ def _continuita_non_differenziabile(fonte, testo, testo_latex, f_expr, fx0, fy0,
     passi = [_passo("Funzione:", testo_latex)]
     passi.append(_passo("Passo 1 -- passando in coordinate polari (x=r cos(theta), y=r sin(theta)) e "
                          "sviluppando per r->0, si verifica che f(r,theta)->0 uniformemente rispetto a "
-                         "theta (bound indipendente da theta): f e' CONTINUA in (0,0).", None))
+                         "theta (bound indipendente da theta): f e' CONTINUA in (0,0).",
+                         bound_continuita_latex))
     passi.append(_passo("Passo 2 -- derivate parziali in (0,0) per definizione (limite del "
                          "rapporto incrementale lungo gli assi):",
                          f"f_x(0,0)={_tex(fx0)},\\quad f_y(0,0)={_tex(fy0)}"))
     passi.append(_passo("Passo 3 -- test di differenziabilita': calcoliamo "
                          r"\frac{f(x,y)-f_x(0,0)x-f_y(0,0)y}{r} in coordinate polari, per r->0:",
-                         None))
+                         nota_non_diff_latex))
     passi.append(_passo(nota_non_diff, None))
     passi.append(_passo("Il resto, diviso per r, NON tende a 0 uniformemente (dipende da theta e non "
                          "si annulla per alcuni valori di theta): f e' quindi CONTINUA ma NON "
-                         "DIFFERENZIABILE in (0,0) -- nessun piano tangente in quel punto.", None))
+                         "DIFFERENZIABILE in (0,0) -- nessun piano tangente in quel punto.",
+                         r"\theta=" + _tex(theta_a) + r":\ " + _tex(val_a)
+                         + r"\quad\ne\quad \theta=" + _tex(theta_b) + r":\ " + _tex(val_b)))
 
     es_fake = {"f": f_expr, "continua": True, "differenziabile": False}
     try:
@@ -1283,7 +1315,12 @@ ESAME["continuita"].append(_continuita_non_differenziabile(
     sp.atan(x**3-y**3)/(x**2+y**2), sp.Integer(1), sp.Integer(-1),
     "Usando arctan(t) circa t per t piccolo, si trova f(r,theta) circa r(cos^3(theta)-sin^3(theta))+O(r^3): il resto "
     "[f-x+y]/r si riconduce, al primo ordine, a (cos(theta)-sin(theta))(cos(theta)sin(theta)), che vale ad esempio "
-    "circa -0.058 per theta=pi/3 (quindi diverso da 0)."))
+    "(radice(3)-3)/8 circa -0.159 per theta=pi/3 (quindi diverso da 0).",
+    bound_continuita_latex=(r"|f(r,\theta)| = \frac{|\arctan(x^3-y^3)|}{r^2} \le "
+                             r"\frac{r^3|\cos^3\theta-\sin^3\theta|}{r^2} \le 2r \to 0"),
+    nota_non_diff_latex=(r"\frac{f-x+y}{r} \to (\cos\theta-\sin\theta)\cos\theta\sin\theta"
+                          r"\quad(r\to0^+)"),
+    theta_a=0, val_a=sp.Integer(0), theta_b=sp.pi/3, val_b=(sp.sqrt(3)-3)/8))
 
 ESAME["continuita"].append(_continuita_non_differenziabile(
     "22 luglio 2026",
@@ -1296,7 +1333,11 @@ ESAME["continuita"].append(_continuita_non_differenziabile(
     "Riscrivendo (x^2-y^2)^2=(x-y)^2(x+y)^2, il numeratore e' (x-y)^3(x+y)^2(x+y+4)^2: vicino "
     "all'origine (x+y+4)^2 circa 16 (fattore quasi costante), quindi f circa 16r(cos(theta)-sin(theta))^3(cos(theta)+sin(theta))^2. "
     "Il resto [f-16x+16y]/r, calcolato con piu' precisione, vale ad esempio 6-6*sqrt(3) circa -4.39 per "
-    "theta=pi/6 (quindi diverso da 0)."))
+    "theta=pi/6 (quindi diverso da 0).",
+    bound_continuita_latex=(r"|f(r,\theta)| \le \sqrt2\,r\,(\sqrt2\,r+4)^2 \to 0\ \ (r\to0^+)"),
+    nota_non_diff_latex=(r"\frac{f-16x+16y}{r} \to 8\sqrt2\,(\cos4\theta-1)\cos\!\left(\theta+"
+                          r"\tfrac\pi4\right)\quad(r\to0^+)"),
+    theta_a=0, val_a=sp.Integer(0), theta_b=sp.pi/6, val_b=6-6*sp.sqrt(3)))
 
 ESAME["continuita"].append(_continuita_non_differenziabile(
     "25 luglio 2026",
@@ -1309,7 +1350,12 @@ ESAME["continuita"].append(_continuita_non_differenziabile(
     "Usando 1-cos(t) circa t^2/2 e log(1+s) circa s per t,s piccoli, si trova f(x,y) circa x^2y^3/(2(x^4+y^4)), cioe' "
     "in polari f(r,theta) circa r*[sin^3(theta)cos^2(theta)/(2(sin^4(theta)+cos^4(theta)))] (il denominatore sin^4(theta)+cos^4(theta) non si "
     "annulla mai, essendo sempre >=1/2). Poiche' fx(0,0)=fy(0,0)=0, il resto f/r tende proprio a "
-    "questa quantita', che vale ad esempio sqrt(2)/8 circa 0.177 per theta=pi/4 (quindi diverso da 0)."))
+    "questa quantita', che vale ad esempio sqrt(2)/8 circa 0.177 per theta=pi/4 (quindi diverso da 0).",
+    bound_continuita_latex=(r"|1-\cos t|\le\tfrac{t^2}{2},\ \ x^4+y^4\ge\tfrac{r^4}{2}"
+                             r"\ \Rightarrow\ |f(r,\theta)| \le \tfrac{r}{2} \to 0\ \ (r\to0^+)"),
+    nota_non_diff_latex=(r"\frac{f}{r} \to \frac{(1-\cos4\theta)\sin\theta}{16(\sin^4\theta+"
+                          r"\cos^4\theta)}\quad(r\to0^+)"),
+    theta_a=0, val_a=sp.Integer(0), theta_b=sp.pi/4, val_b=sp.sqrt(2)/8))
 
 
 def _continuita_dominio_piano_tangente():
@@ -1331,12 +1377,14 @@ def _continuita_dominio_piano_tangente():
                          r"\frac{4}{x^2+y^2}\ge1 \ \text{ e }\ x^2+y^2\ne0 \iff 0<x^2+y^2\le4"))
     passi.append(_passo("Il dominio e' il disco chiuso di raggio 2 centrato nell'origine, PRIVATO "
                          "dell'origine stessa (dove il denominatore si annulla): una corona "
-                         "circolare degenere.", None))
+                         "circolare degenere.",
+                         r"D = \{(x,y): 0<x^2+y^2\le4\}"))
     passi.append(_passo("Passo 2 -- il punto (1,1) ha x^2+y^2=2, che soddisfa 0<2<=4 STRETTAMENTE "
                          "(non e' sul bordo x^2+y^2=4): e' un punto INTERNO al dominio, dove f e' "
                          "derivabile con continuita' (l'argomento della radice vale 4/2-1=1>0, "
                          "quindi niente radice di 0 che darebbe problemi di derivabilita'). Il "
-                         "piano tangente ESISTE.", None))
+                         "piano tangente ESISTE.",
+                         r"\frac{4}{1^2+1^2}-1 = \frac{4}{2}-1 = 1 > 0"))
     passi.append(_passo("Passo 3 -- derivate parziali in (1,1):",
                          f"f(1,1)={_tex(f1)},\\ f_x(1,1)={_tex(fx1)},\\ f_y(1,1)={_tex(fy1)}"))
     passi.append(_passo("Piano tangente in (1,1,f(1,1)):", "z = " + _tex(piano)))
