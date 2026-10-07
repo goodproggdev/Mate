@@ -170,6 +170,37 @@ ESAME["serie"].append(_serie_parametrica())
 # LAGRANGE (1 problema: 18 ottobre 2025, Esercizio 1)
 # ---------------------------------------------------------------------------
 
+def _passo_regolarita_latex(g, x, y, numero=2):
+    """Passo 'controllo di regolarita' del vincolo': i moltiplicatori di Lagrange trovano solo i
+    punti dove grad(g) != 0; i punti del vincolo con grad(g) = (0,0) (singolari) sfuggirebbero
+    al metodo e vanno controllati a parte."""
+    gx, gy = sp.diff(g, x), sp.diff(g, y)
+    testo = (f"Passo {numero} — controllo di regolarità del vincolo: il metodo di Lagrange vale nei punti "
+             "dove ∇g ≠ (0,0). Calcoliamo il gradiente di g e vediamo se si annulla su punti del vincolo:")
+    lat = (r"\nabla g=\left(\frac{\partial g}{\partial x},\frac{\partial g}{\partial y}\right)=("
+           + _tex(gx) + "," + _tex(gy) + ")")
+    try:
+        sol = sp.solve([gx, gy], [x, y], dict=True)
+    except Exception:
+        sol = None
+    if sol is None:
+        return _passo(testo, lat)
+    if not sol:
+        lat += r"\ne(0,0)\ \ \forall(x,y)\ \Rightarrow\ \text{vincolo regolare ovunque}"
+        return _passo(testo, lat)
+    for sl in sol:
+        if x not in sl or y not in sl:
+            continue
+        gv = sp.simplify(g.subs(sl))
+        lat += (r";\quad \nabla g=(0,0)\iff(x,y)=(" + _tex(sl[x]) + "," + _tex(sl[y]) + r"),\ g="
+                + _tex(gv))
+        if gv != 0:
+            lat += r"\ne0\ \Rightarrow\ \text{non appartiene al vincolo}"
+        else:
+            lat += r"=0\ \Rightarrow\ \textbf{punto singolare: da studiare a parte}"
+    return _passo(testo, lat)
+
+
 def _lagrange_1():
     f = x - y**2 + 2*x**2
     g = x**2 + y**2 + 2*x
@@ -191,7 +222,8 @@ def _lagrange_1():
                r"x^2+2x+y^2=0 \iff (x+1)^2+y^2=1"),
         _passo("È una circonferenza di centro (-1,0) e raggio 1: chiusa e limitata (compatta).",
                r"\text{centro}=(-1,0),\quad \text{raggio}=1"),
-        _passo("Sistema di Lagrange: gradiente(f) = lambda*gradiente(g), g=0.",
+        _passo_regolarita_latex(g, x, y, 2),
+        _passo("Passo 3 — sistema di Lagrange: gradiente(f) = lambda*gradiente(g), g=0.",
                r"1+4x=\lambda(2x+2),\quad -2y=\lambda(2y),\quad (x+1)^2+y^2=1"),
         _passo("Risolvendo il sistema si trovano 4 punti stazionari, con il relativo moltiplicatore "
                "lambda e il valore di f:", None),
@@ -1210,8 +1242,9 @@ def _lagrange_orlato_parabola():
                "teorema di Weierstrass non garantisce automaticamente l'esistenza di massimo e "
                "minimo assoluti su di essa.",
                r"y=7-(x-3)^2\ \Rightarrow\ \text{vertice}=(3,7),\ \ y\to-\infty\ (x\to\pm\infty)"),
-        _passo("Sistema di Lagrange: gradiente(f)=lambda*gradiente(g), g=0.",
-               f"{_tex(fx)}=\\lambda\\cdot{_tex(gx)},\\quad {_tex(fy)}=\\lambda\\cdot{_tex(gy)},"
+        _passo_regolarita_latex(g, x, y, 2),
+        _passo("Passo 3 — sistema di Lagrange: gradiente(f)=lambda*gradiente(g), g=0.",
+               f"{_tex(fx)}=\\lambda\\cdot({_tex(gx)}),\\quad {_tex(fy)}=\\lambda\\cdot({_tex(gy)}),"
                f"\\quad {_tex(g)}=0"),
         _passo("Dalla prima equazione, 2(x-3)y=2lambda(x-3): se x!=3 si semplifica per (x-3) ottenendo "
                "y=lambda, che sostituito nella seconda equazione porta a una contraddizione col "

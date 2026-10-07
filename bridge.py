@@ -184,6 +184,37 @@ def _spiega_taylor_latex(es):
     return passi
 
 
+def _passo_regolarita_latex(g, x, y, numero=2):
+    """Passo 'controllo di regolarita' del vincolo': i moltiplicatori di Lagrange trovano solo i
+    punti dove grad(g) != 0; i punti del vincolo con grad(g) = (0,0) (singolari) sfuggirebbero
+    al metodo e vanno controllati a parte."""
+    gx, gy = sp.diff(g, x), sp.diff(g, y)
+    testo = (f"Passo {numero} — controllo di regolarità del vincolo: il metodo di Lagrange vale nei punti "
+             "dove ∇g ≠ (0,0). Calcoliamo il gradiente di g e vediamo se si annulla su punti del vincolo:")
+    lat = (r"\nabla g=\left(\frac{\partial g}{\partial x},\frac{\partial g}{\partial y}\right)=("
+           + _tex(gx) + "," + _tex(gy) + ")")
+    try:
+        sol = sp.solve([gx, gy], [x, y], dict=True)
+    except Exception:
+        sol = None
+    if sol is None:
+        return _passo(testo, lat)
+    if not sol:
+        lat += r"\ne(0,0)\ \ \forall(x,y)\ \Rightarrow\ \text{vincolo regolare ovunque}"
+        return _passo(testo, lat)
+    for sl in sol:
+        if x not in sl or y not in sl:
+            continue
+        gv = sp.simplify(g.subs(sl))
+        lat += (r";\quad \nabla g=(0,0)\iff(x,y)=(" + _tex(sl[x]) + "," + _tex(sl[y]) + r"),\ g="
+                + _tex(gv))
+        if gv != 0:
+            lat += r"\ne0\ \Rightarrow\ \text{non appartiene al vincolo}"
+        else:
+            lat += r"=0\ \Rightarrow\ \textbf{punto singolare: da studiare a parte}"
+    return _passo(testo, lat)
+
+
 def _spiega_lagrange_latex(es):
     """Ricostruisce spiega_lagrange() di multivariabile.py passo per passo, in LaTeX."""
     x, y = multivariabile.x, multivariabile.y
@@ -193,7 +224,13 @@ def _spiega_lagrange_latex(es):
 
     passi = [_passo("Funzione e vincolo:",
                      "f(x,y)=" + _tex(sp.expand(f)) + r",\quad g(x,y)=" + _tex(g) + "=0")]
-    passi.append(_passo("Passo 1 — sistema di Lagrange: gradiente(f) = λ·gradiente(g), g = 0.",
+    passi.append(_passo("Passo 1 — riconosciamo il vincolo (curva e compattezza, vedi Passo 6):",
+                         (r"g(x,y)=0:\ x+y=" + _tex(es["vincolo_c"]) + r"\ \text{(retta, non limitata)}")
+                         if es["tipo_vincolo"] == "retta" else
+                         (r"g(x,y)=0:\ x^2+y^2=" + _tex(es["vincolo_r"] ** 2)
+                          + r"\ \text{(circonferenza, compatta)}")))
+    passi.append(_passo_regolarita_latex(g, x, y, 2))
+    passi.append(_passo("Passo 3 — sistema di Lagrange: gradiente(f) = λ·gradiente(g), g = 0.",
                          r"\nabla f = \lambda \nabla g,\quad g=0"))
     passi.append(_passo("Sistema da risolvere:",
                          _tex(grad_f[0]) + r"=\lambda(" + _tex(grad_g[0]) + r")\quad,\quad "
@@ -203,7 +240,7 @@ def _spiega_lagrange_latex(es):
                          "gradienti paralleli, il loro \"prodotto incrociato\" deve annullarsi -- "
                          "equazione equivalente al sistema sopra, ma senza λ:",
                          _tex(sp.expand(grad_f[0] * grad_g[1] - grad_f[1] * grad_g[0])) + "=0"))
-    passi.append(_passo("Passo 2 — risolvendo questa equazione insieme al vincolo g=0 si trovano i "
+    passi.append(_passo("Passo 4 — risolvendo questa equazione insieme al vincolo g=0 si trovano i "
                          "punti stazionari; per ciascuno, λ si ricava da una delle due equazioni del "
                          "sistema. Verifica (il gradiente di f deve essere esattamente λ volte quello "
                          "di g):", None))
@@ -215,7 +252,7 @@ def _spiega_lagrange_latex(es):
                              + r"(" + _tex(sp.simplify(lam_v * ggx)) + "," + _tex(sp.simplify(lam_v * ggy))
                              + r")\ \Rightarrow\ f=" + _tex(val)))
 
-    passi.append(_passo("Passo 3 — classifichiamo ogni punto con l'Hessiano orlato (dal formulario): "
+    passi.append(_passo("Passo 5 — classifichiamo ogni punto con l'Hessiano orlato (dal formulario): "
                          "posto L=f-\\lambda g,",
                          r"\overline{H} = \begin{pmatrix} 0 & g_x' & g_y' \\ g_x' & L_{xx}'' & L_{xy}'' \\ "
                          r"g_y' & L_{yx}'' & L_{yy}'' \end{pmatrix},\quad "
@@ -226,12 +263,12 @@ def _spiega_lagrange_latex(es):
                              + r"\textbf{" + cl["tipo"] + "}"))
 
     if es["tipo_vincolo"] == "cerchio":
-        passi.append(_passo("Passo 4 — il vincolo è una circonferenza: chiuso e limitato (compatto). "
+        passi.append(_passo("Passo 6 — il vincolo è una circonferenza: chiuso e limitato (compatto). "
                              "Per Weierstrass f ammette sia massimo sia minimo assoluto (si confrontano "
                              "TUTTI i valori di f nei punti stazionari, anche quelli relativi):",
                              r"\max f=" + _tex(es["valore_max"]) + r",\quad \min f=" + _tex(es["valore_min"])))
     else:
-        passi.append(_passo("Passo 4 — il vincolo è una retta: chiuso ma NON limitato. Essendo f una forma "
+        passi.append(_passo("Passo 6 — il vincolo è una retta: chiuso ma NON limitato. Essendo f una forma "
                              "quadratica coerciva, tende a +∞ lungo la retta: esiste solo il minimo assoluto:",
                              r"\min f=" + _tex(es["valore_min"]) + r",\quad \max f:\ \text{non esiste}"))
     return passi
