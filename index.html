@@ -1351,7 +1351,9 @@
     <ol style="margin:8px 0 0; padding-left:20px;">
       <li>Scrivi il vincolo come $g(x,y)=0$, <strong>riconosci e disegna la curva</strong> (sez. 8) e decidi se è compatta.</li>
       <li><strong>Controllo di regolarità del vincolo:</strong> calcola $\nabla g=\left(\frac{\partial g}{\partial x},\frac{\partial g}{\partial y}\right)$ e cerca dove si annulla. Se $\nabla g=(0,0)$ in un punto che <em>sta sul vincolo</em> ($g=0$) il punto è singolare: Lagrange non lo trova, va studiato a parte (valutando $f$ lì). Se si annulla solo fuori dal vincolo (es. origine per una circonferenza non centrata in $0$) il vincolo è regolare.</li>
-      <li>Imposta $\nabla f=\lambda\nabla g$ e $g=0$ (3 equazioni, incognite $x,y,\lambda$). Per eliminare $\lambda$: $f_xg_y-f_yg_x=0$.</li>
+      <li><strong>Lagrangiana</strong> (con $g$ scritta come $g=0$): $\mathcal{L}(x,y,\lambda)=f(x,y)-\lambda\,g(x,y)$, ad es. $\mathcal{L}=x^2+y^2-\lambda(x+y-2)$. Imponi $\nabla\mathcal{L}=0$, cioè l'insieme da risolvere:
+        $$\begin{cases}\mathcal{L}_x=f_x-\lambda g_x=0\\ \mathcal{L}_y=f_y-\lambda g_y=0\\ \mathcal{L}_\lambda=-g(x,y)=0\end{cases}$$
+        (3 equazioni, incognite $x,y,\lambda$; equivale a $\nabla f=\lambda\nabla g$, $g=0$). Per eliminare $\lambda$: $f_xg_y-f_yg_x=0$.</li>
       <li>Risolvi, senza perdere casi (se dividi per una quantità, studia a parte quando è zero). Trova tutti i punti e i rispettivi $\lambda$.</li>
       <li>Controlla che i punti soddisfino davvero il vincolo.</li>
       <li>Per ogni punto: $L=f-\lambda g$, costruisci $\overline H$ con $g_x,g_y,L_{xx},L_{xy},L_{yy}$ e calcola $\det\overline H$.</li>

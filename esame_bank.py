@@ -201,6 +201,22 @@ def _passo_regolarita_latex(g, x, y, numero=2):
     return _passo(testo, lat)
 
 
+def _passo_lagrangiana_latex(f, g, x, y, numero=3):
+    """Passo 'lagrangiana': L = f - lambda*g e l'insieme (sistema) L_x=L_y=L_lambda=0 da risolvere."""
+    fx, fy = sp.diff(f, x), sp.diff(f, y)
+    gx, gy = sp.diff(g, x), sp.diff(g, y)
+    testo = (f"Passo {numero} — costruiamo la lagrangiana (g scritta nella forma g=0) e imponiamo che "
+             "tutte le sue derivate parziali siano nulle: è l'insieme di equazioni da risolvere:")
+    lat = (r"\mathcal{L}(x,y,\lambda)=f(x,y)-\lambda\,g(x,y)=" + _tex(sp.expand(f))
+           + r"-\lambda\left(" + _tex(g) + r"\right)"
+           + r"\ \Longrightarrow\ \begin{cases}"
+           + r"\mathcal{L}_x=" + _tex(fx) + r"-\lambda\left(" + _tex(gx) + r"\right)=0\\"
+           + r"\mathcal{L}_y=" + _tex(fy) + r"-\lambda\left(" + _tex(gy) + r"\right)=0\\"
+           + r"\mathcal{L}_\lambda=-\left(" + _tex(g) + r"\right)=0"
+           + r"\end{cases}")
+    return _passo(testo, lat)
+
+
 def _lagrange_1():
     f = x - y**2 + 2*x**2
     g = x**2 + y**2 + 2*x
@@ -223,7 +239,8 @@ def _lagrange_1():
         _passo("È una circonferenza di centro (-1,0) e raggio 1: chiusa e limitata (compatta).",
                r"\text{centro}=(-1,0),\quad \text{raggio}=1"),
         _passo_regolarita_latex(g, x, y, 2),
-        _passo("Passo 3 — sistema di Lagrange: gradiente(f) = lambda*gradiente(g), g=0.",
+        _passo_lagrangiana_latex(f, g, x, y, 3),
+        _passo("Passo 4 — in forma vettoriale: gradiente(f) = lambda*gradiente(g), g=0.",
                r"1+4x=\lambda(2x+2),\quad -2y=\lambda(2y),\quad (x+1)^2+y^2=1"),
         _passo("Risolvendo il sistema si trovano 4 punti stazionari, con il relativo moltiplicatore "
                "lambda e il valore di f:", None),
@@ -1243,7 +1260,8 @@ def _lagrange_orlato_parabola():
                "minimo assoluti su di essa.",
                r"y=7-(x-3)^2\ \Rightarrow\ \text{vertice}=(3,7),\ \ y\to-\infty\ (x\to\pm\infty)"),
         _passo_regolarita_latex(g, x, y, 2),
-        _passo("Passo 3 — sistema di Lagrange: gradiente(f)=lambda*gradiente(g), g=0.",
+        _passo_lagrangiana_latex(f, g, x, y, 3),
+        _passo("Passo 4 — in forma vettoriale: gradiente(f)=lambda*gradiente(g), g=0.",
                f"{_tex(fx)}=\\lambda\\cdot({_tex(gx)}),\\quad {_tex(fy)}=\\lambda\\cdot({_tex(gy)}),"
                f"\\quad {_tex(g)}=0"),
         _passo("Dalla prima equazione, 2(x-3)y=2lambda(x-3): se x!=3 si semplifica per (x-3) ottenendo "

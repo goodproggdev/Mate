@@ -215,6 +215,22 @@ def _passo_regolarita_latex(g, x, y, numero=2):
     return _passo(testo, lat)
 
 
+def _passo_lagrangiana_latex(f, g, x, y, numero=3):
+    """Passo 'lagrangiana': L = f - lambda*g e l'insieme (sistema) L_x=L_y=L_lambda=0 da risolvere."""
+    fx, fy = sp.diff(f, x), sp.diff(f, y)
+    gx, gy = sp.diff(g, x), sp.diff(g, y)
+    testo = (f"Passo {numero} — costruiamo la lagrangiana (g scritta nella forma g=0) e imponiamo che "
+             "tutte le sue derivate parziali siano nulle: è l'insieme di equazioni da risolvere:")
+    lat = (r"\mathcal{L}(x,y,\lambda)=f(x,y)-\lambda\,g(x,y)=" + _tex(sp.expand(f))
+           + r"-\lambda\left(" + _tex(g) + r"\right)"
+           + r"\ \Longrightarrow\ \begin{cases}"
+           + r"\mathcal{L}_x=" + _tex(fx) + r"-\lambda\left(" + _tex(gx) + r"\right)=0\\"
+           + r"\mathcal{L}_y=" + _tex(fy) + r"-\lambda\left(" + _tex(gy) + r"\right)=0\\"
+           + r"\mathcal{L}_\lambda=-\left(" + _tex(g) + r"\right)=0"
+           + r"\end{cases}")
+    return _passo(testo, lat)
+
+
 def _spiega_lagrange_latex(es):
     """Ricostruisce spiega_lagrange() di multivariabile.py passo per passo, in LaTeX."""
     x, y = multivariabile.x, multivariabile.y
@@ -224,13 +240,14 @@ def _spiega_lagrange_latex(es):
 
     passi = [_passo("Funzione e vincolo:",
                      "f(x,y)=" + _tex(sp.expand(f)) + r",\quad g(x,y)=" + _tex(g) + "=0")]
-    passi.append(_passo("Passo 1 — riconosciamo il vincolo (curva e compattezza, vedi Passo 6):",
+    passi.append(_passo("Passo 1 — riconosciamo il vincolo (curva e compattezza, vedi Passo 7):",
                          (r"g(x,y)=0:\ x+y=" + _tex(es["vincolo_c"]) + r"\ \text{(retta, non limitata)}")
                          if es["tipo_vincolo"] == "retta" else
                          (r"g(x,y)=0:\ x^2+y^2=" + _tex(es["vincolo_r"] ** 2)
                           + r"\ \text{(circonferenza, compatta)}")))
     passi.append(_passo_regolarita_latex(g, x, y, 2))
-    passi.append(_passo("Passo 3 — sistema di Lagrange: gradiente(f) = λ·gradiente(g), g = 0.",
+    passi.append(_passo_lagrangiana_latex(f, g, x, y, 3))
+    passi.append(_passo("Passo 4 — equivalentemente, in forma vettoriale: gradiente(f) = λ·gradiente(g), g = 0.",
                          r"\nabla f = \lambda \nabla g,\quad g=0"))
     passi.append(_passo("Sistema da risolvere:",
                          _tex(grad_f[0]) + r"=\lambda(" + _tex(grad_g[0]) + r")\quad,\quad "
@@ -240,7 +257,7 @@ def _spiega_lagrange_latex(es):
                          "gradienti paralleli, il loro \"prodotto incrociato\" deve annullarsi -- "
                          "equazione equivalente al sistema sopra, ma senza λ:",
                          _tex(sp.expand(grad_f[0] * grad_g[1] - grad_f[1] * grad_g[0])) + "=0"))
-    passi.append(_passo("Passo 4 — risolvendo questa equazione insieme al vincolo g=0 si trovano i "
+    passi.append(_passo("Passo 5 — risolvendo questa equazione insieme al vincolo g=0 si trovano i "
                          "punti stazionari; per ciascuno, λ si ricava da una delle due equazioni del "
                          "sistema. Verifica (il gradiente di f deve essere esattamente λ volte quello "
                          "di g):", None))
@@ -252,7 +269,7 @@ def _spiega_lagrange_latex(es):
                              + r"(" + _tex(sp.simplify(lam_v * ggx)) + "," + _tex(sp.simplify(lam_v * ggy))
                              + r")\ \Rightarrow\ f=" + _tex(val)))
 
-    passi.append(_passo("Passo 5 — classifichiamo ogni punto con l'Hessiano orlato (dal formulario): "
+    passi.append(_passo("Passo 6 — classifichiamo ogni punto con l'Hessiano orlato (dal formulario): "
                          "posto L=f-\\lambda g,",
                          r"\overline{H} = \begin{pmatrix} 0 & g_x' & g_y' \\ g_x' & L_{xx}'' & L_{xy}'' \\ "
                          r"g_y' & L_{yx}'' & L_{yy}'' \end{pmatrix},\quad "
@@ -263,12 +280,12 @@ def _spiega_lagrange_latex(es):
                              + r"\textbf{" + cl["tipo"] + "}"))
 
     if es["tipo_vincolo"] == "cerchio":
-        passi.append(_passo("Passo 6 — il vincolo è una circonferenza: chiuso e limitato (compatto). "
+        passi.append(_passo("Passo 7 — il vincolo è una circonferenza: chiuso e limitato (compatto). "
                              "Per Weierstrass f ammette sia massimo sia minimo assoluto (si confrontano "
                              "TUTTI i valori di f nei punti stazionari, anche quelli relativi):",
                              r"\max f=" + _tex(es["valore_max"]) + r",\quad \min f=" + _tex(es["valore_min"])))
     else:
-        passi.append(_passo("Passo 6 — il vincolo è una retta: chiuso ma NON limitato. Essendo f una forma "
+        passi.append(_passo("Passo 7 — il vincolo è una retta: chiuso ma NON limitato. Essendo f una forma "
                              "quadratica coerciva, tende a +∞ lungo la retta: esiste solo il minimo assoluto:",
                              r"\min f=" + _tex(es["valore_min"]) + r",\quad \max f:\ \text{non esiste}"))
     return passi
