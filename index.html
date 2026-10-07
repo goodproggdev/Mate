@@ -776,7 +776,7 @@
   </div>
 
   <div class="info-box">
-    Questa pagina riporta fedelmente il formulario fornito a esame, senza spiegazioni aggiuntive: per capire
+    Le sezioni 1–7 riportano fedelmente il formulario fornito a esame, senza spiegazioni aggiuntive (le sezioni 8–13 sono un'appendice di promemoria personale): per capire
     quando e come si usa ciascuna formula, vedi la sezione <a href="#" data-goto="teoria">Teoria</a>, che
     rimanda qui con dei riquadri "Dal Formulario ufficiale".
   </div>
@@ -791,6 +791,12 @@
       <a href="#f5">5. Hessiano orlato (vincolato)</a>
       <a href="#f6">6. EDO del primo ordine lineari</a>
       <a href="#f7">7. EDO del secondo ordine — metodo di somiglianza</a>
+      <a href="#f8">8. Forme geometriche e vincoli (appendice)</a>
+      <a href="#f9">9. Derivate: formule base (appendice)</a>
+      <a href="#f10">10. Integrali: formule base (appendice)</a>
+      <a href="#f11">11. Serie: procedimento di analisi (appendice)</a>
+      <a href="#f12">12. EDO 2° ordine: omogenea e caratteristica (appendice)</a>
+      <a href="#f13">13. Metodo di somiglianza: riconoscere e risolvere (appendice)</a>
     </div>
   </div>
 
@@ -995,6 +1001,307 @@
     <p style="margin:6px 0 0; font-size:13px;">Si cerca una soluzione $y_1=c_1e^{-x}$ dell'equazione
     $y''+2y=3e^{-x}$; si cerca una soluzione $y_2=ax^2+bx+c$ dell'equazione $y''+2y=x^2+1$; la funzione
     $y_1+y_2$ sarà allora una soluzione particolare dell'equazione di partenza.</p>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- APPENDICE: strumenti di consultazione rapida (non ufficiali)   -->
+  <!-- ============================================================ -->
+  <div class="warning-box" style="margin-top:34px;">
+    <span class="box-label">Appendice — non fa parte del formulario ufficiale</span>
+    Le sezioni 8–13 che seguono sono un <strong>promemoria personale</strong> (geometria dei vincoli, derivate,
+    integrali, procedimenti per serie ed EDO). Non sono ammesse a esame come formulario: servono per studiare e
+    per riconoscere velocemente i casi.
+  </div>
+
+  <!-- ============================== 8 ============================== -->
+  <h2 id="f8">8. Forme geometriche e vincoli: come leggerli</h2>
+  <p>Quando un esercizio dà un vincolo $g(x,y)=0$ o un dominio, la prima cosa è <strong>riconoscere la
+  curva</strong>: da lì si capisce se è compatta (Weierstrass), come parametrizzarla e come disegnarla.</p>
+  <div class="table-scroll">
+  <table>
+    <tr><th>Curva</th><th>Equazione canonica</th><th>Elementi / note</th></tr>
+    <tr><td>Retta</td><td>$ax+by=c$ &nbsp;oppure&nbsp; $y=mx+q$</td>
+        <td>Per due punti: $m=\dfrac{y_2-y_1}{x_2-x_1}$, $\;y-y_1=m(x-x_1)$. Chiusa, <strong>non limitata</strong>.</td></tr>
+    <tr><td>Circonferenza</td><td>$(x-x_0)^2+(y-y_0)^2=r^2$</td>
+        <td>Centro $(x_0,y_0)$, raggio $r$. Parametrica: $x=x_0+r\cos t,\ y=y_0+r\sin t$. Lunghezza $2\pi r$, area del disco $\pi r^2$. <strong>Compatta</strong>.</td></tr>
+    <tr><td>Ellisse</td><td>$\dfrac{(x-x_0)^2}{a^2}+\dfrac{(y-y_0)^2}{b^2}=1$</td>
+        <td>Semiassi $a$ (lungo $x$) e $b$ (lungo $y$); se $a=b$ è un cerchio. Area $\pi ab$. Parametrica: $x=x_0+a\cos t,\ y=y_0+b\sin t$. <strong>Compatta</strong>.</td></tr>
+    <tr><td>Iperbole</td><td>$\dfrac{x^2}{a^2}-\dfrac{y^2}{b^2}=\pm1$</td>
+        <td>Due rami, asintoti $y=\pm\dfrac bax$. Segno $+1$: rami a destra/sinistra; segno $-1$: rami sopra/sotto. <strong>Non limitata</strong>.</td></tr>
+    <tr><td>Iperbole equilatera</td><td>$xy=k$</td>
+        <td>Asintoti = assi coordinati. Per $k>0$ rami nel I e III quadrante, per $k<0$ nel II e IV. Non limitata.</td></tr>
+    <tr><td>Parabola (asse verticale)</td><td>$y=ax^2+bx+c$</td>
+        <td>Vertice $\left(-\dfrac{b}{2a},\,c-\dfrac{b^2}{4a}\right)$. $a>0$ concavità verso l'alto, $a<0$ verso il basso. Forma con vertice: $y=a(x-h)^2+v$. Non limitata.</td></tr>
+    <tr><td>Parabola (asse orizzontale)</td><td>$x=ay^2+by+c$</td>
+        <td>Stessa cosa scambiando i ruoli di $x$ e $y$ (es. $x=y^2-1$ è una parabola "coricata").</td></tr>
+  </table>
+  </div>
+
+  <div class="info-box">
+    <span class="box-label">Riconoscere la conica dai coefficienti</span>
+    Data $Ax^2+By^2+Cx+Dy+E=0$ (senza termine misto $xy$):
+    <ul style="margin:8px 0 0;">
+      <li>$A$ e $B$ <strong>dello stesso segno</strong>: ellisse; se $A=B$ circonferenza;</li>
+      <li>$A$ e $B$ <strong>di segno opposto</strong>: iperbole;</li>
+      <li>uno solo dei due è $0$: parabola.</li>
+    </ul>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Completare il quadrato (esempio d'esame)</span>
+    <div class="tex-line">$$x^2+y^2+2x=0 \iff (x^2+2x+1)+y^2=1 \iff (x+1)^2+y^2=1$$</div>
+    <span class="box-caption">Circonferenza di centro $(-1,0)$ e raggio $1$. Regola: $x^2+px=\left(x+\frac p2\right)^2-\frac{p^2}{4}$.</span>
+    <div class="tex-line">$$x^2+4y^2-2x+8y+1=0 \iff (x-1)^2+4(y+1)^2=4 \iff \frac{(x-1)^2}{4}+\frac{(y+1)^2}{1}=1$$</div>
+    <span class="box-caption">Ellisse di centro $(1,-1)$, semiassi $a=2$, $b=1$.</span>
+    <div class="tex-line">$$(x-3)^2+y-7=0 \iff y=7-(x-3)^2$$</div>
+    <span class="box-caption">Parabola con concavità verso il basso, vertice $(3,7)$: <em>non</em> compatta.</span>
+  </div>
+
+  <div class="formula-box">
+    <span class="box-label">Dominî: interno / esterno / fascia</span>
+    <div class="tex-line">$$x^2+y^2\le R^2\ \ (\text{disco}),\qquad r^2\le x^2+y^2\le R^2\ \ (\text{corona}),\qquad y\le mx+q\ \ (\text{semipiano sotto la retta})$$</div>
+    <div class="tex-line">$$\frac{x^2}{a^2}+\frac{y^2}{b^2}\le1\ \ (\text{interno dell'ellisse}),\qquad y\ge x^2\ \ (\text{sopra la parabola})$$</div>
+    <span class="box-caption">Per disegnare una disequazione: traccia la curva con l'uguale, poi prova un punto (es. l'origine) per capire quale lato soddisfa la disuguaglianza.</span>
+  </div>
+
+  <div class="formula-box">
+    <span class="box-label">Coordinate polari e polari generalizzate</span>
+    <div class="tex-line">$$x=r\cos\theta,\ \ y=r\sin\theta,\ \ x^2+y^2=r^2,\ \ dx\,dy=r\,dr\,d\theta$$</div>
+    <div class="tex-line">$$\text{ellisse: } x=x_0+ar\cos\theta,\ \ y=y_0+br\sin\theta,\ \ dx\,dy=ab\,r\,dr\,d\theta$$</div>
+    <span class="box-caption">Conviene quando il dominio è un disco/corona/ellisse o quando compare $x^2+y^2$ nella funzione.</span>
+  </div>
+
+  <div class="warning-box">
+    <span class="box-label">Vincolo compatto o no? (Weierstrass nei Lagrange)</span>
+    <strong>Chiuso e limitato</strong> (circonferenza, ellisse, segmento, poligono chiuso): $f$ continua ha massimo e minimo assoluti, da cercare confrontando i valori nei punti stazionari.
+    <strong>Non limitato</strong> (retta, parabola, iperbole): Weierstrass non si applica, può esserci solo uno dei due (o nessuno); si studia il comportamento di $f$ per $|x|\to\infty$.
+  </div>
+
+  <!-- ============================== 9 ============================== -->
+  <h2 id="f9">9. Derivate: formule base</h2>
+  <div class="table-scroll">
+  <table>
+    <tr><th>$f(x)$</th><th>$f'(x)$</th><th>$f(x)$</th><th>$f'(x)$</th></tr>
+    <tr><td>$c$</td><td>$0$</td><td>$\sin x$</td><td>$\cos x$</td></tr>
+    <tr><td>$x^\alpha$</td><td>$\alpha x^{\alpha-1}$</td><td>$\cos x$</td><td>$-\sin x$</td></tr>
+    <tr><td>$\sqrt x$</td><td>$\dfrac{1}{2\sqrt x}$</td><td>$\tan x$</td><td>$\dfrac1{\cos^2x}=1+\tan^2x$</td></tr>
+    <tr><td>$\dfrac1x$</td><td>$-\dfrac1{x^2}$</td><td>$\arctan x$</td><td>$\dfrac1{1+x^2}$</td></tr>
+    <tr><td>$e^x$</td><td>$e^x$</td><td>$\arcsin x$</td><td>$\dfrac1{\sqrt{1-x^2}}$</td></tr>
+    <tr><td>$a^x$</td><td>$a^x\ln a$</td><td>$\arccos x$</td><td>$-\dfrac1{\sqrt{1-x^2}}$</td></tr>
+    <tr><td>$\ln x$</td><td>$\dfrac1x$</td><td>$\sinh x$ / $\cosh x$</td><td>$\cosh x$ / $\sinh x$</td></tr>
+    <tr><td>$\log_a x$</td><td>$\dfrac1{x\ln a}$</td><td>$|x|$</td><td>$\operatorname{sgn}x\ (x\ne0)$</td></tr>
+  </table>
+  </div>
+  <div class="formula-box">
+    <span class="box-label">Regole di derivazione</span>
+    <div class="tex-line">$$(f\pm g)'=f'\pm g',\qquad (cf)'=cf',\qquad (fg)'=f'g+fg',\qquad \left(\frac fg\right)'=\frac{f'g-fg'}{g^2}$$</div>
+    <div class="tex-line">$$\text{composta: } \big(f(g(x))\big)'=f'(g(x))\cdot g'(x),\qquad (f^{-1})'(y)=\frac1{f'(x)}$$</div>
+    <div class="tex-line">$$\big(f^g\big)'=f^g\left(g'\ln f+g\frac{f'}{f}\right)\quad(f>0)$$</div>
+    <span class="box-caption">Esempio: $\big(\sin(x^2)\big)'=\cos(x^2)\cdot2x$; $\ \big(e^{-x}\ln x\big)'=e^{-x}\left(\frac1x-\ln x\right)$.</span>
+  </div>
+  <div class="formula-box">
+    <span class="box-label">Più variabili</span>
+    <div class="tex-line">$$f_x=\frac{\partial f}{\partial x}\ (\text{si deriva in }x\text{ trattando }y\text{ come costante}),\qquad \nabla f=(f_x,\,f_y)$$</div>
+    <div class="tex-line">$$H=\begin{pmatrix}f_{xx}&f_{xy}\\f_{yx}&f_{yy}\end{pmatrix},\qquad \det H=f_{xx}f_{yy}-f_{xy}^2\ \ (f_{xy}=f_{yx}\text{ per Schwarz})$$</div>
+    <div class="tex-line">$$\text{derivata parziale in }(0,0)\text{ per definizione: } f_x(0,0)=\lim_{h\to0}\frac{f(h,0)-f(0,0)}{h}$$</div>
+  </div>
+
+  <!-- ============================== 10 ============================== -->
+  <h2 id="f10">10. Integrali: formule base</h2>
+  <div class="table-scroll">
+  <table>
+    <tr><th>Integrando</th><th>Primitiva</th><th>Integrando</th><th>Primitiva</th></tr>
+    <tr><td>$x^\alpha\ (\alpha\ne-1)$</td><td>$\dfrac{x^{\alpha+1}}{\alpha+1}$</td><td>$\sin x$</td><td>$-\cos x$</td></tr>
+    <tr><td>$\dfrac1x$</td><td>$\ln|x|$</td><td>$\cos x$</td><td>$\sin x$</td></tr>
+    <tr><td>$e^x$</td><td>$e^x$</td><td>$\dfrac1{\cos^2x}$</td><td>$\tan x$</td></tr>
+    <tr><td>$e^{\lambda x}$</td><td>$\dfrac{e^{\lambda x}}{\lambda}$</td><td>$\dfrac1{1+x^2}$</td><td>$\arctan x$</td></tr>
+    <tr><td>$a^x$</td><td>$\dfrac{a^x}{\ln a}$</td><td>$\dfrac1{\sqrt{1-x^2}}$</td><td>$\arcsin x$</td></tr>
+    <tr><td>$\ln x$</td><td>$x\ln x-x$</td><td>$\dfrac{f'(x)}{f(x)}$</td><td>$\ln|f(x)|$</td></tr>
+  </table>
+  </div>
+  <div class="formula-box">
+    <span class="box-label">Tecniche</span>
+    <div class="tex-line">$$\text{per parti: } \int f\,g'\,dx=fg-\int f'\,g\,dx\qquad(\text{es. }\textstyle\int xe^x\,dx=xe^x-e^x)$$</div>
+    <div class="tex-line">$$\text{sostituzione: } t=g(x),\ dt=g'(x)\,dx\qquad(\text{es. }\textstyle\int xe^{x^2}dx=\tfrac12e^{x^2})$$</div>
+    <div class="tex-line">$$\text{fondamentale: } \int_a^b f\,dx=F(b)-F(a)$$</div>
+    <span class="box-caption">Per parti: scegli come $f$ ciò che si semplifica derivando (polinomi, $\ln x$), come $g'$ ciò che si integra facilmente ($e^x,\sin x,\cos x$).</span>
+  </div>
+  <div class="formula-box">
+    <span class="box-label">Integrali doppi</span>
+    <div class="tex-line">$$\text{dominio normale rispetto a }x:\ D=\{a\le x\le b,\ \alpha(x)\le y\le\beta(x)\}\ \Rightarrow\ \iint_Df=\int_a^b\!\!\int_{\alpha(x)}^{\beta(x)}f\,dy\,dx$$</div>
+    <div class="tex-line">$$\text{dominio normale rispetto a }y:\ D=\{c\le y\le d,\ \gamma(y)\le x\le\delta(y)\}\ \Rightarrow\ \iint_Df=\int_c^d\!\!\int_{\gamma(y)}^{\delta(y)}f\,dx\,dy$$</div>
+    <div class="tex-line">$$\text{polari: } \iint_Df(x,y)\,dx\,dy=\iint f(r\cos\theta,r\sin\theta)\,r\,dr\,d\theta$$</div>
+    <div class="tex-line">$$\text{area di }D=\iint_D1\,dx\,dy,\qquad \text{se }D=D_1\cup D_2\text{ (senza sovrapposizioni): } \iint_D=\iint_{D_1}+\iint_{D_2}$$</div>
+    <span class="box-caption">Procedura: 1) disegna $D$; 2) trova i vertici/intersezioni tra le curve; 3) scegli l'ordine di integrazione che evita di spezzare $D$; 4) integra prima la variabile interna (l'altra è costante).</span>
+  </div>
+  <div class="example-box">
+    <span class="box-label">Esempio svolto</span>
+    <div class="tex-line">$$\iint_D xy\,dx\,dy,\ \ D=\{0\le x\le1,\ 0\le y\le x\}$$</div>
+    <div class="tex-line">$$=\int_0^1 x\left[\frac{y^2}{2}\right]_0^{x}dx=\int_0^1\frac{x^3}{2}\,dx=\frac{x^4}{8}\Big|_0^1=\frac18$$</div>
+  </div>
+
+  <!-- ============================== 11 ============================== -->
+  <h2 id="f11">11. Serie numeriche: procedimento di analisi</h2>
+  <div class="info-box">
+    <span class="box-label">Schema da seguire, nell'ordine</span>
+    <ol style="margin:8px 0 0; padding-left:20px;">
+      <li><strong>Condizione necessaria.</strong> Se $a_n\not\to0$ la serie <strong>diverge</strong> (o è irregolare): fine. Se $a_n\to0$ non basta: si prosegue.</li>
+      <li><strong>Forma notevole?</strong> Armonica, armonica generalizzata, geometrica, Mengoli (telescopica): risposta immediata dal formulario (sezione 1).</li>
+      <li><strong>Termini positivi (o definitivamente positivi).</strong>
+        <ul>
+          <li>Con $n!$, $a^n$, $n^n$: <em>criterio del rapporto</em>;</li>
+          <li>Con potenze $n$-esime $(\dots)^n$: <em>criterio della radice</em>;</li>
+          <li>Con rapporti di polinomi/radici/logaritmi: <em>confronto asintotico</em> con $\frac1{n^p}$.</li>
+        </ul></li>
+      <li><strong>Segno alterno</strong> $(-1)^nb_n$: <em>Leibniz</em> ($b_n\ge0$ decrescente e infinitesima ⇒ converge); poi si studia $\sum|a_n|$ per la convergenza assoluta.</li>
+      <li><strong>Parametro $x$</strong>: se è geometrica di ragione $q(x)$, converge $\iff|q(x)|<1$; si risolve la disequazione e si controllano a parte gli estremi $|q|=1$ (lì diverge o è irregolare).</li>
+    </ol>
+  </div>
+  <div class="table-scroll">
+  <table>
+    <tr><th>Criterio</th><th>Enunciato</th><th>Esito</th></tr>
+    <tr><td><strong>Rapporto</strong></td><td>$L=\displaystyle\lim_{n\to\infty}\frac{a_{n+1}}{a_n}$</td><td>$L<1$ converge; $L>1$ diverge; $L=1$ nulla si può dire</td></tr>
+    <tr><td><strong>Radice</strong></td><td>$L=\displaystyle\lim_{n\to\infty}\sqrt[n]{a_n}$</td><td>stesso schema del rapporto</td></tr>
+    <tr><td><strong>Confronto</strong></td><td>$0\le a_n\le b_n$</td><td>$\sum b_n$ conv. ⇒ $\sum a_n$ conv.; $\sum a_n$ div. ⇒ $\sum b_n$ div.</td></tr>
+    <tr><td><strong>Confronto asintotico</strong></td><td>$\displaystyle\lim\frac{a_n}{b_n}=\ell\in(0,+\infty)$</td><td>le due serie hanno lo stesso carattere</td></tr>
+    <tr><td><strong>Leibniz</strong></td><td>$\sum(-1)^nb_n$, $b_n\downarrow0$</td><td>converge (almeno semplicemente)</td></tr>
+    <tr><td><strong>Conv. assoluta</strong></td><td>$\sum|a_n|$ converge</td><td>⇒ $\sum a_n$ converge</td></tr>
+  </table>
+  </div>
+  <div class="formula-box">
+    <span class="box-label">Ordini di infinito (per $n\to\infty$) e somme notevoli</span>
+    <div class="tex-line">$$\ln^bn\ \ll\ n^a\ \ll\ q^n\ (q>1)\ \ll\ n!\ \ll\ n^n$$</div>
+    <div class="tex-line">$$\sum_{n=n_0}^{\infty}q^n=\frac{q^{n_0}}{1-q}\ \ (|q|<1),\qquad \text{somma}=\frac{\text{primo termine}}{1-\text{ragione}}$$</div>
+    <div class="tex-line">$$\text{telescopica: }\sum_{n=n_0}^{N}(b_n-b_{n+1})=b_{n_0}-b_{N+1}\ \to\ b_{n_0}-\lim b_n$$</div>
+    <div class="tex-line">$$\frac{(n+1)!}{n!}=n+1,\qquad \frac{(2n+2)!}{(2n)!}=(2n+1)(2n+2),\qquad \left(1+\frac1n\right)^n\to e$$</div>
+  </div>
+  <div class="example-box">
+    <span class="box-label">Esempio 1 — rapporto</span>
+    <div class="tex-line">$$\sum\frac{(n!)^2}{(2n)!}:\quad\frac{a_{n+1}}{a_n}=\frac{(n+1)^2}{(2n+1)(2n+2)}=\frac{n+1}{2(2n+1)}\to\frac14<1\ \Rightarrow\ \text{converge}$$</div>
+  </div>
+  <div class="example-box">
+    <span class="box-label">Esempio 2 — confronto asintotico</span>
+    <div class="tex-line">$$\sum\frac{n+3}{n^3+1}:\quad \frac{a_n}{1/n^2}=\frac{n^3+3n^2}{n^3+1}\to1\ \Rightarrow\ \text{stesso carattere di }\sum\frac1{n^2}\ (p=2>1)\ \Rightarrow\ \text{converge}$$</div>
+  </div>
+  <div class="example-box">
+    <span class="box-label">Esempio 3 — geometrica con parametro</span>
+    <div class="tex-line">$$\sum\left(\frac{1}{x+2}\right)^n:\quad \left|\frac1{x+2}\right|<1\iff|x+2|>1\iff x<-3\ \text{ o }\ x>-1$$</div>
+    <span class="box-caption">Per $x=-3$ e $x=-1$ la ragione vale $\mp1$: la serie non converge. Per $x=-2$ non è definita.</span>
+  </div>
+
+  <!-- ============================== 12 ============================== -->
+  <h2 id="f12">12. EDO del secondo ordine: omogenea, caratteristica e soluzione generale</h2>
+  <p>Equazione a coefficienti costanti: $\;y''+py'+qy=f(x)$.</p>
+  <div class="info-box">
+    <span class="box-label">Riconoscere il caso</span>
+    <ul style="margin:8px 0 0;">
+      <li>$f(x)\equiv0$: equazione <strong>omogenea</strong>, la soluzione è solo $y_{om}$.</li>
+      <li>$f(x)\not\equiv0$: equazione <strong>completa</strong>, la soluzione generale è $\;y=y_{om}+y_p$, dove $y_p$ è <em>una</em> soluzione particolare (metodo di somiglianza, sezione 13).</li>
+    </ul>
+  </div>
+  <div class="formula-box">
+    <span class="box-label">Passo 1 — equazione caratteristica e $y_{om}$</span>
+    <div class="tex-line">$$r^2+pr+q=0,\qquad \Delta=p^2-4q$$</div>
+  </div>
+  <div class="table-scroll">
+  <table>
+    <tr><th>$\Delta$</th><th>Radici</th><th>Soluzione dell'omogenea $y_{om}$</th></tr>
+    <tr><td>$\Delta>0$</td><td>$r_1\ne r_2$ reali</td><td>$c_1e^{r_1x}+c_2e^{r_2x}$</td></tr>
+    <tr><td>$\Delta=0$</td><td>$r_1=r_2=r$ (doppia)</td><td>$(c_1+c_2x)\,e^{rx}$</td></tr>
+    <tr><td>$\Delta<0$</td><td>$r=\alpha\pm i\beta$</td><td>$e^{\alpha x}\left(c_1\cos\beta x+c_2\sin\beta x\right)$</td></tr>
+  </table>
+  </div>
+  <div class="example-box">
+    <span class="box-label">Esempi di riconoscimento</span>
+    <div class="tex-line">$$y''-y'-2y=0:\ r^2-r-2=0\Rightarrow r=2,-1\ \Rightarrow\ y_{om}=c_1e^{2x}+c_2e^{-x}$$</div>
+    <div class="tex-line">$$y''+2y'+y=0:\ (r+1)^2=0\Rightarrow r=-1\ (\text{doppia})\ \Rightarrow\ y_{om}=(c_1+c_2x)e^{-x}$$</div>
+    <div class="tex-line">$$y''-4y'+13y=0:\ r=2\pm3i\ \Rightarrow\ y_{om}=e^{2x}(c_1\cos3x+c_2\sin3x)$$</div>
+    <div class="tex-line">$$y''+9y=0:\ r=\pm3i\ (\alpha=0)\ \Rightarrow\ y_{om}=c_1\cos3x+c_2\sin3x$$</div>
+  </div>
+  <div class="formula-box">
+    <span class="box-label">Passo finale — problema di Cauchy $y(x_0)=y_0,\ y'(x_0)=y_1$</span>
+    <div class="tex-line">$$y=y_{om}+y_p\ \Rightarrow\ \text{si calcola }y'\text{ e si risolve }\begin{cases}y(x_0)=y_0\\y'(x_0)=y_1\end{cases}\text{ nelle incognite }c_1,c_2$$</div>
+    <span class="box-caption">Attenzione: le condizioni iniziali si impongono sulla soluzione <strong>completa</strong> ($y_{om}+y_p$), mai sulla sola omogenea. Se il testo chiede la soluzione generale, non servono.</span>
+  </div>
+
+  <!-- ============================== 13 ============================== -->
+  <h2 id="f13">13. Metodo di somiglianza: come riconoscere la forma e risolvere</h2>
+  <div class="info-box">
+    <span class="box-label">Algoritmo completo</span>
+    <ol style="margin:8px 0 0; padding-left:20px;">
+      <li><strong>Radici</strong> dell'equazione caratteristica $r^2+pr+q=0$ (servono per la risonanza).</li>
+      <li><strong>Spezza</strong> il termine noto in addendi di tipo diverso: $f=f_1+f_2+\dots$ (ognuno ha il suo ansatz, poi si sommano le $y_{p_i}$).</li>
+      <li><strong>Classifica</strong> ogni addendo (tabella sezione 7): polinomio (Caso 1), $Ae^{\lambda x}$ (Caso 2), $A\cos\omega x+B\sin\omega x$ (Caso 3), $e^{\lambda x}(\cdots\cos+\cdots\sin)$ (Caso 4), $e^{\lambda x}p(x)$ (Caso 5).</li>
+      <li><strong>Risonanza?</strong> Confronta con le radici:
+        <ul>
+          <li>Casi 2 e 5: $\lambda$ è radice? Con molteplicità $m\in\{0,1,2\}$ ⇒ si moltiplica l'ansatz per $x^m$;</li>
+          <li>Casi 3 e 4: $\lambda\pm i\omega$ coincide con le radici? Se sì ⇒ si moltiplica per $x$ (Caso 3: $\lambda=0$, radici $\pm i\omega$);</li>
+          <li>Caso 1: $0$ è radice? (cioè $q=0$ ⇒ grado $+1$; $p=q=0$ ⇒ grado $+2$).</li>
+        </ul></li>
+      <li><strong>Scrivi l'ansatz</strong> con coefficienti incogniti ($A,B,\dots$). Anche se $f$ ha solo il seno, l'ansatz ha <em>entrambi</em> seno e coseno.</li>
+      <li><strong>Sostituisci</strong> $y_p,y_p',y_p''$ nell'equazione e <strong>uguaglia i coefficienti</strong> dei termini simili ($x^k$, $\cos$, $\sin$) ⇒ sistema lineare.</li>
+      <li><strong>Somma</strong>: $y=y_{om}+y_{p_1}+y_{p_2}+\dots$; se c'è Cauchy, impongo le condizioni iniziali sulla somma.</li>
+    </ol>
+  </div>
+  <div class="formula-box">
+    <span class="box-label">Scorciatoia per $y_p=e^{\lambda x}q(x)$ (Casi 2 e 5)</span>
+    <div class="tex-line">$$L[e^{\lambda x}q]=e^{\lambda x}\Big[q''+(2\lambda+p)\,q'+(\lambda^2+p\lambda+q_0)\,q\Big]\qquad(L=y''+py'+q_0y)$$</div>
+    <span class="box-caption">Si semplifica $e^{\lambda x}$ e resta un'equazione solo sul polinomio $q$. Se $\lambda$ è radice, il coefficiente di $q$ si annulla (risonanza) e il grado effettivo sale.</span>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Esempio A — Caso 1 (polinomio), nessuna risonanza</span>
+    <div class="tex-line">$$y''-y'-2y=x^2\qquad r=2,\,-1\ (0\text{ non è radice})$$</div>
+    <div class="tex-line">$$y_p=Ax^2+Bx+C,\quad y_p'=2Ax+B,\quad y_p''=2A$$</div>
+    <div class="tex-line">$$2A-(2Ax+B)-2(Ax^2+Bx+C)=x^2\ \Rightarrow\ -2A\,x^2+(-2A-2B)\,x+(2A-B-2C)=x^2$$</div>
+    <div class="tex-line">$$\begin{cases}-2A=1\\-2A-2B=0\\2A-B-2C=0\end{cases}\Rightarrow A=-\tfrac12,\ B=\tfrac12,\ C=-\tfrac34\ \Rightarrow\ y_p=-\tfrac12x^2+\tfrac12x-\tfrac34$$</div>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Esempio B — Caso 2 con risonanza + Cauchy</span>
+    <div class="tex-line">$$y''-3y'+2y=e^{x},\quad y(0)=1,\ y'(0)=0$$</div>
+    <div class="tex-line">$$r^2-3r+2=0\Rightarrow r=1,2\ \Rightarrow\ y_{om}=c_1e^{x}+c_2e^{2x}$$</div>
+    <div class="tex-line">$$\lambda=1\text{ è radice (molt. 1)}\ \Rightarrow\ y_p=Axe^{x},\ \ y_p'=A(1+x)e^x,\ \ y_p''=A(2+x)e^x$$</div>
+    <div class="tex-line">$$A(2+x)-3A(1+x)+2Ax=-A\ \Rightarrow\ -Ae^x=e^x\Rightarrow A=-1,\quad y_p=-xe^x$$</div>
+    <div class="tex-line">$$y=c_1e^x+c_2e^{2x}-xe^x,\quad y'=c_1e^x+2c_2e^{2x}-e^x-xe^x$$</div>
+    <div class="tex-line">$$\begin{cases}y(0)=c_1+c_2=1\\y'(0)=c_1+2c_2-1=0\end{cases}\Rightarrow c_2=0,\ c_1=1\ \Rightarrow\ y=(1-x)e^x$$</div>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Esempio C — Caso 3 con risonanza (radici $\pm i\omega$)</span>
+    <div class="tex-line">$$y''+y=\cos x\qquad r=\pm i\ \Rightarrow\ \cos x\text{ e }\sin x\text{ risolvono l'omogenea}$$</div>
+    <div class="tex-line">$$y_p=x(A\cos x+B\sin x),\quad y_p''=2(-A\sin x+B\cos x)-x(A\cos x+B\sin x)$$</div>
+    <div class="tex-line">$$y_p''+y_p=-2A\sin x+2B\cos x=\cos x\ \Rightarrow\ A=0,\ B=\tfrac12\ \Rightarrow\ y_p=\tfrac12x\sin x$$</div>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Esempio D — termine noto somma di due tipi</span>
+    <div class="tex-line">$$y''+9y=xe^{3x}+\cos3x\qquad r=\pm3i$$</div>
+    <div class="tex-line">$$f_1=xe^{3x}\ (\text{Caso 5, }\lambda=3\text{ non è radice})\ \Rightarrow\ y_{p_1}=(Ax+B)e^{3x}$$</div>
+    <div class="tex-line">$$f_2=\cos3x\ (\text{Caso 3, }\pm3i\text{ SONO le radici})\ \Rightarrow\ y_{p_2}=x(C\cos3x+D\sin3x)$$</div>
+    <div class="tex-line">$$y_p=y_{p_1}+y_{p_2}$$</div>
+    <span class="box-caption">Ogni addendo ha il suo ansatz e si determina a parte: la risonanza si decide <em>addendo per addendo</em>.</span>
+  </div>
+
+  <div class="warning-box">
+    <span class="box-label">Tabella di riconoscimento rapido (ansatz)</span>
+    <div class="table-scroll">
+    <table>
+      <tr><th>Termine noto</th><th>Radici</th><th>Ansatz $y_p$</th></tr>
+      <tr><td>$3x^2+1$</td><td>$0$ non radice</td><td>$Ax^2+Bx+C$</td></tr>
+      <tr><td>$x+2$</td><td>$r=0$ semplice ($q=0$)</td><td>$x(Ax+B)$</td></tr>
+      <tr><td>$e^{2x}$</td><td>$2$ non radice</td><td>$Ae^{2x}$</td></tr>
+      <tr><td>$e^{2x}$</td><td>$2$ radice semplice</td><td>$Axe^{2x}$</td></tr>
+      <tr><td>$e^{2x}$</td><td>$2$ radice doppia</td><td>$Ax^2e^{2x}$</td></tr>
+      <tr><td>$\sin3x$ (o $\cos3x$)</td><td>$\pm3i$ non radici</td><td>$A\cos3x+B\sin3x$</td></tr>
+      <tr><td>$\sin3x$ (o $\cos3x$)</td><td>$\pm3i$ radici</td><td>$x(A\cos3x+B\sin3x)$</td></tr>
+      <tr><td>$e^{x}\cos2x$</td><td>$1\pm2i$ non radici</td><td>$e^{x}(A\cos2x+B\sin2x)$</td></tr>
+      <tr><td>$e^{x}\cos2x$</td><td>$1\pm2i$ radici</td><td>$xe^{x}(A\cos2x+B\sin2x)$</td></tr>
+      <tr><td>$(x+3)e^{2x}$</td><td>$2$ non radice</td><td>$(Ax+B)e^{2x}$</td></tr>
+      <tr><td>$(x+3)e^{2x}$</td><td>$2$ radice doppia</td><td>$x^2(Ax+B)e^{2x}$</td></tr>
+      <tr><td>$x\cos x$</td><td>$\pm i$ non radici</td><td>$(Ax+B)\cos x+(Cx+D)\sin x$</td></tr>
+    </table>
+    </div>
   </div>
 
 </div>
