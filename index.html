@@ -776,7 +776,7 @@
   </div>
 
   <div class="info-box">
-    Le sezioni 1–7 riportano fedelmente il formulario fornito a esame, senza spiegazioni aggiuntive (le sezioni 8–14 sono un'appendice di promemoria personale): per capire
+    Le sezioni 1–7 riportano fedelmente il formulario fornito a esame, senza spiegazioni aggiuntive (le sezioni 8–15 sono un'appendice di promemoria personale): per capire
     quando e come si usa ciascuna formula, vedi la sezione <a href="#" data-goto="teoria">Teoria</a>, che
     rimanda qui con dei riquadri "Dal Formulario ufficiale".
   </div>
@@ -798,6 +798,7 @@
       <a href="#f12">12. EDO 2° ordine: omogenea e caratteristica (appendice)</a>
       <a href="#f13">13. Metodo di somiglianza: riconoscere e risolvere (appendice)</a>
       <a href="#f14">14. Scalette passo-passo per ogni tipo di esercizio (appendice)</a>
+      <a href="#f15">15. Determinante 2×2 e 3×3 (appendice)</a>
     </div>
   </div>
 
@@ -1009,7 +1010,7 @@
   <!-- ============================================================ -->
   <div class="warning-box" style="margin-top:34px;">
     <span class="box-label">Appendice — non fa parte del formulario ufficiale</span>
-    Le sezioni 8–14 che seguono sono un <strong>promemoria personale</strong> (geometria dei vincoli, derivate,
+    Le sezioni 8–15 che seguono sono un <strong>promemoria personale</strong> (geometria dei vincoli, derivate,
     integrali, procedimenti per serie ed EDO). Non sono ammesse a esame come formulario: servono per studiare e
     per riconoscere velocemente i casi.
   </div>
@@ -1413,6 +1414,55 @@
       <li><em>Piano tangente in un altro punto $(x_0,y_0)$ regolare:</em> calcola $f$, $f_x$, $f_y$ lì e usa la formula della sez. 4 (verifica prima che il punto stia nel dominio e che $f$ sia derivabile).</li>
       <li><em>Dominio:</em> imponi radicandi $\ge0$, denominatori $\ne0$, argomenti dei logaritmi $>0$.</li>
     </ol>
+  </div>
+
+  <!-- ============================== 15 ============================== -->
+  <h2 id="f15">15. Determinante di una matrice 2×2 e 3×3</h2>
+  <div class="formula-box">
+    <span class="box-label">Matrice 2×2</span>
+    <div class="tex-line">$$\det\begin{pmatrix}a&b\\c&d\end{pmatrix}=\begin{vmatrix}a&b\\c&d\end{vmatrix}=ad-bc$$</div>
+    <span class="box-caption">Diagonale principale meno diagonale secondaria. Nell'Hessiano: $\det H=f_{xx}f_{yy}-f_{xy}^2$.</span>
+  </div>
+  <div class="example-box">
+    <span class="box-label">Esempio 2×2</span>
+    <div class="tex-line">$$\begin{vmatrix}3&-1\\2&4\end{vmatrix}=3\cdot4-(-1)\cdot2=12+2=14$$</div>
+  </div>
+
+  <div class="formula-box">
+    <span class="box-label">Matrice 3×3 — regola di Sarrus</span>
+    <div class="tex-line">$$\begin{vmatrix}a&b&c\\d&e&f\\g&h&i\end{vmatrix}=\underbrace{aei+bfg+cdh}_{\text{diagonali}\ \searrow}-\underbrace{(ceg+afh+bdi)}_{\text{anti-diagonali}\ \swarrow}$$</div>
+    <span class="box-caption">Ricopia a destra le prime due colonne: somma i 3 prodotti lungo le diagonali che scendono, sottrai i 3 prodotti lungo quelle che salgono. <strong>Vale solo per 3×3.</strong></span>
+  </div>
+
+  <div class="formula-box">
+    <span class="box-label">Matrice 3×3 — sviluppo di Laplace (prima riga)</span>
+    <div class="tex-line">$$\begin{vmatrix}a&b&c\\d&e&f\\g&h&i\end{vmatrix}=a\begin{vmatrix}e&f\\h&i\end{vmatrix}-b\begin{vmatrix}d&f\\g&i\end{vmatrix}+c\begin{vmatrix}d&e\\g&h\end{vmatrix}$$</div>
+    <div class="tex-line">$$\text{segni dei cofattori: }\begin{pmatrix}+&-&+\\-&+&-\\+&-&+\end{pmatrix}\qquad(-1)^{i+j}$$</div>
+    <span class="box-caption">Si può sviluppare lungo <em>qualsiasi</em> riga o colonna: conviene scegliere quella con più zeri.</span>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Esempio 3×3 (stessa matrice, due metodi)</span>
+    <div class="tex-line">$$A=\begin{pmatrix}2&1&3\\0&-1&4\\1&2&5\end{pmatrix}$$</div>
+    <div class="tex-line">$$\text{Sarrus: }(2\cdot(-1)\cdot5+1\cdot4\cdot1+3\cdot0\cdot2)-(3\cdot(-1)\cdot1+2\cdot4\cdot2+1\cdot0\cdot5)=(-6)-(13)=-19$$</div>
+    <div class="tex-line">$$\text{Laplace: }2\begin{vmatrix}-1&4\\2&5\end{vmatrix}-1\begin{vmatrix}0&4\\1&5\end{vmatrix}+3\begin{vmatrix}0&-1\\1&2\end{vmatrix}=2(-13)-1(-4)+3(1)=-19$$</div>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Uso tipico: Hessiano orlato</span>
+    <div class="tex-line">$$\overline H=\begin{pmatrix}0&2&2\\2&1&0\\2&0&3\end{pmatrix}\ \Rightarrow\ \det\overline H=0-\big[(2\cdot1\cdot2)+0+(2\cdot2\cdot3)\big]=-16<0\ \Rightarrow\ \text{minimo vincolato}$$</div>
+    <span class="box-caption">Con lo zero in alto a sinistra, nello sviluppo di Laplace sulla prima riga il primo termine sparisce: $\det\overline H=-g_x'\,(g_x'L_{yy}''-g_y'L_{xy}'')+g_y'\,(g_x'L_{xy}''-g_y'L_{xx}'')$.</span>
+  </div>
+
+  <div class="info-box">
+    <span class="box-label">Proprietà utili</span>
+    <ul style="margin:8px 0 0;">
+      <li>Scambiando due righe (o colonne) il determinante cambia segno.</li>
+      <li>Se una riga/colonna è nulla, o due righe/colonne sono proporzionali, $\det=0$.</li>
+      <li>Moltiplicando una riga per $k$, il determinante si moltiplica per $k$; $\det(kA)=k^n\det A$ per matrice $n\times n$.</li>
+      <li>Sommare a una riga un multiplo di un'altra <strong>non</strong> cambia il determinante.</li>
+      <li>$\det A=\det A^{T}$; $\ \det(AB)=\det A\cdot\det B$; matrici triangolari: $\det=$ prodotto della diagonale.</li>
+    </ul>
   </div>
 
 </div>
