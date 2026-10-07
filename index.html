@@ -776,7 +776,7 @@
   </div>
 
   <div class="info-box">
-    Le sezioni 1–7 riportano fedelmente il formulario fornito a esame, senza spiegazioni aggiuntive (le sezioni 8–15 sono un'appendice di promemoria personale): per capire
+    Le sezioni 1–7 riportano fedelmente il formulario fornito a esame, senza spiegazioni aggiuntive (le sezioni 8–16 sono un'appendice di promemoria personale): per capire
     quando e come si usa ciascuna formula, vedi la sezione <a href="#" data-goto="teoria">Teoria</a>, che
     rimanda qui con dei riquadri "Dal Formulario ufficiale".
   </div>
@@ -799,6 +799,7 @@
       <a href="#f13">13. Metodo di somiglianza: riconoscere e risolvere (appendice)</a>
       <a href="#f14">14. Scalette passo-passo per ogni tipo di esercizio (appendice)</a>
       <a href="#f15">15. Determinante 2×2 e 3×3 (appendice)</a>
+      <a href="#f16">16. Guida d'esame: procedimenti per ogni casistica (appendice)</a>
     </div>
   </div>
 
@@ -812,10 +813,10 @@
         <td>$p\le1$ divergente<br>$p>1$ convergente</td>
         <td>serie armonica generalizzata</td></tr>
     <tr><td>$$\sum_{n=0}^{+\infty} q^n$$</td>
-        <td>$q\le-1$ irregolare<br>$-1<q<1$ convergente<br>$q\ge1$ divergente</td>
+        <td>$q\le-1$ irregolare<br>$-1\lt q<1$ convergente<br>$q\ge1$ divergente</td>
         <td>serie geometrica di ragione $q$</td></tr>
     <tr><td>$$\sum_{n=0}^{+\infty} aq^n$$</td>
-        <td>$q\le-1$ irregolare<br>$-1<q<1$ convergente<br>$q\ge1$ divergente</td>
+        <td>$q\le-1$ irregolare<br>$-1\lt q<1$ convergente<br>$q\ge1$ divergente</td>
         <td>serie geometrica di punto iniziale $a$ e ragione $q$</td></tr>
     <tr><td>$$\sum \frac{1}{n(n+1)}=1$$</td><td>convergente</td><td>serie di Mengoli</td></tr>
   </table>
@@ -1010,7 +1011,7 @@
   <!-- ============================================================ -->
   <div class="warning-box" style="margin-top:34px;">
     <span class="box-label">Appendice — non fa parte del formulario ufficiale</span>
-    Le sezioni 8–15 che seguono sono un <strong>promemoria personale</strong> (geometria dei vincoli, derivate,
+    Le sezioni 8–16 che seguono sono un <strong>promemoria personale</strong> (geometria dei vincoli, derivate,
     integrali, procedimenti per serie ed EDO). Non sono ammesse a esame come formulario: servono per studiare e
     per riconoscere velocemente i casi.
   </div>
@@ -1466,6 +1467,322 @@
       <li>Sommare a una riga un multiplo di un'altra <strong>non</strong> cambia il determinante.</li>
       <li>$\det A=\det A^{T}$; $\ \det(AB)=\det A\cdot\det B$; matrici triangolari: $\det=$ prodotto della diagonale.</li>
     </ul>
+  </div>
+
+  <!-- ============================== 16 ============================== -->
+  <h2 id="f16">16. Guida d'esame: procedimenti completi per ogni casistica</h2>
+  <div class="info-box">
+    <span class="box-label">Come leggere questa sezione</span>
+    Costruita sugli appelli della cartella <em>ExEsami</em> (2021–2026) e sul programma ufficiale
+    (<em>Argomenti_esame.pdf</em>): ogni compito ha esercizi su <strong>serie, continuità/differenziabilità, massimi e minimi liberi,
+    massimi e minimi vincolati, integrali doppi, EDO del primo e del secondo ordine</strong>. Per ciascuna area trovi:
+    le <strong>casistiche</strong> (come riconoscerle), i <strong>passi</strong> da eseguire e le <strong>formule risolutive</strong> nei punti chiave,
+    con esempi presi dai testi d'esame. Le scalette brevi sono nella sez. 14; qui c'è il dettaglio.
+  </div>
+  <div class="card">
+    <div class="sidebar-title" style="margin-bottom:8px;">Indice di questa sezione</div>
+    <div class="toc">
+      <a href="#g1">16.1 Serie</a>
+      <a href="#g2">16.2 Dominio di una funzione di due variabili</a>
+      <a href="#g3">16.3 Continuità, differenziabilità, piano tangente</a>
+      <a href="#g4">16.4 Massimi e minimi liberi</a>
+      <a href="#g5">16.5 Massimi e minimi vincolati</a>
+      <a href="#g6">16.6 Integrali doppi</a>
+      <a href="#g7">16.7 EDO del primo ordine</a>
+      <a href="#g8">16.8 EDO del secondo ordine</a>
+    </div>
+  </div>
+
+  <!-- ---------- 16.1 SERIE ---------- -->
+  <h3 id="g1">16.1 Serie</h3>
+  <div class="table-scroll">
+  <table>
+    <tr><th>Come si presenta</th><th>Cosa fare</th></tr>
+    <tr><td>Carattere di $\sum a_n$ numerica ($\frac{n+2}{n^2+n+1}$, fattoriali, potenze…)</td>
+        <td>Schema sez. 11: $a_n\to0$? ⇒ forma notevole ⇒ criterio (rapporto / radice / confronto asintotico). <strong>Nominare sempre il criterio usato</strong> (l'esame lo chiede).</td></tr>
+    <tr><td>Segno alterno $\sum(-1)^nb_n$</td>
+        <td>(1) $b_n\to0$; (2) $b_n$ decrescente (anche definitivamente) ⇒ <strong>Leibniz</strong>: converge. (3) $\sum b_n$ con confronto asintotico: se diverge, la serie converge solo <em>semplicemente</em>.</td></tr>
+    <tr><td>"Verificare che è telescopica e calcolarne la somma"<br>$\sum\frac1{(an+b)(an+c)}$</td>
+        <td>Fratti semplici, poi cancellazione (formula sotto).</td></tr>
+    <tr><td>Serie geometrica con parametro $x$: $\sum q(x)^n$, "per quali $x$ converge / calcolarne la somma"</td>
+        <td>$|q(x)|<1$, poi somma (formule sotto).</td></tr>
+    <tr><td>"Trovare una serie che abbia per somma $S$"</td>
+        <td>Geometrica con ragione scelta in modo che $\frac{1}{1-q}=S$ (formula sotto).</td></tr>
+  </table>
+  </div>
+
+  <div class="formula-box">
+    <span class="box-label">Telescopica: formula risolutiva</span>
+    <div class="tex-line">$$\frac{1}{(an+b)(an+c)}=\frac{1}{c-b}\left[\frac{1}{an+b}-\frac{1}{an+c}\right]\qquad(b\ne c)$$</div>
+    <div class="tex-line">$$\text{se } c-b=a\ (\text{scarto di un passo}):\ \ \sum_{n=n_0}^{\infty}\frac1{(an+b)(an+c)}=\frac{1}{c-b}\cdot\frac{1}{an_0+b}\quad(\text{resta solo il 1° termine})$$</div>
+    <div class="tex-line">$$\sum_{n=1}^{\infty}\frac{1}{n(n+k)}=\frac1k\left(1+\frac12+\dots+\frac1k\right)\quad(\text{restano i primi }k\text{ termini})$$</div>
+    <span class="box-caption">Somma parziale: $S_N=\frac1{c-b}\left[\frac1{an_0+b}-\frac1{aN+c}\right]$ (caso scarto di un passo) $\to$ il termine che resta tende a $0$ per $N\to\infty$.</span>
+  </div>
+  <div class="example-box">
+    <span class="box-label">Esempi dagli esami</span>
+    <div class="tex-line">$$\sum_{n\ge1}\frac{1}{(2n-1)(2n+1)}=\frac12\sum\left(\frac1{2n-1}-\frac1{2n+1}\right)\ \Rightarrow\ S=\frac12\cdot1=\frac12$$</div>
+    <div class="tex-line">$$\sum_{n\ge1}\frac{1}{(3n-2)(3n+1)}=\frac13\sum\left(\frac1{3n-2}-\frac1{3n+1}\right)\ \Rightarrow\ S=\frac13$$</div>
+    <div class="tex-line">$$\sum_{n\ge1}\frac{1}{n(n+3)}=\frac13\sum\left(\frac1n-\frac1{n+3}\right)\ \Rightarrow\ S=\frac13\left(1+\frac12+\frac13\right)=\frac{11}{18}$$</div>
+    <div class="tex-line">$$\sum_{n\ge1}\frac{1}{4n^2-1}=\sum\frac{1}{(2n-1)(2n+1)}=\frac12\ \ (\text{convergente})$$</div>
+  </div>
+
+  <div class="formula-box">
+    <span class="box-label">Geometrica con parametro: convergenza e somma</span>
+    <div class="tex-line">$$\sum_{n\ge n_0}q^n\ \text{converge}\iff|q|<1,\qquad \sum_{n\ge0}q^n=\frac1{1-q},\quad \sum_{n\ge1}q^n=\frac{q}{1-q},\quad \sum_{n\ge n_0}q^n=\frac{q^{n_0}}{1-q}$$</div>
+    <div class="tex-line">$$q=\frac{A(x)}{B(x)}:\quad |q|<1\iff A^2\lt B^2\ \ (B\ne0)\iff (A-B)(A+B)<0$$</div>
+    <div class="tex-line">$$\text{serie con somma assegnata }S\ (n\ge0):\ \ \frac1{1-q}=S\iff q=1-\frac1S\qquad\left(S=\tfrac75\Rightarrow q=\tfrac27,\ \ \sum\left(\tfrac27\right)^n\right)$$</div>
+  </div>
+  <div class="example-box">
+    <span class="box-label">Esempi dagli esami (con parametro)</span>
+    <div class="tex-line">$$\sum_{n\ge0}\left(\frac1{e^x-1}\right)^n:\ \ |e^x-1|>1\iff e^x>2\ (\text{l'altro ramo }e^x-1<-1\text{ è impossibile})\ \Rightarrow\ x>\ln2,\quad S=\frac{1}{1-q}=\frac{e^x-1}{e^x-2}$$</div>
+    <div class="tex-line">$$\sum_{n\ge0}\left(\frac{2+x}{3-x}\right)^n:\ \ (2+x)^2<(3-x)^2\iff10x<5\ \Rightarrow\ x<\tfrac12,\quad S=\frac{3-x}{1-2x}$$</div>
+    <span class="box-caption">Controlla sempre di non includere i valori in cui il denominatore si annulla (qui $x=3$ è già escluso da $x<\frac12$) e discuti a parte $|q|=1$: non converge.</span>
+  </div>
+
+  <!-- ---------- 16.2 DOMINIO ---------- -->
+  <h3 id="g2">16.2 Dominio di una funzione di due variabili</h3>
+  <div class="table-scroll">
+  <table>
+    <tr><th>Compare…</th><th>Condizione</th><th>Esempio</th></tr>
+    <tr><td>frazione $\dfrac{N}{D}$</td><td>$D\ne0$</td><td>$\dfrac{xy-2x}{x+3y}$: si toglie la retta $x+3y=0$</td></tr>
+    <tr><td>radice pari $\sqrt{A}$</td><td>$A\ge0$</td><td>$\sqrt{\frac{4}{x^2+y^2}-1}$: $0\lt x^2+y^2\le4$</td></tr>
+    <tr><td>logaritmo $\log A$</td><td>$A>0$ (stretta)</td><td>$x^2\log(y-1)$: semipiano aperto $y>1$</td></tr>
+    <tr><td>$\log x^2\cdot\log y$</td><td>$x\ne0,\ y>0$</td><td>semipiano $y>0$ senza l'asse $y$</td></tr>
+    <tr><td>$\arcsin A,\arccos A$</td><td>$|A|\le1$</td><td></td></tr>
+    <tr><td>$e^{\cdots},\ \sin,\ \cos,\ \arctan$, polinomi</td><td>nessuna</td><td>dominio $\mathbb{R}^2$</td></tr>
+  </table>
+  </div>
+  <p>Se il dominio è chiesto <strong>disegnalo</strong> (tratteggia i bordi esclusi con linea punteggiata) e ricorda che i punti stazionari vanno cercati solo <em>nell'interno</em> del dominio.</p>
+
+  <!-- ---------- 16.3 CONTINUITA' ---------- -->
+  <h3 id="g3">16.3 Continuità, differenziabilità, piano tangente</h3>
+  <div class="info-box">
+    <span class="box-label">Procedura completa per $f(x,y)=\begin{cases}F(x,y)&(x,y)\ne(0,0)\\0&(x,y)=(0,0)\end{cases}$</span>
+    <ol style="margin:8px 0 0; padding-left:20px;">
+      <li><strong>(Se richiesto) segno di $f$:</strong> studia numeratore e denominatore (es. $\frac{(y-x)^3}{x^2+y^2+x^2y^2}$ ha il segno di $y-x$) e disegna le regioni.</li>
+      <li><strong>Continuità in $(0,0)$</strong>: devi mostrare $\lim_{(x,y)\to(0,0)}F=0=f(0,0)$.
+        <ul>
+          <li><em>Metodo A — polari:</em> $x=r\cos\theta,\ y=r\sin\theta$. Se $F(r,\theta)\to L(\theta)$ dipende da $\theta$ ⇒ <strong>NON continua</strong>. Se $|F(r,\theta)|\le h(r)\to0$ con $h$ <em>indipendente da $\theta$</em> ⇒ continua.</li>
+          <li><em>Metodo B — fascio di rette</em> $y=mx$: se $\lim_{x\to0}F(x,mx)$ dipende da $m$ ⇒ NON continua. Se vale $0$ per ogni $m$ <strong>non basta</strong>: prova anche curve ($y=kx^2$, $y=kx^3$, $x=ky^2$).</li>
+        </ul></li>
+      <li><strong>Derivate parziali in $(0,0)$ per definizione</strong> (mai con le regole di derivazione: il punto è speciale):
+        $$f_x(0,0)=\lim_{h\to0}\frac{f(h,0)-f(0,0)}{h},\qquad f_y(0,0)=\lim_{h\to0}\frac{f(0,h)-f(0,0)}{h}$$</li>
+      <li><strong>Differenziabilità in $(0,0)$</strong> (solo se continua): calcola in polari
+        $$\lim_{r\to0^+}\frac{f(x,y)-f(0,0)-f_x(0,0)\,x-f_y(0,0)\,y}{r}$$
+        $=0$ per ogni $\theta$ ⇒ <strong>differenziabile</strong>; dipende da $\theta$ o $\ne0$ ⇒ <strong>non differenziabile</strong>.</li>
+      <li><strong>Piano tangente</strong> (solo se differenziabile): $z=f(P)+f_x(P)(x-x_0)+f_y(P)(y-y_0)$; in $(0,0)$ è $z=f_x(0,0)x+f_y(0,0)y$.</li>
+    </ol>
+  </div>
+  <div class="formula-box">
+    <span class="box-label">Strumenti (quando le maggiorazioni sono ammesse)</span>
+    <div class="tex-line">$$|x|\le r,\ |y|\le r,\quad |xy|\le\tfrac{r^2}2,\quad x^2+y^2=r^2,\quad x^4+y^4\ge\tfrac{r^4}2$$</div>
+    <div class="tex-line">$$|\sin t|\le|t|,\qquad 0\le1-\cos t\le\tfrac{t^2}2,\qquad |\arctan t|\le|t|,\qquad \ln(1+t)\sim t\ \ (t\to0)$$</div>
+    <div class="tex-line">$$x^4+y^2\ge2x^2|y|\ \ (\text{AM-GM}),\qquad \sin t\sim t,\ \ 1-\cos t\sim\tfrac{t^2}2,\ \ \ln(1+t)\sim t,\ \ e^t-1\sim t\ \ (t\to0)$$</div>
+    <span class="box-caption">Quando il testo dice "non sono ammesse maggiorazioni" (o "solo polari o fascio di rette") usa le polari <em>esatte</em> e gli sviluppi/limiti notevoli, senza disuguaglianze.</span>
+  </div>
+  <div class="warning-box">
+    <span class="box-label">Teorema del differenziale totale (e le sue trappole)</span>
+    Se $f_x,f_y$ <strong>esistono e sono continue</strong> in un intorno di $P$ (cioè $f\in C^1$) ⇒ $f$ è differenziabile in $P$ (e quindi esiste il piano tangente). Si usa nei punti $\ne(0,0)$ dove $f$ è un'espressione elementare ben definita, per dire che il piano tangente in quel punto esiste.
+    <strong>Il viceversa è falso</strong>, e l'esistenza delle sole derivate parziali <strong>non basta</strong>: es. $f=y\log\!\big(3+\tfrac{xy}{x^2+y^2}\big)$ è continua in $(0,0)$, ha $f_x=0,\ f_y=\log3$ ma <em>non</em> è differenziabile. Se $f$ non è continua ⇒ non è differenziabile.
+  </div>
+  <div class="example-box">
+    <span class="box-label">Esempio svolto (continuità + piano tangente in un altro punto)</span>
+    <div class="tex-line">$$f=\frac{x\sin(x^2+y^2)}{x^2+y^2}+2x:\quad \text{polari: }f(r,\theta)=r\cos\theta\left(\frac{\sin r^2}{r^2}+2\right)\to0\ \Rightarrow\ \text{continua}$$</div>
+    <div class="tex-line">$$f_x(0,0)=\lim\frac{f(h,0)}{h}=\lim\left(\frac{\sin h^2}{h^2}+2\right)=3,\quad f_y(0,0)=0,\quad \frac{f-3x}{r}=\frac{(\sin r^2-r^2)\cos\theta}{r^2}\to0\ \Rightarrow\ \text{differenziabile}$$</div>
+    <span class="box-caption">In $(1,0)$ (lontano dall'origine) la funzione è $C^1$: piano tangente $z=f(1,0)+f_x(1,0)(x-1)+f_y(1,0)\,y$.</span>
+  </div>
+
+  <!-- ---------- 16.4 LIBERI ---------- -->
+  <h3 id="g4">16.4 Massimi e minimi liberi</h3>
+  <div class="info-box">
+    <span class="box-label">Procedura</span>
+    <ol style="margin:8px 0 0; padding-left:20px;">
+      <li><strong>Dominio</strong> (sez. 16.2): i punti stazionari devono stare nell'interno.</li>
+      <li>$\nabla f=(f_x,f_y)=(0,0)$. Strumenti per risolvere il sistema:
+        <ul>
+          <li>fattorizza: $A\cdot B=0\Rightarrow A=0$ oppure $B=0$ (apri un ramo per ciascun fattore);</li>
+          <li>se $f=e^{g}\cdot h$: $\ f_x=e^{g}(h_x+g_xh)$, $f_y=e^{g}(h_y+g_yh)$ e $e^{g}\ne0$ ⇒ si semplifica;</li>
+          <li>se $f=\log u$: $\nabla f=\dfrac{\nabla u}{u}$ ⇒ basta $\nabla u=0$ (con $u>0$).</li>
+        </ul></li>
+      <li>Hessiana $H=\begin{pmatrix}f_{xx}&f_{xy}\\f_{xy}&f_{yy}\end{pmatrix}$ in ogni punto stazionario: $\det H=f_{xx}f_{yy}-f_{xy}^2$.</li>
+      <li>$\det H>0$: minimo se $f_{xx}>0$, massimo se $f_{xx}<0$. $\det H<0$: sella. $\det H=0$: <strong>non decide</strong> (vedi sotto).</li>
+    </ol>
+  </div>
+  <div class="table-scroll">
+  <table>
+    <tr><th>Casistica</th><th>Cosa fare</th></tr>
+    <tr><td><strong>Punti isolati</strong> (caso normale)</td><td>Hessiana in ciascun punto, tabella sopra.</td></tr>
+    <tr><td><strong>$\det H=0$</strong> in un punto</td><td>Studia il segno di $f(P+\text{incremento})-f(P)$: lungo rette $y=mx$ <em>e</em> lungo curve ($y=kx^2$); se il segno cambia ⇒ sella; se resta costante in tutto un intorno ⇒ massimo/minimo (anche non stretto). Il solo test lungo le rette può ingannare.</td></tr>
+    <tr><td><strong>Famiglia di punti stazionari</strong> (un'intera retta/curva, es. $(0,h)$)</td><td>Dopo aver trovato la famiglia, fissa il parametro e studia il segno di $f$ attorno al punto al variare di $h$: i valori di $h$ per cui il segno cambia (radici) separano i casi min / max / sella. Es. $f=x^2y(2x-3y+6)$: vicino a $(0,h)$, $f\approx x^2\,h(6-3h)$: <strong>min</strong> se $0\lt h<2$, <strong>max</strong> se $h<0$ o $h>2$, <strong>sella</strong> per $h=0,2$.</td></tr>
+    <tr><td>"Non è richiesta la natura dei punti"</td><td>Basta trovare tutte le soluzioni di $\nabla f=0$ (nel dominio).</td></tr>
+    <tr><td>"Il massimo/minimo <em>assoluto</em> su un insieme $S$"</td><td>Se $S$ è <strong>chiuso e limitato</strong> e $f$ è continua ⇒ <strong>Weierstrass</strong>: esistono massimo e minimo assoluti (si cercano tra i punti stazionari interni e sul bordo). Se $S$ non è limitato (o non è chiuso) il teorema non si applica.</td></tr>
+  </table>
+  </div>
+
+  <!-- ---------- 16.5 VINCOLATI ---------- -->
+  <h3 id="g5">16.5 Massimi e minimi vincolati (solo vincoli di uguaglianza)</h3>
+  <div class="info-box">
+    <span class="box-label">Procedura (Lagrange + Hessiana orlata)</span>
+    <ol style="margin:8px 0 0; padding-left:20px;">
+      <li><strong>Disegna il vincolo</strong> $g(x,y)=0$ e riconosci la curva (sez. 8): retta, circonferenza, ellisse $\frac{x^2}{a^2}+\frac{y^2}{b^2}=1$, parabola, iperbole… Decidi se è <strong>compatto</strong> (chiuso e limitato).</li>
+      <li><strong>Regolarità:</strong> $\nabla g=(g_x,g_y)=(0,0)$ ha soluzioni sul vincolo? Se sì sono punti singolari da valutare a parte.</li>
+      <li><strong>Lagrangiana:</strong> $\mathcal L=f-\lambda g$; sistema $\mathcal L_x=0,\ \mathcal L_y=0,\ g=0$ (equivale a $\nabla f=\lambda\nabla g$).</li>
+      <li><strong>Risolvi il sistema:</strong> elimina $\lambda$ con $f_xg_y-f_yg_x=0$ e metti a sistema con $g=0$; se un'equazione è del tipo $x(\dots)=0$ apri i rami; ricava $\lambda$ per ogni punto.</li>
+      <li><strong>Hessiana orlata</strong> (con $L=f-\lambda g$, $\lambda$ del punto):
+        $$\det\overline H=-\big(g_x^2\,L_{yy}-2g_xg_y\,L_{xy}+g_y^2\,L_{xx}\big)$$
+        $\overline H>0$ ⇒ <strong>massimo vincolato</strong>; $\overline H<0$ ⇒ <strong>minimo vincolato</strong>; $=0$ nulla si può dire.</li>
+      <li><strong>Assoluti</strong> (se chiesti): vincolo compatto ⇒ calcola $f$ in tutti i punti trovati; il valore più grande è il max assoluto, il più piccolo il min assoluto (Weierstrass). Vincolo non compatto ⇒ studia $f$ all'infinito sulla curva: potrebbe non esistere uno dei due.</li>
+    </ol>
+  </div>
+  <div class="table-scroll">
+  <table>
+    <tr><th>Tipo di vincolo</th><th>Note operative</th></tr>
+    <tr><td>Circonferenza / ellisse / quartica chiusa (es. $x^2+7y^2=11$, $(x^2+y^2)^2=2(x^2-y^2)$)</td><td>Compatto ⇒ Weierstrass: confronta i valori di $f$. Ellisse: $g_x=\frac{2x}{a^2},\ g_y=\frac{2y}{b^2}$.</td></tr>
+    <tr><td>Retta ($x+y=2$)</td><td>Non compatto. Scorciatoia: $y=2-x$ ⇒ $h(x)=f(x,2-x)$ e studia $h'$; oppure orlata. Se $f$ è "convessa" (es. $e^x+e^y$) c'è solo il minimo.</td></tr>
+    <tr><td>Parabola ($y=7-(x-3)^2$), iperbole ($x^2y=2$, $xy+y=3$)</td><td>Non compatto: orlata per la natura relativa; per gli assoluti guarda i limiti per $|x|\to\infty$.</td></tr>
+    <tr><td>$f=e^{h(x,y)}$ (es. $e^{x^2+y^2}$, $e^{x^2+2xy-y^2}$)</td><td>$e^h$ è crescente in $h$: estremi di $f$ = estremi di $h$ sul vincolo (stessa natura): si semplifica il sistema.</td></tr>
+  </table>
+  </div>
+  <div class="example-box">
+    <span class="box-label">Esempio svolto (dall'esame di ottobre 2024)</span>
+    <div class="tex-line">$$f=xy,\quad g=x^2+4y^2-1=0\ (\text{ellisse, compatta}),\qquad \nabla g=(2x,8y)\ne0\text{ sul vincolo}$$</div>
+    <div class="tex-line">$$f_xg_y-f_yg_x=y\cdot8y-x\cdot2x=0\ \Rightarrow\ x^2=4y^2;\quad g=0\Rightarrow 8y^2=1\Rightarrow y=\pm\tfrac{1}{2\sqrt2},\ x=\pm\tfrac1{\sqrt2}$$</div>
+    <div class="tex-line">$$f=\tfrac14\ \text{(segni concordi)}\to\max,\qquad f=-\tfrac14\ \text{(segni discordi)}\to\min$$</div>
+  </div>
+
+  <!-- ---------- 16.6 INTEGRALI ---------- -->
+  <h3 id="g6">16.6 Integrali doppi</h3>
+  <div class="info-box">
+    <span class="box-label">Prima di tutto: dominio e scelta del metodo</span>
+    <ol style="margin:8px 0 0; padding-left:20px;">
+      <li><strong>Disegna $D$ descrivendo ogni curva</strong> (tipo, vertice/centro, intercette) e colora la regione richiesta (testando un punto per ogni disequazione).</li>
+      <li><strong>Vertici/intersezioni</strong> tra le curve: sostituzione o sistema. Per un poligono: retta per due punti $y-y_1=\frac{y_2-y_1}{x_2-x_1}(x-x_1)$.</li>
+      <li>Scegli: cartesiane (dominio normale) | polari | cambio di variabili lineare (vedi sotto).</li>
+      <li>Imposta $\int_a^b\!\int_{\alpha(x)}^{\beta(x)}$ (o l'ordine inverso). Integra l'interna (l'altra variabile è costante), poi l'esterna.</li>
+    </ol>
+  </div>
+  <div class="table-scroll">
+  <table>
+    <tr><th>Casistica</th><th>Procedimento / formula</th></tr>
+    <tr><td><strong>Dominio normale semplice</strong></td><td>Domini normali rispetto a $x$ o $y$ (sez. 10).</td></tr>
+    <tr><td><strong>Estremi con $\min$ / $\max$</strong>, o curve che si incrociano dentro l'intervallo (es. $\min\{x^2,x\}\le y\le\max\{x^2,x\}$)</td>
+        <td>Trova i punti in cui le curve si scambiano ruolo e <strong>spezza l'integrale</strong> in intervalli. Es. $0\le x\le2$: $\int_0^1\!\int_{x^2}^{x}(x+2y)\,dy\,dx+\int_1^2\!\int_{x}^{x^2}(x+2y)\,dy\,dx=\dfrac{11}{2}$.</td></tr>
+    <tr><td><strong>Integranda senza primitiva elementare</strong> in una variabile ($\sin y^2$, $\sin y^3$, $e^{x^2}$, $\cos x^4$…)</td>
+        <td><strong>Scambia l'ordine di integrazione</strong>, in modo che la variabile "difficile" sia integrata per ultima (grazie al fattore $y$ o $x$ prodotto dall'altra integrazione).
+        <div class="tex-line">$$D:\,0\le x\le y,\ 0\le y\le1\ (\text{triangolo }O,(0,1),(1,1)):\ \iint_D\sin y^2=\int_0^1\!\!\int_0^{y}\sin y^2\,dx\,dy=\int_0^1y\sin y^2\,dy=\frac{1-\cos1}{2}$$</div>
+        <div class="tex-line">$$D:\,0\le x\le1,\ \sqrt x\le y\le1\ \Rightarrow\ 0\le y\le1,\ 0\le x\le y^2:\ \ \iint_D\sin y^3=\int_0^1y^2\sin y^3\,dy=\frac{1-\cos1}{3}$$</div></td></tr>
+    <tr><td><strong>Dischi / settori / corone</strong> o $x^2+y^2$ nell'integranda</td>
+        <td>Polari: $dx\,dy=r\,dr\,d\theta$. Disco $x^2+y^2\le R^2$: $0\le r\le R$.
+        <div class="tex-line">$$x^2+y^2\le2ax\iff r\le2a\cos\theta\ \ (-\tfrac\pi2\le\theta\le\tfrac\pi2),\qquad x^2+y^2\le2by\iff r\le2b\sin\theta\ \ (0\le\theta\le\pi)$$</div></td></tr>
+    <tr><td><strong>Intersezione di due dischi</strong> (es. $x^2+y^2\le1$ e $x^2+y^2\le2x$, con $y\le0$)</td>
+        <td>$r\le\min\{1,\,2\cos\theta\}$: si incrociano dove $2\cos\theta=1\Rightarrow\theta=\pm\frac\pi3$. Per $-\frac\pi3\le\theta\le0$: $r\le1$; per $-\frac\pi2\le\theta\le-\frac\pi3$: $r\le2\cos\theta$. Integrale di $xy$: $\displaystyle\int_{-\pi/3}^{0}\!\!\int_0^1\!r^3\cos\theta\sin\theta\,dr\,d\theta+\int_{-\pi/2}^{-\pi/3}\!\!\int_0^{2\cos\theta}\!r^3\cos\theta\sin\theta\,dr\,d\theta=-\frac5{48}$.</td></tr>
+    <tr><td><strong>Quadrilatero tra rette parallele a coppie</strong> (es. $y=3x,\ y=x,\ y=3x-1,\ y=x+4$)</td>
+        <td><strong>Cambio di variabili lineare</strong> che trasforma i lati in $u=\text{cost}$, $v=\text{cost}$:
+        $$\iint_Df\,dx\,dy=\iint_{D'}f\big(x(u,v),y(u,v)\big)\left|\det\frac{\partial(x,y)}{\partial(u,v)}\right|du\,dv$$
+        Es. $u=3x-y\in[0,1],\ v=y-x\in[0,4]$ ⇒ $x=\frac{u+v}2,\ y=\frac{u+3v}2$, $|J|=\frac12$; con integranda $(3x-y)\frac{y-x}4=\frac{uv}4$: $\ \int_0^1\!\!\int_0^4\frac{uv}{4}\cdot\frac12\,dv\,du=\frac12$.</td></tr>
+    <tr><td><strong>Triangolo / poligono</strong></td>
+        <td>Scrivi le rette dei lati; scegli l'ordine che dà un solo blocco (altrimenti spezza in 2 triangoli/trapezi). Es. quadrilatero $(0,1),(1,2),(2,1),(2,0)$: $\int_0^1\!\int_{1-x/2}^{x+1}+\int_1^2\!\int_{1-x/2}^{-x+3}$.</td></tr>
+    <tr><td><strong>Area</strong> di $D$ (integrale di $1$)</td><td>$\iint_D1\,dx\,dy$; per aree tra due curve $\int_a^b[\beta(x)-\alpha(x)]\,dx$.</td></tr>
+  </table>
+  </div>
+  <div class="warning-box">
+    <span class="box-label">Errori da evitare</span>
+    Dimenticare il fattore <strong>$r$</strong> in polari (o $|J|$ nel cambio di variabili) · usare estremi dell'integrale interno che dipendono dalla variabile interna · non spezzare $D$ quando le curve si scambiano · integrare un'integranda positiva e ottenere un risultato negativo (segnale di errore nell'ordine degli estremi).
+  </div>
+
+  <!-- ---------- 16.7 EDO 1 ---------- -->
+  <h3 id="g7">16.7 EDO del primo ordine</h3>
+  <div class="info-box">
+    <span class="box-label">Classificazione e scelta del metodo</span>
+    <ol style="margin:8px 0 0; padding-left:20px;">
+      <li><strong>Classifica</strong>: ordine 1; <em>lineare</em> se $y,y'$ compaiono al primo grado e non moltiplicati tra loro; <em>omogenea</em> se il termine noto è $0$.</li>
+      <li>Isola $y'$ e riconosci il tipo:
+        <ul>
+          <li>$y'=g(x)\,h(y)$ ⇒ <strong>variabili separabili</strong>;</li>
+          <li>$y'=a(x)y+b(x)$ (o $a_1(x)y'+a_0(x)y=c(x)$) ⇒ <strong>lineare</strong> (fattore integrante);</li>
+          <li>$y'=a(x)y+b(x)y^n$ con $n\ne0,1$ (es. $y'=\frac yx+xy^{1/3}$, $xy'=4y-2x^2y^2$, $y'=-\frac yx+xy^2\log x$) ⇒ <strong>Bernoulli</strong>.</li>
+        </ul></li>
+      <li><strong>Cauchy $y(x_0)=y_0$:</strong> il punto $x_0$ decide il ramo dei valori assoluti/logaritmi ($x_0=2\Rightarrow x-1>0$; $x_0=1\Rightarrow x>0$) e l'intervallo di definizione della soluzione.</li>
+    </ol>
+  </div>
+
+  <div class="formula-box">
+    <span class="box-label">Lineare: formula risolutiva</span>
+    <div class="tex-line">$$y'+P(x)\,y=Q(x)\ \Longrightarrow\ \mu(x)=e^{\int P(x)dx},\quad (\mu\,y)'=\mu\,Q\ \Rightarrow\ y=\frac{1}{\mu(x)}\left[\int\mu(x)Q(x)\,dx+c\right]$$</div>
+    <span class="box-caption">Coerente con il formulario ($y'=ay+b$ ⇒ $P=-a$, $\mu=e^{-A}$). Se l'equazione è $a_1(x)y'+a_0(x)y=c(x)$ dividi prima per $a_1(x)$ (attento a $a_1(x)=0$).</span>
+  </div>
+  <div class="table-scroll">
+  <table>
+    <tr><th>$P(x)$</th><th>$\int P\,dx$</th><th>$\mu(x)$</th></tr>
+    <tr><td>$\dfrac kx$</td><td>$k\ln|x|$</td><td>$|x|^k$ (es. $\frac1x\to x$; $\frac7x\to x^7$)</td></tr>
+    <tr><td>$\dfrac{1}{x-1}$</td><td>$\ln|x-1|$</td><td>$|x-1|$</td></tr>
+    <tr><td>$\dfrac{2x}{1+x^2}$</td><td>$\ln(1+x^2)$</td><td>$1+x^2$</td></tr>
+    <tr><td>$\dfrac{x}{x^2+1}$</td><td>$\frac12\ln(x^2+1)$</td><td>$\sqrt{x^2+1}$</td></tr>
+    <tr><td>$\cos x$</td><td>$\sin x$</td><td>$e^{\sin x}$</td></tr>
+    <tr><td>$\ln x$</td><td>$x\ln x-x$</td><td>$e^{x\ln x-x}$</td></tr>
+    <tr><td>$-2$ (cioè $y'=2y+\dots$)</td><td>$-2x$</td><td>$e^{-2x}$</td></tr>
+  </table>
+  </div>
+  <div class="example-box">
+    <span class="box-label">Lineare con coefficienti variabili (non in forma normale)</span>
+    <div class="tex-line">$$(x-1)y'+y=2x,\ \ y(2)=1\ \xrightarrow{\ :(x-1)\ }\ y'+\frac{y}{x-1}=\frac{2x}{x-1},\quad\mu=x-1\ (x>1)$$</div>
+    <div class="tex-line">$$\big((x-1)y\big)'=2x\ \Rightarrow\ (x-1)y=x^2+c,\quad y(2)=1\Rightarrow c=-3\ \Rightarrow\ y=\frac{x^2-3}{x-1}$$</div>
+  </div>
+
+  <div class="formula-box">
+    <span class="box-label">Variabili separabili</span>
+    <div class="tex-line">$$y'=g(x)h(y)\ \Rightarrow\ \int\frac{dy}{h(y)}=\int g(x)\,dx+c\quad(\text{più le soluzioni costanti }h(y_0)=0)$$</div>
+    <span class="box-caption">Esempi: $y'=e^{2y-x}\Rightarrow e^{-2y}dy=e^{-x}dx\Rightarrow -\frac12e^{-2y}=-e^{-x}+c$. &nbsp; $y'=6x^2(1-7e^{-y})\Rightarrow\int\frac{e^{y}}{e^{y}-7}dy=\ln|e^y-7|=2x^3+c$; con $y(0)=\ln8$ si ha $c=0$ e $y=\ln\!\big(7+e^{2x^3}\big)$. &nbsp; $y'=(1-y)(2-y)x$: fratti semplici su $\frac1{(1-y)(2-y)}$ e soluzioni costanti $y\equiv1,\ y\equiv2$.</span>
+  </div>
+
+  <div class="formula-box">
+    <span class="box-label">Bernoulli: $y'+p(x)y=q(x)y^n$</span>
+    <div class="tex-line">$$v=y^{1-n}\ \Longrightarrow\ v'+(1-n)\,p(x)\,v=(1-n)\,q(x)\ \ (\text{lineare in }v),\qquad y=v^{\frac1{1-n}}$$</div>
+    <span class="box-caption">$n=2$: $v=\frac1y$; $n=\frac13$: $v=y^{2/3}$; $n=3$: $v=y^{-2}$. Per $n>0$ anche $y\equiv0$ è soluzione. Dopo aver trovato $v$, impone Cauchy su $v$ (o su $y$ a fine calcolo).</span>
+  </div>
+  <div class="example-box">
+    <span class="box-label">Esempio Bernoulli svolto (gennaio 2025)</span>
+    <div class="tex-line">$$xy'=4y-2x^2y^2,\ y(1)=2\ \Rightarrow\ y'-\frac4xy=-2x\,y^2\quad(p=-\tfrac4x,\ q=-2x,\ n=2)$$</div>
+    <div class="tex-line">$$v=\frac1y:\ \ v'+\frac4xv=2x,\quad\mu=x^4:\ (x^4v)'=2x^5\Rightarrow v=\frac{x^2}{3}+\frac{c}{x^4}$$</div>
+    <div class="tex-line">$$v(1)=\tfrac12\Rightarrow c=\tfrac16\ \Rightarrow\ y=\frac1v=\frac{6x^4}{2x^6+1}$$</div>
+  </div>
+
+  <!-- ---------- 16.8 EDO 2 ---------- -->
+  <h3 id="g8">16.8 EDO del secondo ordine a coefficienti costanti</h3>
+  <div class="info-box">
+    <span class="box-label">Procedura (richiesta tipica: classifica, omogenea, particolare, generale, Cauchy)</span>
+    <ol style="margin:8px 0 0; padding-left:20px;">
+      <li><strong>Classifica:</strong> ordine 2, <em>lineare</em> (si può scrivere $y''+py'+qy=f(x)$), a <em>coefficienti costanti</em> ($p,q$ numeri), <em>omogenea</em> se $f\equiv0$, altrimenti <em>completa</em>. Se $y''+py'+qy=f$ ha $q=0$, manca il termine in $y$.</li>
+      <li><strong>Omogenea associata:</strong> $r^2+pr+q=0$ ⇒ $y_{om}$ (tabella sez. 12).</li>
+      <li><strong>Soluzione particolare:</strong> spezza $f$ in addendi, classifica (sez. 7), controlla la risonanza, applica le <em>formule chiuse</em> qui sotto o il sistema sui coefficienti.</li>
+      <li><strong>Integrale generale:</strong> $y=y_{om}+y_p$.</li>
+      <li><strong>Cauchy</strong> $y(x_0)=y_0,\ y'(x_0)=y_1$ (anche con $x_0\ne0$, es. $y'(\pi)=0$): calcola $y'$, <em>valuta in $x_0$</em> e risolvi il sistema in $c_1,c_2$.</li>
+    </ol>
+  </div>
+
+  <div class="formula-box">
+    <span class="box-label">Formule chiuse per $y_p$ ($L[y]=y''+py'+qy$, $\ P(\lambda)=\lambda^2+p\lambda+q$)</span>
+    <div class="tex-line">$$f=Ae^{\lambda x}:\quad \begin{cases}P(\lambda)\ne0:& y_p=\dfrac{A}{P(\lambda)}\,e^{\lambda x}\\[6pt] \lambda\text{ radice semplice}:& y_p=\dfrac{A}{2\lambda+p}\,x\,e^{\lambda x}\\[6pt] \lambda\text{ radice doppia}:& y_p=\dfrac{A}{2}\,x^2e^{\lambda x}\end{cases}$$</div>
+    <div class="tex-line">$$f=A\cos\omega x+B\sin\omega x,\ \ \pm i\omega\text{ non radici}:\ \ y_p=a\cos\omega x+b\sin\omega x,\ \ \begin{cases}(q-\omega^2)\,a+p\omega\,b=A\\-p\omega\,a+(q-\omega^2)\,b=B\end{cases}$$</div>
+    <div class="tex-line">$$p=0,\ q=\omega^2\ (\text{risonanza}):\ \ y''+\omega^2y=A\cos\omega x+B\sin\omega x\ \Rightarrow\ y_p=\frac{x}{2\omega}\big(A\sin\omega x-B\cos\omega x\big)$$</div>
+    <div class="tex-line">$$f=e^{\alpha x}(A\cos\omega x+B\sin\omega x),\ \ z=\alpha+i\omega:\quad y_p=\operatorname{Re}\!\left[\frac{(A-iB)\,e^{zx}}{P(z)}\right]\ \ (P(z)\ne0),\qquad y_p=\operatorname{Re}\!\left[\frac{(A-iB)\,x\,e^{zx}}{2z+p}\right]\ \ (z\text{ radice})$$</div>
+    <div class="tex-line">$$f=e^{\lambda x}p_n(x),\ y_p=e^{\lambda x}q(x):\quad q''+(2\lambda+p)\,q'+P(\lambda)\,q=p_n(x)\quad(\text{si risolve per coefficienti})$$</div>
+    <span class="box-caption">Verificate: ad es. $y''-2y'+5y=e^x\cos x$: $z=1+i$, $P(z)=3\Rightarrow y_p=\frac13e^x\cos x$. &nbsp; $y''+y=3\cos x$: $y_p=\frac32x\sin x$. &nbsp; Polinomio di grado $n$ con $q\ne0$: $y_p$ di grado $n$; con $q=0$ (e $p\ne0$): $y_p=x\cdot(\text{grado }n)$; con $p=q=0$: $x^2\cdot(\text{grado }n)$.</span>
+  </div>
+
+  <div class="example-box">
+    <span class="box-label">Esempi dagli esami</span>
+    <div class="tex-line">$$y''-y=xe^{2x}\ (\text{radici}\pm1,\ \lambda=2\text{ non radice}):\ y_p=e^{2x}(ax+b),\ \ q''+4q'+3q=x\Rightarrow a=\tfrac13,\ b=-\tfrac49$$</div>
+    <div class="tex-line">$$y''+y'=x+2\ (q=0):\ \ y_p=x(ax+b),\ \ 2a+2ax+b=x+2\Rightarrow y_p=\tfrac12x^2+x$$</div>
+    <div class="tex-line">$$y''+3y'+2y=x^2+e^{x}\ (\text{radici }-1,-2):\ \ y_p=\underbrace{\tfrac12x^2-\tfrac32x+\tfrac74}_{\text{polinomio}}+\underbrace{\tfrac16e^{x}}_{A/P(1)=1/6}$$</div>
+    <div class="tex-line">$$y''-6y'+9y=4xe^{3x}\ (\lambda=3\text{ doppia}):\ \ y_p=x^2e^{3x}(ax+b),\ \ q''=4x\Rightarrow y_p=\tfrac23x^3e^{3x}$$</div>
+    <div class="tex-line">$$y''+y=x^2+\sin x:\ \ y_p=(x^2-2)\ \ +\ \ \left(-\tfrac12x\cos x\right)\quad(\text{somma dei due ansatz; }\sin x\text{ è in risonanza})$$</div>
+  </div>
+
+  <div class="warning-box">
+    <span class="box-label">Trappole frequenti</span>
+    Risonanza individuata <em>per ogni addendo</em> separatamente · se $f$ ha solo il seno (o solo il coseno) l'ansatz ha <strong>entrambi</strong> · le condizioni di Cauchy vanno imposte sull'integrale generale <em>completo</em> ($y_{om}+y_p$), non sulla sola omogenea · se $x_0\ne0$ le costanti $c_1,c_2$ risultano con $e^{x_0}$, $\cos x_0$… non vanno "semplificate a mano": risolvi il sistema lineare ·
+    controlla sempre il risultato: $y(x_0)$ e $y'(x_0)$ devono tornare, e sostituendo $y_p$ nell'equazione deve restare $f(x)$.
   </div>
 
 </div>
