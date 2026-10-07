@@ -776,7 +776,7 @@
   </div>
 
   <div class="info-box">
-    Le sezioni 1–7 riportano fedelmente il formulario fornito a esame, senza spiegazioni aggiuntive (le sezioni 8–13 sono un'appendice di promemoria personale): per capire
+    Le sezioni 1–7 riportano fedelmente il formulario fornito a esame, senza spiegazioni aggiuntive (le sezioni 8–14 sono un'appendice di promemoria personale): per capire
     quando e come si usa ciascuna formula, vedi la sezione <a href="#" data-goto="teoria">Teoria</a>, che
     rimanda qui con dei riquadri "Dal Formulario ufficiale".
   </div>
@@ -797,6 +797,7 @@
       <a href="#f11">11. Serie: procedimento di analisi (appendice)</a>
       <a href="#f12">12. EDO 2° ordine: omogenea e caratteristica (appendice)</a>
       <a href="#f13">13. Metodo di somiglianza: riconoscere e risolvere (appendice)</a>
+      <a href="#f14">14. Scalette passo-passo per ogni tipo di esercizio (appendice)</a>
     </div>
   </div>
 
@@ -1008,7 +1009,7 @@
   <!-- ============================================================ -->
   <div class="warning-box" style="margin-top:34px;">
     <span class="box-label">Appendice — non fa parte del formulario ufficiale</span>
-    Le sezioni 8–13 che seguono sono un <strong>promemoria personale</strong> (geometria dei vincoli, derivate,
+    Le sezioni 8–14 che seguono sono un <strong>promemoria personale</strong> (geometria dei vincoli, derivate,
     integrali, procedimenti per serie ed EDO). Non sono ammesse a esame come formulario: servono per studiare e
     per riconoscere velocemente i casi.
   </div>
@@ -1302,6 +1303,116 @@
       <tr><td>$x\cos x$</td><td>$\pm i$ non radici</td><td>$(Ax+B)\cos x+(Cx+D)\sin x$</td></tr>
     </table>
     </div>
+  </div>
+
+  <!-- ============================== 14 ============================== -->
+  <h2 id="f14">14. Scalette passo-passo: cosa fare per ogni tipo di esercizio</h2>
+  <p>Una checklist per ciascun tipo d'esame, da seguire in ordine. Le formule di riferimento sono nelle sezioni indicate.</p>
+
+  <div class="info-box">
+    <span class="box-label">A. Serie numerica (carattere / somma) — vedi sez. 1 e 11</span>
+    <ol style="margin:8px 0 0; padding-left:20px;">
+      <li>Scrivi $a_n$ e controlla $\lim a_n$: se $\ne0$ ⇒ <strong>diverge</strong>, fine.</li>
+      <li>È una serie notevole (armonica, geometrica, Mengoli, telescopica)? Se sì applica la formula e concludi.</li>
+      <li>Scegli il criterio dalla forma di $a_n$: fattoriali / $a^n$ ⇒ <strong>rapporto</strong>; potenze $n$-esime ⇒ <strong>radice</strong>; frazioni di polinomi/radici ⇒ <strong>confronto asintotico</strong> con $1/n^p$; $(-1)^n$ ⇒ <strong>Leibniz</strong>.</li>
+      <li>Calcola il limite del criterio (semplifica prima il rapporto $a_{n+1}/a_n$).</li>
+      <li>Concludi: $L<1$ converge, $L>1$ diverge, $L=1$ cambia criterio.</li>
+      <li><em>Se serve la somma:</em> geometrica ⇒ $\frac{\text{primo termine}}{1-q}$ (attento da quale $n$ parte); telescopica ⇒ scomponi in fratti semplici, scrivi la somma parziale $S_N$ e fai $N\to\infty$.</li>
+      <li><em>Se c'è un parametro $x$:</em> riconosci la geometrica, imponi $|q(x)|<1$, escludi i valori dove $q$ non è definita, controlla a parte $|q|=1$.</li>
+    </ol>
+  </div>
+
+  <div class="info-box">
+    <span class="box-label">B. Sviluppo di Taylor / Mac Laurin — vedi sez. 2</span>
+    <ol style="margin:8px 0 0; padding-left:20px;">
+      <li>Individua punto $x_0$ e ordine $n$. Se $x_0\ne0$ poni $t=x-x_0$ e sviluppa in $t$ intorno a $0$.</li>
+      <li>Riscrivi $f$ come combinazione/composizione di funzioni del formulario (es. $e^{u}$ con $u=x^2$).</li>
+      <li>Sostituisci nello sviluppo noto e tronca all'ordine richiesto, tenendo solo i termini fino a $x^n$ (i prodotti di sviluppi si moltiplicano troncando).</li>
+      <li><em>Alternativa:</em> calcola $f^{(k)}(x_0)$ per $k=0..n$ e usa $\sum\frac{f^{(k)}(x_0)}{k!}(x-x_0)^k$.</li>
+      <li>Scrivi il resto $o\big((x-x_0)^n\big)$.</li>
+    </ol>
+  </div>
+
+  <div class="info-box">
+    <span class="box-label">C. Punti stazionari liberi (Hessiano) — vedi sez. 3</span>
+    <ol style="margin:8px 0 0; padding-left:20px;">
+      <li>Calcola $f_x$ e $f_y$ e risolvi il sistema $\nabla f=0$ (fattorizza: un prodotto nullo ⇒ casi separati).</li>
+      <li>Calcola $f_{xx},\,f_{yy},\,f_{xy}$ e la matrice Hessiana.</li>
+      <li>Per <strong>ogni</strong> punto trovato calcola $H=f_{xx}f_{yy}-f_{xy}^2$.</li>
+      <li>$H>0$ e $f_{xx}>0$ ⇒ minimo; $H>0$ e $f_{xx}<0$ ⇒ massimo; $H<0$ ⇒ sella.</li>
+      <li>$H=0$: l'Hessiano non decide. Studia il segno di $f$ vicino al punto lungo rette <em>e</em> lungo curve ($y=kx^2$, ...), o confronta $f(x,y)$ con $f(P_0)$ direttamente.</li>
+      <li>Se è chiesto il segno di $f$: studia numeratore e denominatore e disegna le regioni.</li>
+    </ol>
+  </div>
+
+  <div class="info-box">
+    <span class="box-label">D. Estremi vincolati (Lagrange + Hessiano orlato) — vedi sez. 5 e 8</span>
+    <ol style="margin:8px 0 0; padding-left:20px;">
+      <li>Scrivi il vincolo come $g(x,y)=0$, <strong>riconosci e disegna la curva</strong> (sez. 8) e decidi se è compatta.</li>
+      <li>Imposta $\nabla f=\lambda\nabla g$ e $g=0$ (3 equazioni, incognite $x,y,\lambda$). Per eliminare $\lambda$: $f_xg_y-f_yg_x=0$.</li>
+      <li>Risolvi, senza perdere casi (se dividi per una quantità, studia a parte quando è zero). Trova tutti i punti e i rispettivi $\lambda$.</li>
+      <li>Controlla che i punti soddisfino davvero il vincolo.</li>
+      <li>Per ogni punto: $L=f-\lambda g$, costruisci $\overline H$ con $g_x,g_y,L_{xx},L_{xy},L_{yy}$ e calcola $\det\overline H$.</li>
+      <li>$\overline H>0$ ⇒ massimo vincolato; $\overline H<0$ ⇒ minimo vincolato; $\overline H=0$ ⇒ nulla si può dire.</li>
+      <li>Vincolo compatto ⇒ massimo e minimo assoluti esistono (Weierstrass): confronta i valori di $f$ in <strong>tutti</strong> i punti stazionari. Vincolo non compatto ⇒ studia $f$ all'infinito.</li>
+    </ol>
+  </div>
+
+  <div class="info-box">
+    <span class="box-label">E. EDO del primo ordine (con Cauchy) — vedi sez. 6</span>
+    <ol style="margin:8px 0 0; padding-left:20px;">
+      <li>Portala a forma normale $y'=\dots$ e <strong>riconosci il tipo</strong>:
+        <ul>
+          <li>$y'=g(x)h(y)$ ⇒ <strong>separabile</strong>;</li>
+          <li>$y'+a(x)y=b(x)$ ⇒ <strong>lineare</strong>;</li>
+          <li>$y'+p(x)y=q(x)y^n$ ⇒ <strong>Bernoulli</strong> ($n\ne0,1$).</li>
+        </ul></li>
+      <li><em>Separabile:</em> $\int\frac{dy}{h(y)}=\int g(x)\,dx+C$, poi isola $y$ (non dimenticare le soluzioni costanti $h(y)=0$).</li>
+      <li><em>Lineare:</em> scrivila come $y'=a(x)y+b(x)$, $A(x)=\int a(x)dx$, poi $y=e^{A}\left[\int b\,e^{-A}dx+c\right]$ (se è data come $y'+py=b$ allora $a=-p$).</li>
+      <li><em>Bernoulli:</em> dividi per $y^n$, poni $v=y^{1-n}$ ⇒ equazione lineare in $v$; risolvi e torna a $y=v^{1/(1-n)}$.</li>
+      <li>Imponi $y(x_0)=y_0$ per trovare la costante.</li>
+      <li>Verifica: deriva la soluzione e sostituisci nell'equazione.</li>
+    </ol>
+  </div>
+
+  <div class="info-box">
+    <span class="box-label">F. EDO del secondo ordine (omogenea / somiglianza / Cauchy) — vedi sez. 7, 12, 13</span>
+    <ol style="margin:8px 0 0; padding-left:20px;">
+      <li>Scrivi $y''+py'+qy=f(x)$ e risolvi $r^2+pr+q=0$ ($\Delta>0$, $=0$, $<0$ ⇒ $y_{om}$ dalla tabella sez. 12).</li>
+      <li>Se $f\equiv0$ hai finito la parte generale. Altrimenti spezza $f$ in addendi e classifica ciascuno (Caso 1–5).</li>
+      <li>Per ogni addendo controlla la <strong>risonanza</strong> con le radici e moltiplica l'ansatz per $x$ (o $x^2$).</li>
+      <li>Scrivi l'ansatz con coefficienti incogniti, sostituisci, <strong>uguaglia i coefficienti</strong> e risolvi.</li>
+      <li>$y=y_{om}+y_p$ (somma dei $y_{p_i}$).</li>
+      <li>Cauchy: calcola $y'$, imponi $y(x_0)=y_0$ e $y'(x_0)=y_1$ sulla soluzione <strong>completa</strong> e risolvi il sistema in $c_1,c_2$.</li>
+      <li>Controllo rapido: $y(x_0)$ e $y'(x_0)$ tornano? Sostituisci $y_p$ nell'equazione.</li>
+    </ol>
+  </div>
+
+  <div class="info-box">
+    <span class="box-label">G. Integrale doppio su un dominio — vedi sez. 8 e 10</span>
+    <ol style="margin:8px 0 0; padding-left:20px;">
+      <li><strong>Disegna $D$</strong> riconoscendo ogni curva (retta, circonferenza, parabola...) e colora la regione giusta.</li>
+      <li>Calcola vertici/intersezioni tra le curve (sostituzione o sistema).</li>
+      <li>Scegli la coordinata: cartesiane (dominio normale) oppure <strong>polari</strong> se compare $x^2+y^2$ / il dominio è un disco, corona o settore (non dimenticare il fattore $r$).</li>
+      <li>Cartesiane: scegli l'ordine ($dy\,dx$ o $dx\,dy$) che non obbliga a spezzare $D$; se serve, dividi $D$ in parti e somma.</li>
+      <li>Scrivi gli estremi: <em>interno</em> dipende dalla variabile esterna, <em>esterno</em> è costante.</li>
+      <li>Integra prima la variabile interna (l'altra è costante), poi l'esterna.</li>
+      <li>Controllo di buon senso: segno e ordine di grandezza (integrale di funzione positiva ⇒ risultato positivo; $\iint1=$ area).</li>
+    </ol>
+  </div>
+
+  <div class="info-box">
+    <span class="box-label">H. Continuità e differenziabilità in $(0,0)$ + piano tangente — vedi sez. 4 e 9</span>
+    <ol style="margin:8px 0 0; padding-left:20px;">
+      <li><strong>Continuità:</strong> passa in polari $x=r\cos\theta,\ y=r\sin\theta$, semplifica e calcola $\lim_{r\to0^+}f(r,\theta)$ a $\theta$ fissato.</li>
+      <li>Se il limite <strong>dipende da $\theta$</strong> ⇒ non continua (fine). Se è $0$ per ogni $\theta$ attenzione: non basta. Verifica con una maggiorazione uniforme in $\theta$ (es. $|f|\le r\cdot\text{const}$) o prova una curva ($y=kx^2$, $y=kx^3$): se dà un valore dipendente da $k$ ⇒ non continua.</li>
+      <li>Se continua, calcola le <strong>derivate parziali in $(0,0)$ per definizione</strong>: $f_x(0,0)=\lim\frac{f(h,0)}{h}$, $f_y(0,0)=\lim\frac{f(0,h)}{h}$.</li>
+      <li><strong>Differenziabilità:</strong> calcola $\dfrac{f(x,y)-f_x(0,0)x-f_y(0,0)y}{r}$ in polari e il limite per $r\to0^+$.</li>
+      <li>Limite $=0$ per ogni $\theta$ ⇒ <strong>differenziabile</strong>; dipende da $\theta$ (o non è $0$) ⇒ <strong>non differenziabile</strong>.</li>
+      <li>Se differenziabile, <strong>piano tangente</strong> in $(0,0)$: $z=f_x(0,0)\,x+f_y(0,0)\,y$ (essendo $f(0,0)=0$).</li>
+      <li><em>Piano tangente in un altro punto $(x_0,y_0)$ regolare:</em> calcola $f$, $f_x$, $f_y$ lì e usa la formula della sez. 4 (verifica prima che il punto stia nel dominio e che $f$ sia derivabile).</li>
+      <li><em>Dominio:</em> imponi radicandi $\ge0$, denominatori $\ne0$, argomenti dei logaritmi $>0$.</li>
+    </ol>
   </div>
 
 </div>
