@@ -1486,8 +1486,86 @@ function mostraSoluzione() {
       m.className = "passo-math";
       if (renderKatexInto(m, passo.latex, true)) box.appendChild(m);
     }
+    if (passo.form && passo.form.length) aggiungiRiferimentoFormulario(box, passo);
     if (box.childNodes.length) cont.appendChild(box);
   });
+}
+
+// ---------- Riferimenti al formulario nei passi della soluzione ----------
+// Ogni passo puo' avere "form": ["id_blocco" | "id_blocco#n", ...] e "form_nota". Gli id puntano a
+// formulario_blocks.json (blocchi HTML del formulario con KaTeX); "#n" evidenzia l'n-esimo punto
+// della scaletta. Il file dei blocchi si scarica una sola volta, alla prima anteprima aperta.
+let FORM_BLOCCHI = null, formBlocchiPromise = null;
+function caricaBlocchiFormulario() {
+  if (FORM_BLOCCHI) return Promise.resolve(FORM_BLOCCHI);
+  if (!formBlocchiPromise) {
+    formBlocchiPromise = fetch("formulario_blocks.json")
+      .then((r) => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+      .then((j) => (FORM_BLOCCHI = j))
+      .catch((e) => { formBlocchiPromise = null; throw e; });
+  }
+  return formBlocchiPromise;
+}
+
+function aggiungiRiferimentoFormulario(box, passo) {
+  const wrap = document.createElement("div");
+  wrap.className = "passo-form";
+  if (passo.form_nota) {
+    const n = document.createElement("div");
+    n.className = "passo-form-nota";
+    n.textContent = "\u{1F4D6} " + passo.form_nota;
+    wrap.appendChild(n);
+  }
+  const chips = document.createElement("div");
+  chips.className = "passo-form-chips";
+  const preview = document.createElement("div");
+  preview.className = "form-preview";
+  preview.style.display = "none";
+  let aperto = null;
+  passo.form.forEach((ref) => {
+    const [id, hl] = ref.split("#");
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "form-chip";
+    b.textContent = "Mostra nel formulario: ...";
+    b.dataset.id = id;
+    caricaBlocchiFormulario().then((bl) => {
+      const blk = bl[id];
+      b.textContent = blk ? `\u{1F4D6} ${blk.t} (${blk.s})` : id;
+    }).catch(() => { b.textContent = id; });
+    b.addEventListener("click", async () => {
+      if (aperto === ref) { preview.style.display = "none"; b.classList.remove("on"); aperto = null; return; }
+      chips.querySelectorAll(".form-chip").forEach((x) => x.classList.remove("on"));
+      try {
+        const bl = await caricaBlocchiFormulario();
+        const blk = bl[id];
+        if (!blk) throw new Error("blocco mancante");
+        preview.innerHTML = `<div class="form-preview-head">${blk.s} \u2014 ${blk.t}</div><div class="form-preview-body">${blk.h}</div>`;
+        if (hl) {
+          const li = preview.querySelectorAll("ol > li")[parseInt(hl, 10) - 1];
+          if (li) li.classList.add("hl");
+        }
+        if (typeof renderMathInElement === "function") {
+          renderMathInElement(preview, { delimiters: [
+            { left: "$$", right: "$$", display: true }, { left: "$", right: "$", display: false } ],
+            throwOnError: false });
+        }
+        preview.style.display = "block";
+        b.classList.add("on");
+        aperto = ref;
+        const hli = preview.querySelector("li.hl");
+        if (hli && hli.scrollIntoView) hli.scrollIntoView({ block: "nearest" });
+      } catch (e) {
+        console.warn("anteprima formulario:", e);
+        preview.innerHTML = "<em>Anteprima del formulario non disponibile (offline e non ancora in cache).</em>";
+        preview.style.display = "block";
+      }
+    });
+    chips.appendChild(b);
+  });
+  wrap.appendChild(chips);
+  wrap.appendChild(preview);
+  box.appendChild(wrap);
 }
 
 function apriLightbox(src) {

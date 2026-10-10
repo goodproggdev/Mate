@@ -162,3 +162,19 @@ footer { text-align: center; color: var(--text3); font-size: 12.5px; padding: 30
 .formulario-actions .btn { text-decoration: none; display: inline-block; }
 .pdf-embed { display: block; width: 100%; height: calc(100vh - 150px); min-height: 520px; border: 1px solid var(--blue-border, #ccc); border-radius: 8px; background: #fff; }
 .pdf-fallback { padding: 16px; font-family: var(--sans); }
+
+/* Riferimenti al formulario nella soluzione passo-passo */
+.passo-form { margin-top: 8px; border-top: 1px dashed var(--blue-border, #bbb); padding-top: 7px; font-family: var(--sans); }
+.passo-form-nota { font-size: 12.5px; color: var(--text2); margin-bottom: 6px; }
+.passo-form-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.form-chip { font-family: var(--sans); font-size: 12px; padding: 4px 9px; border-radius: 14px; cursor: pointer;
+  border: 1px solid var(--accent); background: var(--bg-card); color: var(--accent); text-align: left; }
+.form-chip:hover, .form-chip.on { background: var(--accent-solid); color: #fff; }
+.form-preview { margin-top: 8px; border: 1px solid var(--blue-border, #bbb); border-radius: 8px; background: var(--blue-bg, #f4f8fc);
+  padding: 8px 12px; max-height: 360px; overflow: auto; font-size: 13px; }
+.form-preview-head { font-weight: 700; color: var(--accent2, var(--accent)); margin-bottom: 4px; font-size: 12.5px; }
+.form-preview .box-label { font-weight: 700; font-size: 11px; text-transform: uppercase; color: var(--accent2, var(--accent)); display: block; margin-bottom: 4px; }
+.form-preview .info-box, .form-preview .warning-box, .form-preview .formula-box, .form-preview .example-box { margin: 6px 0; font-size: 13px; padding: 8px 10px; }
+.form-preview table { font-size: 12px; }
+.form-preview li.hl { background: rgba(255, 200, 0, .28); border-left: 3px solid #e0a800; padding-left: 6px; border-radius: 3px; }
+.form-preview h2, .form-preview h3 { font-size: 14px; margin: 6px 0; }
