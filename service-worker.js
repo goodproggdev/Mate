@@ -12,7 +12,7 @@
  * scaricare un runtime Python + numpy/sympy/matplotlib nel browser (erano decine di MB
  * e qualche secondo di avvio); il banco statico e' piu' piccolo e si apre all'istante.
  */
-const CACHE_APP = "mm-app-v19";
+const CACHE_APP = "mm-app-v21";
 const CACHE_RUNTIME = "mm-runtime-v2";
 
 const APP_ASSETS = [
@@ -23,7 +23,9 @@ const APP_ASSETS = [
   "style.css",
   "manifest.json",
   "esercizi.json",
-  "Formulario_integrato.pdf",
+  "Formulario_integrato_v5.pdf",
+  "Piramide_Metodi_Matematici.pdf",
+  "piramide.js",
   "formulario_blocks.json",
   "icon-192.png",
   "icon-512.png",

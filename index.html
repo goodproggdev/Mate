@@ -227,6 +227,7 @@
     <a href="#" data-goto="esercizi">Esercizi</a>
     <a href="#" data-goto="teoria">Teoria</a>
     <a href="#" data-goto="formulario">Formulario</a>
+    <a href="#" data-goto="piramide">Piramide</a>
     <button id="theme-toggle" type="button" aria-label="Cambia tema chiaro/scuro" title="Cambia tema">🌙</button>
   </nav>
 </div>
@@ -266,6 +267,11 @@
       <div class="icon">📐</div>
       <h2>Formulario</h2>
       <p>Il formulario ufficiale più l'integrazione con scalette passo-passo per ogni esercizio, in PDF: consultabile e scaricabile, anche offline.</p>
+    </a>
+    <a class="link-card" href="#" data-goto="piramide">
+      <div class="icon">🔺</div>
+      <h2>Piramide</h2>
+      <p>I mattoncini dell'esame, dai fondamentali ai tipi di esercizio: tocca un mattone per formule, logica, applicazioni e prerequisiti.</p>
     </a>
   </div>
 
@@ -776,8 +782,8 @@
   </div>
 
   <div class="formulario-actions">
-    <a class="btn" href="Formulario_integrato.pdf" download="Formulario_integrato.pdf">&#11015; Scarica il PDF</a>
-    <a class="btn secondary" href="Formulario_integrato.pdf" target="_blank" rel="noopener">Apri a schermo intero</a>
+    <a class="btn" href="Formulario_integrato_v5.pdf" download="Formulario_integrato_v5.pdf">&#11015; Scarica il PDF</a>
+    <a class="btn secondary" href="Formulario_integrato_v5.pdf" target="_blank" rel="noopener">Apri a schermo intero</a>
   </div>
 
   <div class="info-box">
@@ -785,17 +791,33 @@
     e casistiche per ogni tipo di esercizio d'esame. Su telefono, se l'anteprima qui sotto non si carica, usa i pulsanti sopra.
   </div>
 
-  <object class="pdf-embed" data="Formulario_integrato.pdf#view=FitH" type="application/pdf" aria-label="Formulario integrato (PDF)">
+  <object class="pdf-embed" data="Formulario_integrato_v5.pdf#view=FitH" type="application/pdf" aria-label="Formulario integrato (PDF)">
     <p class="pdf-fallback">Il tuo browser non mostra i PDF in pagina.
-      <a href="Formulario_integrato.pdf" download>Scarica il formulario</a> oppure
-      <a href="Formulario_integrato.pdf" target="_blank" rel="noopener">aprilo in una nuova scheda</a>.</p>
+      <a href="Formulario_integrato_v5.pdf" download>Scarica il formulario</a> oppure
+      <a href="Formulario_integrato_v5.pdf" target="_blank" rel="noopener">aprilo in una nuova scheda</a>.</p>
   </object>
 
 </div>
 </div>
 
+<div id="view-piramide" class="view">
+<div class="wrap">
+  <div class="cover">
+    <h1>Piramide dell'esame</h1>
+    <div class="sub">Metodi Matematici per l'Ingegneria</div>
+    <div class="tag">Dalla base (fondamentali) al vertice (tipi d'esame): tocca un mattoncino</div>
+  </div>
+  <div class="formulario-actions">
+    <a class="btn secondary" href="Piramide_Metodi_Matematici.pdf" target="_blank" rel="noopener">Versione PDF stampabile</a>
+  </div>
+  <div id="pir-root"></div>
+  <p class="pir-hint" style="margin-top:10px">Legenda: verde = fondamentali, viola = strumenti di calcolo, rosso = tipi d'esame, arancione = metodo.</p>
+</div>
+</div>
+
 <footer>Progetto di studio personale per l'esame di Metodi Matematici — eseguito interamente nel browser, nessun dato lascia il tuo dispositivo.</footer>
 
+<script src="piramide.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/mathjs@12.4.3/lib/browser/math.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/katex@0.18.1/dist/katex.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/katex@0.18.1/dist/contrib/auto-render.min.js"></script>
@@ -1727,7 +1749,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Teoria e Formulario sono contenuto statico: li formattiamo in LaTeX una sola volta,
   // a prescindere da quale vista sia attiva all'avvio (e' un lavoro leggero, non richiede il banco).
   if (typeof renderMathInElement === "function") {
-    ["view-teoria", "view-formulario"].forEach((id) => {
+    ["view-teoria", "view-formulario", "view-piramide"].forEach((id) => {
       renderMathInElement(document.getElementById(id), {
         delimiters: [
           { left: "$$", right: "$$", display: true },

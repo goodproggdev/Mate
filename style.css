@@ -178,3 +178,32 @@ footer { text-align: center; color: var(--text3); font-size: 12.5px; padding: 30
 .form-preview table { font-size: 12px; }
 .form-preview li.hl { background: rgba(255, 200, 0, .28); border-left: 3px solid #e0a800; padding-left: 6px; border-radius: 3px; }
 .form-preview h2, .form-preview h3 { font-size: 14px; margin: 6px 0; }
+
+/* ---------- Piramide interattiva ---------- */
+.pir{display:flex;flex-direction:column;align-items:center;gap:6px;margin:14px 0}
+.pir-row{display:flex;justify-content:center;gap:6px;width:100%}
+.pir-brick{flex:1 1 0;max-width:150px;min-height:54px;padding:6px 4px;border-radius:8px;border:1px solid;font:inherit;font-size:13px;font-weight:600;line-height:1.25;cursor:pointer;text-align:center;transition:opacity .15s,transform .15s}
+.pir-brick:hover{transform:translateY(-1px)}
+.pir-brick.dim{opacity:.35}
+.pir-brick.sel{outline:3px solid var(--accent);outline-offset:1px}
+.pir-brick.need{outline:2px dashed var(--accent);outline-offset:1px}
+.pir-brick.done::after{content:" ✓";font-weight:700}
+.t1{background:#E1F5EE;border-color:#0F6E56;color:#085041}
+.t2{background:#EEEDFE;border-color:#534AB7;color:#3C3489}
+.t3{background:#FAECE7;border-color:#993C1D;color:#712B13}
+.t4{background:#FAEEDA;border-color:#854F0B;color:#633806}
+[data-theme="dark"] .t1{background:#085041;border-color:#9FE1CB;color:#E1F5EE}
+[data-theme="dark"] .t2{background:#3C3489;border-color:#CECBF6;color:#EEEDFE}
+[data-theme="dark"] .t3{background:#712B13;border-color:#F5C4B3;color:#FAECE7}
+[data-theme="dark"] .t4{background:#633806;border-color:#FAC775;color:#FAEEDA}
+.pir-detail{border:1px solid var(--border);border-radius:12px;padding:14px 16px;background:var(--bg-card);color:var(--text)}
+.pir-detail.t1{border-color:#0F6E56}.pir-detail.t2{border-color:#534AB7}.pir-detail.t3{border-color:#993C1D}.pir-detail.t4{border-color:#854F0B}
+.pir-detail h3{margin:0 0 6px}
+.pir-sec{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--text3);margin:10px 0 2px}
+.pir-detail ul{margin:0;padding-left:18px}
+.pir-hint{color:var(--text2);margin:0}
+.pir-prog{font-size:13px;color:var(--text2)}
+.pir-chips{display:flex;flex-wrap:wrap;gap:6px}
+.pir-chip{border:1px solid var(--border);background:var(--bg);color:var(--text);border-radius:999px;padding:3px 10px;font:inherit;font-size:12px;cursor:pointer}
+.pir-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+@media (max-width:640px){.pir-brick{font-size:11px;min-height:48px;padding:4px 2px}.pir-row{gap:3px}.pir{gap:3px}}
